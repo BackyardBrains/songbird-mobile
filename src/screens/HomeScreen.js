@@ -10,25 +10,26 @@ const HomeScreen = ( {navigation} ) => {
   
   const stateIn = useSelector(state => state.BLEs);
   const dispatch = useDispatch();
+  console.log(stateIn);
+  dispatch(scan());
+  const BLEList = useSelector(state => state.BLEs.BLEList);
 
   return (
   <View>
     <View style={styles.container}>
     <FlatList 
-            data = {devices}
+            data = {BLEList}
             renderItem={({item}) => {
               return (
                   <TouchableOpacity 
                     onPress={() => {
-                      // this onPress function will eventually call the BLEManager to connect with the 
-                      // desired device. That device's data will then populate the state object
-                      dispatch(changeDevice(`${item.device}`));
-                      dispatch(updateBattery(`${item.battery}`));
-                      console.log("state in hscreen",stateIn); // to test state's availability
+                      // 
+                      //dispatch(changeDevice(`${item.device}`)); // will dispatch 'connnect' thunk
+                      //dispatch(updateBattery(`${item.battery}`)); // worry about these later
                       navigation.navigate('Device'); // go to Device Screen
                     }}
                   >
-                      <Text style={styles.header}>{item.device}</Text> 
+                      <Text style={styles.header}>{item.name}</Text> 
                   </TouchableOpacity>
                 );
             }}

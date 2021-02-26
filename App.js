@@ -2,6 +2,7 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import {BleManager} from 'react-native-ble-plx';
+import thunk from 'redux-thunk';
 
 import React, { Component } from 'react'
 
@@ -25,7 +26,10 @@ const navigator = createStackNavigator(
   }
 );
 
-const store = createStore(rootReducer);
+const DeviceManager = new BleManager();
+const store = createStore(rootReducer,
+                            applyMiddleware(
+                              thunk.withExtraArgument(DeviceManager)));
 
 let Navigation = createAppContainer(navigator);
 

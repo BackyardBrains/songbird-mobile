@@ -1,6 +1,9 @@
 
+import { setStatusBarStyle } from "expo-status-bar";
+
 export const INITIAL_STATE = {
-	status: 'disconnected',
+	BLEList: [],
+	status: 'Disconnected',
 	connectedDevice: {},
 	deviceBattery: 20,
 	deviceStorage: 20,
@@ -23,6 +26,22 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				 ...state,
 				 connectedDevice: {deviceID: action.payload},
 			 }
+		case 'changeStatus':
+			return {
+				...state,
+				status: action.payload,
+			}
+		case 'addBLE':
+			if(state.BLEList.some(device => device.id === action.device.id) 
+			|| !action.device.isConnectable || action.device.name === null){
+				return state;
+			} 
+			else {
+				return {
+					...state,
+					BLEList: [...state.BLEList, action.device],
+				}
+			}
 	 	default: return state;
 	}
 };

@@ -1,3 +1,6 @@
+//these action functions will return an action const object when called. call it with parameters
+// to return an action oject with the appropriate payload
+// example: store.dispatch( updateBattery(45) );
 
 export const updateBattery = (batteryLevel) => ({
     type: 'updateBattery',
@@ -14,6 +17,28 @@ export const changeDevice = (newDeviceID) => ({
     payload: newDeviceID,
 })
 
-//these actions will return a const object when called. call it with parameters
-// to return an oject with the appropriate payload
-// example: store.dispatch( updateBattery(45) );
+export const changeStatus = (newStatus) => ({
+    type: "changeStatus",
+    payload: newStatus,
+});
+
+export const addBLE = (device) => ({
+    type: "addBLE",
+    device,
+});
+
+// thunks
+
+export const scan = () => {
+    return (dispatch, DeviceManager) => {
+        DeviceManager.startDeviceScan(null, null, (error, device) => {
+           dispatch(changeStatus("Scanning"));
+          if (error) {
+            console.log(error);
+          }
+          if(device !== null){
+            dispatch(addBLE(device));
+        }
+        });
+    }
+}
