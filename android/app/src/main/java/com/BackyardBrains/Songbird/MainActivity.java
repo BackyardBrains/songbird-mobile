@@ -1,4 +1,4 @@
-package com.songbirdmobile;
+package com.BackyardBrains.Songbird;
 
 import android.os.Bundle;
 
