@@ -1,0 +1,12 @@
+{
+  "name": "songbird-mobile",
+  "displayName": "songbird-mobile",
+  "expo": {
+    "name": "songbird-mobile",
+    "slug": "songbird-mobile",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
