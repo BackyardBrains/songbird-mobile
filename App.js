@@ -1,21 +1,41 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+import {BleManager} from 'react-native-ble-plx';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+import React, { Component } from 'react'
+
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import rootReducer from './src/reducers/index';
+
+import HomeScreen from './src/screens/HomeScreen';
+import DeviceScreen from './src/screens/DeviceScreen';
+
+const navigator = createStackNavigator(
+  {
+    Home: HomeScreen,
+    Device: DeviceScreen
   },
-});
+  {
+    initialRouteName: 'Home',
+    defaultNavigationOptions: {
+      title: 'Songbird Recorder Buddy',
+    },
+  }
+);
+
+const store = createStore(rootReducer);
+
+let Navigation = createAppContainer(navigator);
+
+// Render the app container component with the provider around it
+export default class App extends Component {
+  render() {
+    return (
+      <Provider store={store}>
+        <Navigation />
+      </Provider>
+    );
+  }
+}
