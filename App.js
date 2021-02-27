@@ -27,9 +27,12 @@ const navigator = createStackNavigator(
 );
 
 const DeviceManager = new BleManager();
-const store = createStore(rootReducer,
-                            applyMiddleware(
-                              thunk.withExtraArgument(DeviceManager)));
+const store = createStore(
+  rootReducer,
+  applyMiddleware(
+    thunk.withExtraArgument({ DeviceManager } )
+  )
+);
 
 let Navigation = createAppContainer(navigator);
 

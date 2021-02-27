@@ -2,20 +2,7 @@
 // to return an action oject with the appropriate payload
 // example: store.dispatch( updateBattery(45) );
 
-export const updateBattery = (batteryLevel) => ({
-    type: 'updateBattery',
-    payload: batteryLevel,
-})
-
-export const updateStorage = (storageLevel) => ({
-    type: 'updateStorage',
-    payload: storageLevel,
-})
-
-export const changeDevice = (newDeviceID) => ({
-    type: 'changeDevice',
-    payload: newDeviceID,
-})
+import { BleManager } from "react-native-ble-plx";
 
 export const changeStatus = (newStatus) => ({
     type: "changeStatus",
@@ -29,16 +16,33 @@ export const addBLE = (device) => ({
 
 // thunks
 
+export const startScan = () => {
+    return (dispatch, getState, { DeviceManager } ) => {
+        DeviceManager.state().then( (State) => console.log("manager state:", State));
+
+        const subscription = DeviceManager.onStateChange((state) => {
+            if (state === 'PoweredOn') {
+                dispatch(scan());
+                subscription.remove();
+            }
+        }, true);
+    };
+}
+
 export const scan = () => {
-    return (dispatch, DeviceManager) => {
+    return (dispatch, getState, { DeviceManager } ) => {
+        
         DeviceManager.startDeviceScan(null, null, (error, device) => {
-           dispatch(changeStatus("Scanning"));
-          if (error) {
-            console.log(error);
-          }
-          if(device !== null){
-            dispatch(addBLE(device));
-        }
+
+            // dispatch(changeStatus("Scanning"));
+           
+            if (error) {
+                console.log(error);
+            }
+            if(device !== null){
+                dispatch(addBLE(device));
+                console.log("found device");
+            }
         });
     }
 }

@@ -1,9 +1,8 @@
 import React from "react";
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import styles from '../styles/style';
-import devices from '../components/DeviceData'
 import { useDispatch, useSelector } from 'react-redux';
-import { scan, changeDevice, updateBattery, updateStorage} from '../actions/index';
+import { startScan } from '../actions/index';
 
 
 const HomeScreen = ( {navigation} ) => {
@@ -11,7 +10,7 @@ const HomeScreen = ( {navigation} ) => {
   const stateIn = useSelector(state => state.BLEs);
   const dispatch = useDispatch();
   console.log(stateIn);
-  dispatch(scan());
+  dispatch(startScan());
   const BLEList = useSelector(state => state.BLEs.BLEList);
 
   return (
