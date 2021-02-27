@@ -7,7 +7,7 @@ import thunk from 'redux-thunk';
 import React, { Component } from 'react'
 
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import rootReducer from './src/reducers/index';
 
 import HomeScreen from './src/screens/HomeScreen';

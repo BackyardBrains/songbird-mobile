@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import styles from '../styles/style';
 import devices from '../components/DeviceData'
 import { useDispatch, useSelector } from 'react-redux';
-import { changeDevice, updateBattery, updateStorage} from '../actions/index';
+import { scan, changeDevice, updateBattery, updateStorage} from '../actions/index';
 
 
 const HomeScreen = ( {navigation} ) => {
