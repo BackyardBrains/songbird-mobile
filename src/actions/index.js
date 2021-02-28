@@ -2,8 +2,6 @@
 // to return an action oject with the appropriate payload
 // example: store.dispatch( updateBattery(45) );
 
-import { BleManager } from "react-native-ble-plx";
-
 export const changeStatus = (newStatus) => ({
     type: "changeStatus",
     payload: newStatus,
@@ -41,7 +39,7 @@ export const scan = () => {
             }
             if(device !== null){
                 dispatch(addBLE(device));
-                console.log("found device");
+                console.log("found device"); 
             }
         });
     }

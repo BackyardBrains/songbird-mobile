@@ -11,16 +11,7 @@ export const INITIAL_STATE = {
 
 const BLEreducer = (state = INITIAL_STATE, action = {}) => {
     switch(action.type){
-		case 'updateBattery': 
-	 		return {
-				...state,
-				deviceBattery: action.payload, 
-			}
-		case 'updateStorage': 
-			return {
-			   ...state,
-			   deviceStorage: action.payload, 
-	   		}
+		
 	 	case 'changeDevice':
 			 return {
 				 ...state,
