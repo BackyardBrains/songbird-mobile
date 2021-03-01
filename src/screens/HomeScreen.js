@@ -24,7 +24,8 @@ const HomeScreen = ( {navigation} ) => {
     <Button title="Refresh" onPress={() => dispatch(changeStatus(`${status}.`))} />
 
       <FlatList 
-        data = {BLEList}
+        keyExtractor={ device => device.name}
+        data={BLEList}
         renderItem={({item}) => {
           return (
             <TouchableOpacity 

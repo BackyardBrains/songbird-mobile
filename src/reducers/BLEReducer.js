@@ -7,12 +7,19 @@ export const INITIAL_STATE = {
 	connectedDevice: {},
 	deviceBattery: 20,
 	deviceStorage: 20,
+	counter: 0,
   };
 
 const BLEreducer = (state = INITIAL_STATE, action = {}) => {
     switch(action.type){
 		
-	 	case 'changeDevice':
+		case 'updateCounter':
+			console.log("running updateCounter, counter: ", state.counter);
+			return {
+				...state,
+				counter: state.counter + action.payload,
+			}
+		case 'changeDevice':
 			 return {
 				 ...state,
 				 connectedDevice: {deviceID: action.payload},
@@ -23,16 +30,18 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				status: action.payload,
 			}
 		case 'addBLE':
-			if(state.BLEList.some(device => device.id === action.device.id) 
-			|| !action.device.isConnectable || action.device.name === null){
+
+			console.log("running addBLE");
+			
+			if (state.BLEList.some(device => device.name === action.payload.name)) { 
 				return state;
-			} 
-			else {
-				return {
-					...state,
-					BLEList: [...state.BLEList, action.device],
-				}
 			}
+			
+			return {
+				...state,
+				BLEList: [...state.BLEList, action.payload],
+			}
+	
 	 	default: return state;
 	}
 };
