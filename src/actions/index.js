@@ -62,7 +62,5 @@ export const scan = () => {
 
         });
 
-       
-
     }
 }
