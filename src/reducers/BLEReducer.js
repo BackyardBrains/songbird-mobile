@@ -32,11 +32,11 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 		case 'addBLE':
 
 			console.log("running addBLE");
-			
+			// checks if same name, might change name to id later
 			if (state.BLEList.some(device => device.name === action.payload.name)) { 
 				return state;
 			}
-			
+
 			return {
 				...state,
 				BLEList: [...state.BLEList, action.payload],

@@ -56,7 +56,7 @@ export const scan = () => {
             const appState = getState();
             const counter = appState.BLEs.counter;
             console.log("counter val at stopDeviceScan check: ", counter);
-            if (counter >= 60) { // stops scan after 25 iterations
+            if (counter >= 60) { // stops scan after 60 iterations
                 DeviceManager.stopDeviceScan();
             }
 

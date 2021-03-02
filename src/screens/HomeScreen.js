@@ -17,8 +17,6 @@ const HomeScreen = ( {navigation} ) => {
   return (
   <View>
     
-    
-
     <View style={styles.container}>
 
     <Button title="Refresh" onPress={() => dispatch(changeStatus(`${status}.`))} />
