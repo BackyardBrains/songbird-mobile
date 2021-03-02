@@ -2,11 +2,12 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import {BleManager} from 'react-native-ble-plx';
+import thunk from 'redux-thunk';
 
 import React, { Component } from 'react'
 
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import rootReducer from './src/reducers/index';
 
 import HomeScreen from './src/screens/HomeScreen';
@@ -25,7 +26,13 @@ const navigator = createStackNavigator(
   }
 );
 
-const store = createStore(rootReducer);
+const DeviceManager = new BleManager();
+const store = createStore(
+  rootReducer,
+  applyMiddleware(
+    thunk.withExtraArgument({ DeviceManager } )
+  )
+);
 
 let Navigation = createAppContainer(navigator);
 
