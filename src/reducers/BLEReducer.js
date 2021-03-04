@@ -3,6 +3,7 @@ export const INITIAL_STATE = {
 	status: 'Disconnected',
 	connectedDevice: {},
 	services: [],
+	characteristic: {},
 	counter: 0,
   };
 
@@ -43,13 +44,16 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				...state,
 				connectedDevice: action.payload,
 			}
-
 		case 'updateServicesArray':
 			return {
 				...state,
 				services: action.payload,
 			}
-
+		case 'addCharacteristic':
+			return {
+				...state,
+				characteristic: action.payload,
+			}
 		case 'disconnectedBLE':
 			return {
 				...state,

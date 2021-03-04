@@ -29,6 +29,11 @@ export const updateServicesArray = (servicesArray) => ({
     payload: servicesArray,
 })
 
+export const addCharacteristic = (characteristic) => ({
+    type: "addCharacteristic",
+    payload: characteristic,
+})
+
 export const disconnectedBLE = () => ({
     type: "disconnectedBLE",
 })
@@ -106,8 +111,9 @@ export const connectDevice = ( item ) => {
                 let servicesArray = [];
                 for (let i = 0; i < services.length; ++i){
                     servicesArray[i] = services[i].uuid;
-                    console.log("Service UUID @ ", i, ": ", servicesArray[i].UUID);
+                    console.log("Service UUID @ ", i, ": ", servicesArray[i]);
                     dispatch(updateServicesArray(servicesArray));
+                    dispatch(getCharacteristic(servicesArray[2])); // @2 is specific to Kane's ESP
                 }
                 console.log("servicesArray: ", servicesArray);
                 return services;
@@ -116,10 +122,17 @@ export const connectDevice = ( item ) => {
 }
 
 // function customized specifically for Kane's ESP
-export const getCharData = ( serviceID ) => {
+export const getCharacteristic = ( serviceID ) => {
     return (dispatch, getState, { DeviceManager } ) => {
+        
+        let counter = getState().BLEs.counter
+        console.log("counter, ", counter);
+        if (counter === 10) {
+            return;
+        }
+        
+        dispatch(updateCounter(1));
 
-        const servicesArray = getState().BLEs.services;
         const deviceID = getState().BLEs.connectedDevice.id;
         DeviceManager.characteristicsForDevice(deviceID, serviceID)
         .then( ( characteristics ) =>{
@@ -129,7 +142,7 @@ export const getCharData = ( serviceID ) => {
         .then( ( characteristic ) => {
            
             console.log("value: ", characteristic.value);
-
+            dispatch(addCharacteristic(characteristic));
             return characteristic;
         })
     }
@@ -181,6 +194,8 @@ export const disconnectDevice = () => {
         DeviceManager.cancelDeviceConnection(deviceID)
             .then((device) => {
                 dispatch(disconnectedBLE());
+                dispatch(updateServicesArray([]));
+                dispatch(addCharacteristic({}));
                 return device;
             })
     }
