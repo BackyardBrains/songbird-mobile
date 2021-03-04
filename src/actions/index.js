@@ -113,8 +113,8 @@ export const connectDevice = ( item ) => {
                     servicesArray[i] = services[i].uuid;
                     console.log("Service UUID @ ", i, ": ", servicesArray[i]);
                     dispatch(updateServicesArray(servicesArray));
-                    dispatch(getCharacteristic(servicesArray[2])); // @2 is specific to Kane's ESP
                 }
+                dispatch(getCharacteristic(servicesArray[2])); // @2 is specific to Kane's ESP
                 console.log("servicesArray: ", servicesArray);
                 return services;
             })    

@@ -23,8 +23,9 @@ const DeviceScreen = ( { navigation } ) => {
         
         <View style={styles.container}>
             <Button title="Refresh" onPress={() => dispatch(changeStatus(`${status}.`))} />
+            <View style={styles.container}/>
             <Button title="Disconnect" onPress={() => dispatch(disconnectDevice())} />
-
+            <View style={styles.container}/>
             <Text style={styles.smallText}>Connected: {device.name}</Text>
             
             <View style={styles.container}/>
