@@ -2,6 +2,8 @@
 // to return an action oject with the appropriate payload
 // example: store.dispatch( updateBattery(45) );
 
+import { Device } from "react-native-ble-plx";
+
 export const changeStatus = (newStatus) => ({
     type: "changeStatus",
     payload: newStatus,
@@ -17,11 +19,31 @@ export const updateCounter = (increment) => ({
     payload: increment,
 })
 
+export const addConnectedBLE = (device) => ({
+    type: "addConnectedBLE",
+    payload: device,
+})
+
+export const updateServicesArray = (servicesArray) => ({
+    type: "updateServicesArray",
+    payload: servicesArray,
+})
+
+export const disconnectedBLE = () => ({
+    type: "disconnectedBLE",
+})
+
 // thunks
 
 export const startScan = () => {
     return (dispatch, getState, { DeviceManager } ) => {
         const appState = getState();
+        
+        if (appState.BLEs.status === "Discovering" 
+        || appState.BLEs.status === "Discovered") {
+            return;
+        }
+        console.log("status: ", appState.BLEs.status);
 
         const counter = appState.BLEs.counter;
         dispatch(updateCounter(-1 * counter)); // resets counter to 0;
@@ -62,5 +84,104 @@ export const scan = () => {
 
         });
 
+    }
+}
+
+export const connectDevice = ( item ) => {
+    return (dispatch, getState, { DeviceManager } ) => {
+        dispatch(changeStatus("Discovering"));
+        const device = item.item;
+        const deviceID = device.id;
+        console.log("device ID: ", deviceID);
+        device.connect( { autoConnect: true, refreshGatt: true } )
+            .then(( device ) => {
+                return device.discoverAllServicesAndCharacteristics();
+            })
+            .then(( device ) => {
+                dispatch(changeStatus("Discovered"));
+                dispatch(addConnectedBLE(device));
+                return device.services();
+            })
+            .then(( services ) => {
+                let servicesArray = [];
+                for (let i = 0; i < services.length; ++i){
+                    servicesArray[i] = services[i].uuid;
+                    console.log("Service UUID @ ", i, ": ", servicesArray[i].UUID);
+                    dispatch(updateServicesArray(servicesArray));
+                }
+                console.log("servicesArray: ", servicesArray);
+                return services;
+            })    
+    }
+}
+
+// function customized specifically for Kane's ESP
+export const getCharData = ( serviceID ) => {
+    return (dispatch, getState, { DeviceManager } ) => {
+
+        const servicesArray = getState().BLEs.services;
+        const deviceID = getState().BLEs.connectedDevice.id;
+        DeviceManager.characteristicsForDevice(deviceID, serviceID)
+        .then( ( characteristics ) =>{
+            const characteristicID = characteristics[0].uuid;
+            return DeviceManager.readCharacteristicForDevice(deviceID, serviceID, characteristicID)
+        })
+        .then( ( characteristic ) => {
+           
+            console.log("value: ", characteristic.value);
+
+            return characteristic;
+        })
+    }
+}
+
+// export const fillCharacteristics = ( servicesArray ) => {
+//     return (dispatch, getState, { DeviceManager } ) => {
+
+//         const deviceID = getState().BLEs.connectedDevice.id;
+//         for (let i = 0; i < servicesArray.length; ++i){
+//             const serviceID = servicesArray[i].UUID;
+//             DeviceManager.characteristicsForDevice(deviceID, serviceID)
+//             .then( ( characteristics ) =>{
+//                 for (let j = 0; j < characteristics.length; ++j){
+//                     servicesArray[i].characteristics[j] = {};
+//                     servicesArray[i].characteristics[j].UUID = characteristics[j].uuid;
+//                 }
+                
+//                 dispatch(fillValues(servicesArray, i));
+//                 return characteristics;
+//             })
+//         } 
+//     }
+// }
+
+// export const fillValues = ( servicesArray, index ) => {
+//     return (dispatch, getState, { DeviceManager } ) => {
+//         console.log("reached fillValues");
+//         const deviceID = getState().BLEs.connectedDevice.id;
+//         const serviceID = servicesArray[index].UUID;
+//         const  characteristics = servicesArray[index].characteristics;
+//         for (let j = 0; j < characteristics.length; ++j){
+//             const characteristicID = characteristics[j].UUID;
+//             console.log("reached readCharacteristic");
+//             DeviceManager.readCharacteristicForDevice(deviceID, serviceID, characteristicID)
+//             .then( ( characteristic ) => {
+//                 servicesArray[index].characteristics[j].value = characteristic.value;
+//                 console.log("value: ", characteristic.value);
+//                 console.log("characteristic: ", servicesArray[i].characteristics[j]);
+//                 return characteristic;
+//             })
+//         }   
+//     }
+// }
+
+export const disconnectDevice = () => {
+    return (dispatch, getState, { DeviceManager } ) => {
+        let deviceID = getState().BLEs.connectedDevice.id;
+        DeviceManager.cancelDeviceConnection(deviceID)
+            .then((device) => {
+                dispatch(disconnectedBLE());
+                return device;
+            })
     }
 }
