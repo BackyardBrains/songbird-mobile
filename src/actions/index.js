@@ -148,46 +148,6 @@ export const getCharacteristic = ( serviceID ) => {
     }
 }
 
-// export const fillCharacteristics = ( servicesArray ) => {
-//     return (dispatch, getState, { DeviceManager } ) => {
-
-//         const deviceID = getState().BLEs.connectedDevice.id;
-//         for (let i = 0; i < servicesArray.length; ++i){
-//             const serviceID = servicesArray[i].UUID;
-//             DeviceManager.characteristicsForDevice(deviceID, serviceID)
-//             .then( ( characteristics ) =>{
-//                 for (let j = 0; j < characteristics.length; ++j){
-//                     servicesArray[i].characteristics[j] = {};
-//                     servicesArray[i].characteristics[j].UUID = characteristics[j].uuid;
-//                 }
-                
-//                 dispatch(fillValues(servicesArray, i));
-//                 return characteristics;
-//             })
-//         } 
-//     }
-// }
-
-// export const fillValues = ( servicesArray, index ) => {
-//     return (dispatch, getState, { DeviceManager } ) => {
-//         console.log("reached fillValues");
-//         const deviceID = getState().BLEs.connectedDevice.id;
-//         const serviceID = servicesArray[index].UUID;
-//         const  characteristics = servicesArray[index].characteristics;
-//         for (let j = 0; j < characteristics.length; ++j){
-//             const characteristicID = characteristics[j].UUID;
-//             console.log("reached readCharacteristic");
-//             DeviceManager.readCharacteristicForDevice(deviceID, serviceID, characteristicID)
-//             .then( ( characteristic ) => {
-//                 servicesArray[index].characteristics[j].value = characteristic.value;
-//                 console.log("value: ", characteristic.value);
-//                 console.log("characteristic: ", servicesArray[i].characteristics[j]);
-//                 return characteristic;
-//             })
-//         }   
-//     }
-// }
-
 export const disconnectDevice = () => {
     return (dispatch, getState, { DeviceManager } ) => {
         let deviceID = getState().BLEs.connectedDevice.id;
