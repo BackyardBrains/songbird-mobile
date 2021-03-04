@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Button, FlatList } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { disconnectDevice, changeStatus } from '../actions';
+import base64 from 'react-native-base64'
 
 // device.serviceUUIDs[0] === "4fafc201-1fb5..." // in theory
 
@@ -17,7 +18,7 @@ const DeviceScreen = ( { navigation } ) => {
     console.log("characteristic: ", characteristic);
     //console.log("connected device in dscreen: ", device);
     //const service = device.serviceUUIDs[0];
-
+    const englishVal = base64.decode(`${characteristic.value}`);
     // NOTE IMPORTANT: need to decode chracteristic values from "Base 64"
     return (
         
@@ -42,7 +43,7 @@ const DeviceScreen = ( { navigation } ) => {
             />
 
             <Text style={styles.smallText}>Characteristic UUID: {characteristic.uuid}</Text>
-            <Text style={styles.smallText}>Characteristic value: {characteristic.value}</Text>
+            <Text style={styles.smallText}>Characteristic value: {englishVal}</Text>
            
 
 
