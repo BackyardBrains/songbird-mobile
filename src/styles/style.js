@@ -3,8 +3,8 @@ import {StyleSheet} from 'react-native'
 export default StyleSheet.create({
 
     container: {
-        marginTop: 15,
-        marginBottom: 15,
+        marginTop: 5,
+        marginBottom: 5,
         alignItems: 'center'
       },
     
@@ -20,6 +20,10 @@ export default StyleSheet.create({
 
       smallText: {
         fontSize: 15
-      }
+      },
+
+      SubheadText: {
+        fontSize: 20
+      },
 
 });
