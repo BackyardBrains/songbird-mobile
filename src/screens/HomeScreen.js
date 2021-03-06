@@ -2,7 +2,7 @@ import React from "react";
 import { Button, View, Text, FlatList, TouchableOpacity } from "react-native";
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeStatus, startScan } from '../actions/index';
+import { changeStatus, connectDevice, startScan } from '../actions/index';
 
 
 const HomeScreen = ( {navigation} ) => {
@@ -11,8 +11,8 @@ const HomeScreen = ( {navigation} ) => {
   
   dispatch(startScan());
   const BLEList = useSelector(state => state.BLEs.BLEList);
-  const status = useSelector(state => state.BLEs.status)
-  console.log("BLEList: ", BLEList);
+  const status = useSelector(state => state.BLEs.status);
+  
    
   return (
   <View>
@@ -28,9 +28,8 @@ const HomeScreen = ( {navigation} ) => {
           return (
             <TouchableOpacity 
               onPress={() => {
-                      // 
-                      //dispatch(changeDevice(`${item.device}`)); // will dispatch 'connnect' thunk
-                      //dispatch(updateBattery(`${item.battery}`)); // worry about these later
+                dispatch(connectDevice({item})); // still needs thorough testing
+
                 navigation.navigate('Device'); // go to Device Screen
               }}
             >
