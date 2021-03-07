@@ -14,6 +14,10 @@ export const addBLE = (device) => ({
     payload: device,
 });
 
+export const resetBleList = () => ({
+    type: "resetBleList",
+});
+
 export const updateCounter = (increment) => ({
     type: "updateCounter",
     payload: increment,
@@ -125,6 +129,8 @@ export const connectDevice = ( item ) => {
 export const getCharacteristic = ( serviceID ) => {
     return (dispatch, getState, { DeviceManager } ) => {
         
+        if (serviceID === null) return;
+
         let counter = getState().BLEs.counter
         console.log("counter, ", counter);
         if (counter === 10) {
@@ -151,6 +157,9 @@ export const getCharacteristic = ( serviceID ) => {
 export const disconnectDevice = () => {
     return (dispatch, getState, { DeviceManager } ) => {
         let deviceID = getState().BLEs.connectedDevice.id;
+
+        if (deviceID == null) return;
+
         DeviceManager.cancelDeviceConnection(deviceID)
             .then((device) => {
                 dispatch(disconnectedBLE());

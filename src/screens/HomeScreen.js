@@ -2,13 +2,14 @@ import React from "react";
 import { Button, View, Text, FlatList, TouchableOpacity } from "react-native";
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeStatus, connectDevice, startScan } from '../actions/index';
+import { changeStatus, connectDevice, disconnectDevice, startScan } from '../actions/index';
 
 
 const HomeScreen = ( {navigation} ) => {
   
   const dispatch = useDispatch();
   
+  //dispatch(disconnectDevice());
   dispatch(startScan());
   const BLEList = useSelector(state => state.BLEs.BLEList);
   const status = useSelector(state => state.BLEs.status);
