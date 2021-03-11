@@ -48,7 +48,7 @@ const DeviceScreen = ( { navigation } ) => {
                 <ListItem itemHeader first>
                     <Text>Recording Settings</Text>
                 </ListItem>
-                <ListItem>
+                <ListItem onPress={() => navigation.navigate('SetClock')}>
                     <Left>
                         <View style={styles.listLeft}>
                             <Text>Device Clock:</Text>   
@@ -59,7 +59,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <Icon name="arrow-forward" />
                     </Right>
                 </ListItem>
-                <ListItem>
+                <ListItem onPress={() => navigation.navigate('SetDuration')}>
                     <Left>
                         <View style={styles.listLeft}>
                             <Text>Duration:</Text>   
@@ -70,7 +70,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <Icon name="arrow-forward" />  
                     </Right>
                 </ListItem>
-                <ListItem>
+                <ListItem onPress={() => navigation.navigate('SetSamplingRate')}>
                     <Left>
                         <View style={styles.listLeft}>
                             <Text>Sampling Rate:</Text>   
@@ -81,7 +81,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <Icon name="arrow-forward" />
                     </Right>
                 </ListItem>
-                <ListItem>
+                <ListItem onPress={() => navigation.navigate('SetSensitivity')}>
                     <Left>
                         <View style={styles.listLeft}>
                             <Text>Sensitivity:</Text>
@@ -95,7 +95,7 @@ const DeviceScreen = ( { navigation } ) => {
                 <ListItem itemHeader>
                     <Text>Trigger Mode</Text>
                 </ListItem>
-                <ListItem>
+                <ListItem onPress={() => navigation.navigate('SetSchedule')}>
                     <Left>
                         <View style={styles.listLeft}>
                             <Text>Schedule: </Text>
@@ -106,7 +106,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <Icon name="arrow-forward" />
                     </Right>
                 </ListItem>
-                <ListItem>
+                <ListItem onPress={() => navigation.navigate('SetLight')}>
                     <Left>
                         <View style={styles.listLeft}>
                             <Text>Light Intensity: </Text>
@@ -117,7 +117,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <Icon name="arrow-forward" />
                     </Right>
                 </ListItem>
-                <ListItem>
+                <ListItem onPress={() => navigation.navigate('SetSound')}>
                     <Left>
                         <View style={styles.listLeft}>
                             <Text>Sound Level: </Text>
@@ -131,7 +131,7 @@ const DeviceScreen = ( { navigation } ) => {
                 <ListItem itemHeader>
                     <Text>Tags</Text>
                 </ListItem>
-                <ListItem>
+                <ListItem onPress={() => navigation.navigate('SetGps')}>
                     <Left>
                         <View style={styles.listLeft}>
                             <Text>GPS Coordinates:</Text>

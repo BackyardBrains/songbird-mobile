@@ -1,9 +1,10 @@
 import React from "react";
-import { Button, View, Text, FlatList, TouchableOpacity } from "react-native";
+import { Button, View, FlatList, TouchableOpacity } from "react-native";
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeStatus, connectDevice, disconnectDevice, startScan } from '../actions/index';
-
+import { Container, Header, Content, List, ListItem, 
+  Text, Left, Right, Icon, Card, CardItem, Body } from 'native-base';
 
 const HomeScreen = ( {navigation} ) => {
   
@@ -27,16 +28,16 @@ const HomeScreen = ( {navigation} ) => {
         data={BLEList}
         renderItem={({item}) => {
           return (
-            <TouchableOpacity 
-              onPress={() => {
-                dispatch(connectDevice({item})); // still needs thorough testing
+            <ListItem onPress={() => {
+              dispatch(connectDevice({item})); // still needs thorough testing
 
-                navigation.navigate('Device'); // go to Device Screen
-              }}
+              navigation.navigate('Device'); // go to Device Screen
+            }}
             >
-              <Text style={styles.header}>{item.name}</Text> 
-            </TouchableOpacity>
+              <Text>{item.name}</Text> 
+            </ListItem>
           );
+
         }}
       />
     </View>
@@ -45,3 +46,4 @@ const HomeScreen = ( {navigation} ) => {
 };
 
 export default HomeScreen;
+
