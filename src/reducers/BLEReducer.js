@@ -1,3 +1,5 @@
+import initialParameterObject from '../components/DeviceData';
+
 export const INITIAL_STATE = {
 	BLEList: [],
 	status: 'Disconnected',
@@ -5,6 +7,7 @@ export const INITIAL_STATE = {
 	services: [],
 	characteristic: {},
 	counter: 0,
+	parameters: initialParameterObject,
   };
 
 const BLEreducer = (state = INITIAL_STATE, action = {}) => {
@@ -36,6 +39,11 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 			return {
 				...state,
 				BLEList: [...state.BLEList, action.payload],
+			}
+		case 'resetBleList':
+			return {
+				...state,
+				BLEList: [],
 			}
 		case 'addConnectedBLE':
 

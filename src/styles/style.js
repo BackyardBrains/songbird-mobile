@@ -18,12 +18,13 @@ export default StyleSheet.create({
         marginBottom: 5
       },
 
-      smallText: {
-        fontSize: 15
-      },
-
       SubheadText: {
         fontSize: 20
+      },
+      
+      listLeft: {
+        width: 160,
+        flexDirection: "row",
       },
 
 });
