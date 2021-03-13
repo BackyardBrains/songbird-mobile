@@ -3,6 +3,8 @@
 // example: store.dispatch( updateBattery(45) );
 
 import { Device } from "react-native-ble-plx";
+import { Buffer } from 'buffer';
+import { Alert } from 'react-native';
 
 export const changeStatus = (newStatus) => ({
     type: "changeStatus",
@@ -74,6 +76,9 @@ export const scan = () => {
 
             if (error) {
                 console.log(error);
+                if (error.errorCode == 102){
+                    alert("Please open Bluetooth first")
+                }
             }
             if(device !== null && device.name !== null){
                 dispatch(addBLE(device));
@@ -159,4 +164,23 @@ export const disconnectDevice = () => {
                 return device;
             })
     }
+}
+
+export const write = (value, index, item) => {
+    return (dispatch, getState, { DeviceManager } ) => {
+        const device = item.item;
+        const deviceId = item.id;
+        let formatValue = new Buffer(value, "base64").toString('ascii');
+        DeviceManager.writeCharacteristicWithoutResponseForDevice(
+            deviceId,  ,  , formatValue, transactionId
+        )
+        .then(characteristic=>{
+            console.log('writeWithoutResponse success', value);
+        })
+        ,error=>{
+            alert()
+        }
+    }
+    
+
 }

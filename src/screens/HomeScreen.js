@@ -3,7 +3,17 @@ import { Button, View, Text, FlatList, TouchableOpacity } from "react-native";
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeStatus, connectDevice, startScan } from '../actions/index';
+import SideBar from "./Sidebar.js"
 
+
+const HomeScreenRouter = DrawerNavigator(
+  {
+    Home : { screen: HomeScreen },
+  },
+  {
+    contentComponent: props => <SideBar {...props} />
+  }
+);
 
 const HomeScreen = ( {navigation} ) => {
   
@@ -18,6 +28,20 @@ const HomeScreen = ( {navigation} ) => {
   <View>
     
     <View style={styles.container}>
+
+    <Header>
+      <Left>
+        <Button
+          transparent
+          onPress={() => navigation.navigate("DrawerOpen")}>
+          <Icon name="menu" />
+        </Button>
+      </Left>
+      <Body>
+        <Title>HomeScreen</Title>
+      </Body>
+      <Right />
+    </Header>
 
     <Button title="Refresh" onPress={() => dispatch(changeStatus(`${status}.`))} />
 
