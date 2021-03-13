@@ -8,11 +8,12 @@ export default initialParameterObject = {
     "SamplingRate" : 0, // kHz
     "Sensitivity" : "High",
     "IsTriggerSchedule" : true, // needs a helper function for display
-    "ScheduleStart" : "0:00 PM",
-    "ScheduleEnd" : "0:00 PM",
+    "ScheduleStart" : "0:00,PM",
+    "ScheduleEnd" : "0:00,PM",
     "LightIntensity" : "High",
     "SoundLevel" : "High",
-    "GpsCoordinates" : "00.000.000.000",
+    "GpsLatitude" : "00.000000",
+    "GpsLongitude" : "00.000000",
 }
 
 

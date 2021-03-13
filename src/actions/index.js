@@ -1,8 +1,46 @@
-//these action functions will return an action const object when called. call it with parameters
-// to return an action oject with the appropriate payload
-// example: store.dispatch( updateBattery(45) );
 
-import { Device } from "react-native-ble-plx";
+// helper functions
+
+const ParameterObjectToString = ( parameterObject ) => {
+    let parString = "";
+
+    parString += parameterObject.BatteryLevel + " ";
+    parString += parameterObject.StorageCapacity + " ";
+    parString += parameterObject.RecordingDuration + " ";
+    parString += parameterObject.SamplingRate + " ";
+    parString += parameterObject.Sensitivity + " ";
+    parString += parameterObject.IsTriggerSchedule + " ";
+    parString += parameterObject.ScheduleStart + " ";
+    parString += parameterObject.ScheduleEnd + " ";
+    parString += parameterObject.LightIntensity + " ";
+    parString += parameterObject.SoundLevel + " ";
+    parString += parameterObject.GpsLatitude + " ";
+    parString += parameterObject.GpsLongitude + " ";
+
+    return parString
+}
+
+const ParameterStringToObject = ( parameterString ) => {
+    let parArray = parameterString.split(" ");
+    let parameterObject = {};
+
+    parameterObject.BatteryLevel = parArray[0];
+    parameterObject.StorageCapacity = parArray[1];
+    parameterObject.RecordingDuration = parArray[2];
+    parameterObject.SamplingRate = parArray[3]; 
+    parameterObject.Sensitivity = parArray[4]; 
+    parameterObject.IsTriggerSchedule = parArray[5]; 
+    parameterObject.ScheduleStart = parArray[6]; 
+    parameterObject.ScheduleEnd = parArray[7]; 
+    parameterObject.LightIntensity = parArray[8]; 
+    parameterObject.SoundLevel = parArray[9];
+    parameterObject.GpsLatitude = parArray[10];
+    parameterObject.GpsLongitude = parArray[11];
+
+    return parameterObject;
+}
+
+// actions
 
 export const changeStatus = (newStatus) => ({
     type: "changeStatus",
@@ -36,6 +74,12 @@ export const updateServicesArray = (servicesArray) => ({
 export const addCharacteristic = (characteristic) => ({
     type: "addCharacteristic",
     payload: characteristic,
+})
+
+export const changeParameterObject = (parameter, value) => ({
+    type: "changeParameterObject",
+    par: parameter,
+    val: value,
 })
 
 export const disconnectedBLE = () => ({
@@ -151,6 +195,23 @@ export const getCharacteristic = ( serviceID ) => {
             dispatch(addCharacteristic(characteristic));
             return characteristic;
         })
+    }
+}
+
+import base64 from 'react-native-base64'
+
+export const changeParameter = ( parameter, newValue ) => {
+    return (dispatch, getState, { DeviceManager } ) => {
+
+        dispatch(changeParameterObject( parameter, newValue ));
+        let parameterObject = getState().BLEs.parameters;
+        let parameterString = ParameterObjectToString(parameterObject);
+
+        let base64ParString = base64.encode(parameterString);
+
+        // also implement the write to chracteristic here
+
+
     }
 }
 
