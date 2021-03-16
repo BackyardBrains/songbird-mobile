@@ -1,8 +1,7 @@
-import React, {useState} from 'react';
-import { View, TouchableOpacity, Button } from 'react-native';
-import styles from '../styles/style';
+import React from 'react';
+import { Button } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateDuration } from '../actions';
+import { changeParameter } from '../actions';
 import { Container, Content, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 
 
@@ -11,7 +10,8 @@ const SetDurationScreen = () => {
     let device = useSelector(state => state.BLEs.connectedDevice);
     
     let parameters = useSelector(state => state.BLEs.parameters);
-    const [duration, setDuration] = useState(parameters.RecordingDuration);
+    const thisParameter = "RecordingDuration";
+    let durationVal = parameters[thisParameter];
 
     return (
         <Container>
@@ -32,17 +32,19 @@ const SetDurationScreen = () => {
                         <Input 
                             keyboardType = 'numeric'
                             onChangeText={(value) => {
-                                setDuration(value);
-                                console.log(duration);
+                                durationVal = value;
                         }}/>
                     </Item>
                 </Form>
                 <Button
-                    title="Submit">
+                    title="Submit"
+                    onPress={ () => {
+                        dispatch(changeParameter(thisParameter, durationVal))
+                    }}
+                >
                 </Button>
             </Content>
       </Container>
-      //onPress={dispatch(updateDuration(duration))}
     );
 };
 

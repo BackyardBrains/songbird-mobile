@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import { View, TouchableOpacity, Button } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateClock } from '../actions';
+import { changeParameter } from '../actions';
 import { Container, Content, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 
 const SetClockScreen = () => {
@@ -11,7 +11,9 @@ const SetClockScreen = () => {
     let device = useSelector(state => state.BLEs.connectedDevice);
     
     let parameters = useSelector(state => state.BLEs.parameters);
-    const [clock, setClock] = useState(parameters.DeviceClock);
+    const thisParameter = "DeviceClock";
+    let clockVal = parameters[thisParameter];
+    
 
     return (
         <Container>
@@ -22,7 +24,7 @@ const SetClockScreen = () => {
                     </CardItem>
                     <CardItem bordered>
                     <Body>
-                        <Text>Current Clock: {parameters.DeviceClock} </Text>
+                        <Text> Clock on last re-render: {parameters.DeviceClock} </Text>
                     </Body>
                 </CardItem>
                 </Card>
@@ -30,13 +32,16 @@ const SetClockScreen = () => {
                     <Item fixedLabel>
                         <Label>New Clock</Label>
                         <Input onChangeText={(value) => {
-                            setClock(value);
-                            console.log(clock);
+                            clockVal = value;
                         }}/>
                     </Item>
                 </Form>
                 <Button
-                    title="Submit">
+                    title="Submit"
+                    onPress={ () => {
+                        dispatch(changeParameter(thisParameter, clockVal))
+                    }}
+                >
                 </Button>
             </Content>
       </Container>

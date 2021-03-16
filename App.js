@@ -56,7 +56,7 @@ const store = createStore(
     thunk.withExtraArgument({ DeviceManager } )
   )
 );
-
+ 
 let Navigation = createAppContainer(navigator);
 
 // Render the app container component with the provider around it

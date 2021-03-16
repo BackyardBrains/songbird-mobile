@@ -2,7 +2,7 @@
 import React from 'react';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateLight } from '../actions';
+import { changeParameter } from '../actions';
 import { Container, Content,Picker, Form, Card, CardItem, Text, Item } from 'native-base';
 import { onChange } from 'react-native-reanimated';
 
@@ -11,7 +11,7 @@ const SetLightScreen = () => {
     let device = useSelector(state => state.BLEs.connectedDevice);
     
     let parameters = useSelector(state => state.BLEs.parameters);
-
+    const thisParameter = "LightIntensity";
 
     return (
         <Container>
@@ -29,11 +29,7 @@ const SetLightScreen = () => {
                             style={{ width: '100%' }}
                             selectedValue={parameters.LightIntensity}
                             onValueChange={(value) => {
-                                console.log(value);
-                                //dispatch(updateLight(value));
-                                onChange(parameters.LightIntensity);
-                                console.log(parameters.LightIntensity);
-
+                                dispatch(changeParameter(thisParameter, value));
                             }}
                         >
                             <Picker.Item label="High" value="High" />

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { View, TouchableOpacity, Button } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateSampleRate } from '../actions';
+import { changeParameter } from '../actions';
 import { Container, Content, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 
 
@@ -11,7 +11,8 @@ const SetSamplingRateScreen = () => {
     let device = useSelector(state => state.BLEs.connectedDevice);
     
     let parameters = useSelector(state => state.BLEs.parameters);
-    const [rate, setRate] = useState(parameters.SamplingRate);
+    const thisParameter = "SamplingRate"
+    let newVal = "";
 
     return (
         <Container>
@@ -26,19 +27,20 @@ const SetSamplingRateScreen = () => {
                     </Body>
                 </CardItem>
                 </Card>
-                <Form>
+                <Form> 
                     <Item fixedLabel>
                         <Label>New Sampling Rate</Label>
-                        <Input 
+                        <Input // could use a picker instead
                             keyboardType = 'numeric'
                             onChangeText={(value) => {
-                                setRate(value);
-                                console.log(rate);
+                                newVal = value;
                         }}/>
                     </Item>
                 </Form>
                 <Button
-                    title="Submit">
+                    title="Submit"
+                    onPress={() => dispatch(changeParameter(thisParameter, newVal))}
+                >
                 </Button>
             </Content>
       </Container>

@@ -65,8 +65,8 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				characteristic: action.payload,
 			}
 		case 'changeParameterObject':
-			
-			let newParameters = state.parameters;
+			console.log("changing parameter in reducer")
+			let newParameters = {...state.parameters};
 			newParameters[action.par] = action.val;
 			return {
 				...state,
@@ -77,46 +77,6 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				...state,
 				status: 'Disconnected',
 				connectedDevice: {},
-			}
-		case 'updateParameter/light':
-			return{
-				...state,
-				parameters: {...parameters, LightIntensity: action.payload},
-			}
-		case 'updateParameter/sound':
-			return{
-				...state,
-				parameters: {...parameters, SoundLevel: action.payload},
-			}
-		case 'updateParameter/sensitivity':
-			return{
-				...state,
-				parameters: {...parameters, Sensitivity: action.payload},
-			}
-		case 'updateParameter/clock':
-			return{
-				...state,
-				parameters: {...parameters, DeviceClock: action.payload},
-			}
-		case 'updateParameter/duration':
-			return{
-				...state,
-				parameters: {...parameters, RecordingDuration: action.payload},
-			}
-		case 'updateParameter/sample_rate':
-			return{
-				...state,
-				parameters: {...parameters, SamplingRate: action.payload},
-			}
-		case 'updateParameter/schedule':
-			return{
-				...state,
-				parameters: {...parameters, ScheduleStart: action.payload[0], ScheduleEnd: action.payload[1]},
-			}
-		case 'updateParameter/gps':
-			return{
-				...state,
-				parameters: {...parameters, GpsCoordinates: action.payload},
 			}
 	 	default: return state;
 	}

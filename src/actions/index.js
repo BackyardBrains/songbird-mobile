@@ -205,6 +205,8 @@ export const changeParameter = ( parameter, newValue ) => {
 
         dispatch(changeParameterObject( parameter, newValue ));
         let parameterObject = getState().BLEs.parameters;
+        console.log("new parameter: ", parameterObject[parameter]);
+        
         let parameterString = ParameterObjectToString(parameterObject);
 
         let base64ParString = base64.encode(parameterString);

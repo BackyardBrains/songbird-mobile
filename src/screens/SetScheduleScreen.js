@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import { View, TouchableOpacity, Button } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateSchedule } from '../actions';
+import { changeParameter } from '../actions';
 import { Container, Content, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 
 const SetScheduleScreen = () => {
@@ -11,8 +11,10 @@ const SetScheduleScreen = () => {
     let device = useSelector(state => state.BLEs.connectedDevice);
     
     let parameters = useSelector(state => state.BLEs.parameters);
-    const [start, setStart] = useState(parameters.ScheduleStart);
-    const [end, setEnd] = useState(parameters.ScheduleEnd);
+    const scheduleStart = "ScheduleStart";
+    const scheduleEnd = "ScheduleEnd";
+    let scheduleStartVal = parameters[scheduleStart];
+    let scheduleEndVal = parameters[scheduleEnd];
 
     return (
         <Container>
@@ -31,20 +33,24 @@ const SetScheduleScreen = () => {
                     <Item fixedLabel>
                         <Label>New Start</Label>
                         <Input onChangeText={(value) => {
-                            setStart(value);
-                            console.log(start);
+                            console.log(value);
+                            scheduleStartVal = value;
                         }}/>
                     </Item>
                     <Item fixedLabel>
                         <Label>New End</Label>
                         <Input onChangeText={(value) => {
-                            setEnd(value);
-                            console.log(end);
+                            scheduleEndVal = value;
                         }}/>
                     </Item>
                 </Form>
                 <Button
-                    title="Submit">
+                    title="Submit"
+                    onPress={ () => {
+                        dispatch(changeParameter(scheduleStart, scheduleStartVal));
+                        dispatch(changeParameter(scheduleEnd, scheduleEndVal))
+                    }}
+                >
                 </Button>
             </Content>
       </Container>
