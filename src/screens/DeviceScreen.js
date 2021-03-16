@@ -136,7 +136,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <View style={styles.listLeft}>
                             <Text>GPS Coordinates:</Text>
                         </View>
-                        <Text>{parameters.GpsCoordinates}</Text>
+                        <Text>{parameters.GpsLatitude}, {parameters.GpsLongitude}</Text>
                     </Left>
                     <Right>
                         <Icon name="arrow-forward" />
