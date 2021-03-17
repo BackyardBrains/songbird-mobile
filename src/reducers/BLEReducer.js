@@ -7,7 +7,7 @@ export const INITIAL_STATE = {
 	status: 'Disconnected',
 	connectedDevice: {},
 	services: [],
-	characteristic: {},
+	characteristics: [],
 	counter: 0,
 	parameters: initialParameterObject,
   };
@@ -59,10 +59,15 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				...state,
 				services: action.payload,
 			}
-		case 'addCharacteristic':
+		case 'updateCharacteristicsArray':
 			return {
 				...state,
-				characteristic: action.payload,
+				characteristics: action.payload,
+			}
+		case  'initParameterObjectState':
+			return {
+				...state, 
+				parameters: action.payload,
 			}
 		case 'changeParameterObject':
 			console.log("changing parameter in reducer")

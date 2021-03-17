@@ -1,11 +1,9 @@
 
 // helper functions
 
-const ParameterObjectToString = ( parameterObject ) => {
+const ParameterObjectToString1 = ( parameterObject ) => {
     let parString = "";
 
-    parString += parameterObject.BatteryLevel + " ";
-    parString += parameterObject.StorageCapacity + " ";
     parString += parameterObject.RecordingDuration + " ";
     parString += parameterObject.SamplingRate + " ";
     parString += parameterObject.Sensitivity + " ";
@@ -20,25 +18,30 @@ const ParameterObjectToString = ( parameterObject ) => {
     return parString
 }
 
-const ParameterStringToObject = ( parameterString ) => {
-    let parArray = parameterString.split(" ");
+const ParameterStringsToObject = ( parameterString0, parameterString1 ) => {
+    let par0Array = parameterString0.split(" ");
+    let par1Array = parameterString1.split(" ");
     let parameterObject = {};
 
-    parameterObject.BatteryLevel = parArray[0];
-    parameterObject.StorageCapacity = parArray[1];
-    parameterObject.RecordingDuration = parArray[2];
-    parameterObject.SamplingRate = parArray[3]; 
-    parameterObject.Sensitivity = parArray[4]; 
-    parameterObject.IsTriggerSchedule = parArray[5]; 
-    parameterObject.ScheduleStart = parArray[6]; 
-    parameterObject.ScheduleEnd = parArray[7]; 
-    parameterObject.LightIntensity = parArray[8]; 
-    parameterObject.SoundLevel = parArray[9];
-    parameterObject.GpsLatitude = parArray[10];
-    parameterObject.GpsLongitude = parArray[11];
+    parameterObject.BatteryLevel = par0Array[0];
+    parameterObject.StorageCapacity = par0Array[1];
+
+    parameterObject.RecordingDuration = par1Array[0];
+    parameterObject.SamplingRate = par1Array[1]; 
+    parameterObject.Sensitivity = par1Array[2]; 
+    parameterObject.IsTriggerSchedule = par1Array[3]; 
+    parameterObject.ScheduleStart = par1Array[4]; 
+    parameterObject.ScheduleEnd = par1Array[5]; 
+    parameterObject.LightIntensity = par1Array[6]; 
+    parameterObject.SoundLevel = par1Array[7];
+    parameterObject.GpsLatitude = par1Array[8];
+    parameterObject.GpsLongitude = par1Array[9];
 
     return parameterObject;
 }
+
+
+
 
 // actions
 
@@ -71,9 +74,14 @@ export const updateServicesArray = (servicesArray) => ({
     payload: servicesArray,
 })
 
-export const addCharacteristic = (characteristic) => ({
-    type: "addCharacteristic",
-    payload: characteristic,
+export const updateCharacteristicsArray = ( characteristicsArray ) => ({
+    type: "updateCharacteristicsArray",
+    payload: characteristicsArray,
+})
+
+export const initParameterObjectState = (parameterObject) => ({
+    type: "initParameterObjectState",
+    payload: parameterObject,
 })
 
 export const changeParameterObject = (parameter, value) => ({
@@ -140,11 +148,14 @@ export const scan = () => {
     }
 }
 
+import base64 from 'react-native-base64'
+
 export const connectDevice = ( item ) => {
     return (dispatch, getState, { DeviceManager } ) => {
         dispatch(changeStatus("Discovering"));
         const device = item.item;
         const deviceID = device.id;
+        let charsArray = [];
         console.log("device ID: ", deviceID);
         device.connect( { autoConnect: true, refreshGatt: true } )
             .then(( device ) => {
@@ -156,49 +167,54 @@ export const connectDevice = ( item ) => {
                 return device.services();
             })
             .then(( services ) => {
-                let servicesArray = [];
-                for (let i = 0; i < services.length; ++i){
-                    servicesArray[i] = services[i].uuid;
-                    console.log("Service UUID @ ", i, ": ", servicesArray[i]);
-                    dispatch(updateServicesArray(servicesArray));
-                }
-                dispatch(getCharacteristic(servicesArray[2])); // @2 is specific to Kane's ESP
-                console.log("servicesArray: ", servicesArray);
-                return services;
-            })    
+                dispatch(updateServicesArray(services));
+                console.log("services[2]: ",services[2]);
+                return services[2].characteristics();
+            })
+            .then(( characteristics ) => {
+                dispatch(updateCharacteristicsArray( characteristics ));
+                //console.log("services[2].characteristics(): ", characteristics);
+                return characteristics[0].read();
+            })
+            .then(( characteristics0 ) => {
+                //console.log("characteristics[0].read(): ", characteristics0)
+                charsArray[0] = characteristics0;
+                let characteristics = getState().BLEs.characteristics;
+                //console.log("characteristics[1]:", characteristics[1]);
+                return characteristics[1].read();
+            })
+            .then(( characteristics1 ) => {
+                charsArray[1] = characteristics1;
+                dispatch(updateCharacteristicsArray(charsArray));
+                console.log("chars[0] val: ", getState().BLEs.characteristics[0].value);
+                console.log("chars[1] val: ", getState().BLEs.characteristics[1].value);
+                dispatch(initParameterObject());
+            })
     }
 }
 
-// function customized specifically for Kane's ESP
-export const getCharacteristic = ( serviceID ) => {
+
+export const initParameterObject = () => {
     return (dispatch, getState, { DeviceManager } ) => {
+        console.log("hello")
+        let char0Encoded = getState().BLEs.characteristics[0].value;
+        let char1Encoded = getState().BLEs.characteristics[1].value;
         
-        if (serviceID === null) return;
-
-        let counter = getState().BLEs.counter
-        console.log("counter, ", counter);
-        if (counter === 10) {
-            return;
-        }
+        let char0Decoded = base64.decode(char0Encoded);
+        let char1Decoded = base64.decode(char1Encoded);
         
-        dispatch(updateCounter(1));
+        console.log("char0: ", char0Decoded);
+        console.log("char1: ", char1Decoded);
 
-        const deviceID = getState().BLEs.connectedDevice.id;
-        DeviceManager.characteristicsForDevice(deviceID, serviceID)
-        .then( ( characteristics ) =>{
-            const characteristicID = characteristics[0].uuid;
-            return DeviceManager.readCharacteristicForDevice(deviceID, serviceID, characteristicID)
-        })
-        .then( ( characteristic ) => {
-           
-            console.log("value: ", characteristic.value);
-            dispatch(addCharacteristic(characteristic));
-            return characteristic;
-        })
+        let parameterObject = ParameterStringsToObject(char0Decoded, char1Decoded);
+        //console.log("parameter object: ",parameterObject);
+        dispatch(initParameterObjectState(parameterObject));
+        
+
+
+
     }
 }
-
-import base64 from 'react-native-base64'
 
 export const changeParameter = ( parameter, newValue ) => {
     return (dispatch, getState, { DeviceManager } ) => {
@@ -207,9 +223,9 @@ export const changeParameter = ( parameter, newValue ) => {
         let parameterObject = getState().BLEs.parameters;
         console.log("new parameter: ", parameterObject[parameter]);
         
-        let parameterString = ParameterObjectToString(parameterObject);
+        let parameterString1 = ParameterObjectToString1(parameterObject);
 
-        let base64ParString = base64.encode(parameterString);
+        let base64ParString = base64.encode(parameterString1);
 
         // also implement the write to chracteristic here
 
