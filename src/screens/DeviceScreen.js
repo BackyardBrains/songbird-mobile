@@ -17,7 +17,7 @@ const DeviceScreen = ( { navigation } ) => {
     const parameters = useSelector(state => state.BLEs.parameters);
 
     const characteristic = useSelector(state => state.BLEs.characteristics[0]);
-    console.log("characteristics[0] in deviceScreen: ", characteristic);
+    // console.log("characteristics[0] in deviceScreen: ", characteristic);
     
     // NOTE: need to do base64 decode and encode of all characteristic values
     

@@ -64,7 +64,7 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				...state,
 				characteristics: action.payload,
 			}
-		case  'initParameterObjectState':
+		case  'initParameterObjectAction':
 			return {
 				...state, 
 				parameters: action.payload,

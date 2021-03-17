@@ -79,8 +79,8 @@ export const updateCharacteristicsArray = ( characteristicsArray ) => ({
     payload: characteristicsArray,
 })
 
-export const initParameterObjectState = (parameterObject) => ({
-    type: "initParameterObjectState",
+export const initParameterObjectAction = (parameterObject) => ({
+    type: "initParameterObjectAction",
     payload: parameterObject,
 })
 
@@ -208,13 +208,10 @@ export const initParameterObject = () => {
 
         let parameterObject = ParameterStringsToObject(char0Decoded, char1Decoded);
         //console.log("parameter object: ",parameterObject);
-        dispatch(initParameterObjectState(parameterObject));
-        
-
-
-
+        dispatch(initParameterObjectAction(parameterObject));
     }
 }
+
 
 export const changeParameter = ( parameter, newValue ) => {
     return (dispatch, getState, { DeviceManager } ) => {
@@ -227,6 +224,8 @@ export const changeParameter = ( parameter, newValue ) => {
 
         let base64ParString = base64.encode(parameterString1);
 
+        let char1 = getState().BLEs.characteristics[1];
+        char1.writeWithResponse(base64ParString);
         // also implement the write to chracteristic here
 
 
