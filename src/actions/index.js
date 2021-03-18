@@ -25,6 +25,7 @@ const ParameterStringsToObject = ( parameterString0, parameterString1 ) => {
 
     parameterObject.BatteryLevel = par0Array[0];
     parameterObject.StorageCapacity = par0Array[1];
+    parameterObject.DeviceClock = par0Array[2];
 
     parameterObject.RecordingDuration = par1Array[0];
     parameterObject.SamplingRate = par1Array[1]; 
@@ -154,40 +155,33 @@ export const connectDevice = ( item ) => {
     return (dispatch, getState, { DeviceManager } ) => {
         dispatch(changeStatus("Discovering"));
         const device = item.item;
-        const deviceID = device.id;
         let charsArray = [];
-        console.log("device ID: ", deviceID);
+
         device.connect( { autoConnect: true, refreshGatt: true } )
             .then(( device ) => {
                 return device.discoverAllServicesAndCharacteristics();
             })
             .then(( device ) => {
                 dispatch(changeStatus("Discovered"));
-                dispatch(addConnectedBLE(device));
+                dispatch(addConnectedBLE( device ));
                 return device.services();
             })
             .then(( services ) => {
-                dispatch(updateServicesArray(services));
-                console.log("services[2]: ",services[2]);
+                dispatch(updateServicesArray( services ));
                 return services[2].characteristics();
             })
             .then(( characteristics ) => {
                 dispatch(updateCharacteristicsArray( characteristics ));
-                //console.log("services[2].characteristics(): ", characteristics);
                 return characteristics[0].read();
             })
             .then(( characteristics0 ) => {
-                //console.log("characteristics[0].read(): ", characteristics0)
                 charsArray[0] = characteristics0;
                 let characteristics = getState().BLEs.characteristics;
-                //console.log("characteristics[1]:", characteristics[1]);
                 return characteristics[1].read();
             })
             .then(( characteristics1 ) => {
                 charsArray[1] = characteristics1;
-                dispatch(updateCharacteristicsArray(charsArray));
-                console.log("chars[0] val: ", getState().BLEs.characteristics[0].value);
-                console.log("chars[1] val: ", getState().BLEs.characteristics[1].value);
+                dispatch(updateCharacteristicsArray( charsArray ));
                 dispatch(initParameterObject());
             })
     }
@@ -196,7 +190,6 @@ export const connectDevice = ( item ) => {
 
 export const initParameterObject = () => {
     return (dispatch, getState, { DeviceManager } ) => {
-        console.log("hello")
         let char0Encoded = getState().BLEs.characteristics[0].value;
         let char1Encoded = getState().BLEs.characteristics[1].value;
         
@@ -232,6 +225,8 @@ export const changeParameter = ( parameter, newValue ) => {
     }
 }
 
+import initialParameterObject from '../components/DeviceData';
+
 export const disconnectDevice = () => {
     return (dispatch, getState, { DeviceManager } ) => {
         let deviceID = getState().BLEs.connectedDevice.id;
@@ -242,7 +237,8 @@ export const disconnectDevice = () => {
             .then((device) => {
                 dispatch(disconnectedBLE());
                 dispatch(updateServicesArray([]));
-                dispatch(addCharacteristic({}));
+                dispatch(updateCharacteristicsArray([]));
+                dispatch(initParameterObjectAction(initialParameterObject));
                 return device;
             })
     }
