@@ -31,9 +31,6 @@ const SetSoundScreen = () => {
                         onValueChange={(value) => {
                             console.log(value);
                             dispatch(changeParameter(thisParameter, value));
-                            onChange(parameters.SoundLevel);
-                            console.log(parameters.SoundLevel);
-
                         }}
                     >
                         <Picker.Item label="High" value="High" />
