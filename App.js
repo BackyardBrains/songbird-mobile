@@ -45,6 +45,9 @@ const navigator = createStackNavigator(
     initialRouteName: 'Home',
     defaultNavigationOptions: {
       title: 'Songbird Recorder Buddy',
+      headerStyle: {
+        backgroundColor: '#FF9E00',
+      },
     },
   }
 );

@@ -51,6 +51,11 @@ export const changeStatus = (newStatus) => ({
     payload: newStatus,
 });
 
+export const changeConnectionStatus = (newConnectionStatus) => ({
+    type: "changeConnectionStatus",
+    payload: newConnectionStatus,
+});
+
 export const addBLE = (device) => ({
     type: "addBLE",
     payload: device,
@@ -100,17 +105,19 @@ export const disconnectedBLE = () => ({
 export const startScan = () => {
     return (dispatch, getState, { DeviceManager } ) => {
         const appState = getState();
+        const counter = appState.BLEs.counter;
+
         
+        console.log("running startScan");
         if (appState.BLEs.status === "Discovering" 
         || appState.BLEs.status === "Discovered") {
+        //|| appState.BLEs.status === "Scanning") {
+            console.log("returning");
             return;
         }
         console.log("status: ", appState.BLEs.status);
 
-        const counter = appState.BLEs.counter;
         dispatch(updateCounter(-1 * counter)); // resets counter to 0;
-
-        DeviceManager.state().then( (State) => console.log("manager state:", State));
 
         const subscription = DeviceManager.onStateChange((state) => {
             if (state === 'PoweredOn') {
@@ -123,9 +130,8 @@ export const startScan = () => {
 
 export const scan = () => {
     return (dispatch, getState, { DeviceManager } ) => {
-        
+        console.log("scan() running");
         DeviceManager.startDeviceScan(null, null, (error, device) => {
-            // dispatch(changeStatus("Scanning"));
 
             dispatch(updateCounter(1)); // increments counter
 
@@ -139,8 +145,9 @@ export const scan = () => {
 
             const appState = getState();
             const counter = appState.BLEs.counter;
-            console.log("counter val at stopDeviceScan check: ", counter);
-            if (counter >= 60) { // stops scan after 60 iterations
+            console.log("counter val: ", counter);
+            if (counter >= 20    // stops scan after 20 iterations
+                || getState().BLEs.connectionStatus !== "Disconnected") {
                 DeviceManager.stopDeviceScan();
             }
 
@@ -153,9 +160,12 @@ import base64 from 'react-native-base64'
 
 export const connectDevice = ( item ) => {
     return (dispatch, getState, { DeviceManager } ) => {
-        dispatch(changeStatus("Discovering"));
+        if (getState().BLEs.connectionStatus === "Connected") return;
+        dispatch(changeConnectionStatus("Connecting"));
         const device = item.item;
         let charsArray = [];
+
+        
 
         device.connect( { autoConnect: true, refreshGatt: true } )
             .then(( device ) => {
@@ -163,6 +173,7 @@ export const connectDevice = ( item ) => {
             })
             .then(( device ) => {
                 dispatch(changeStatus("Discovered"));
+                dispatch(changeConnectionStatus("Connected"));
                 dispatch(addConnectedBLE( device ));
                 return device.services();
             })
@@ -235,6 +246,8 @@ export const disconnectDevice = () => {
 
         DeviceManager.cancelDeviceConnection(deviceID)
             .then((device) => {
+                dispatch(changeStatus("Disconnected"));
+                dispatch(changeConnectionStatus("Disconnected"));
                 dispatch(disconnectedBLE());
                 dispatch(updateServicesArray([]));
                 dispatch(updateCharacteristicsArray([]));

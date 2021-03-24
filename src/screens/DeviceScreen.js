@@ -20,9 +20,6 @@ const DeviceScreen = ( { navigation } ) => {
     // console.log("characteristics[0] in deviceScreen: ", characteristic);
     
     // NOTE: need to do base64 decode and encode of all characteristic values
-    
-    
-
     return (
         
 
@@ -157,5 +154,12 @@ const DeviceScreen = ( { navigation } ) => {
         </Content>
     );
 };
+
+DeviceScreen.navigationOptions = () => ({
+    // title: 'ggggg',
+    headerStyle: {
+      backgroundColor: '#FF9E00',
+    },
+  });
 
 export default DeviceScreen;

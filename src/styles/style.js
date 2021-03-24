@@ -2,11 +2,17 @@ import {StyleSheet} from 'react-native'
 
 export default StyleSheet.create({
 
-    container: {
-        marginTop: 5,
-        marginBottom: 5,
-        alignItems: 'center'
+      contentContainer: {
+        flex: 1
       },
+
+      footer: {
+        //paddingTop: 100,
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        
+    },
     
       header: { 
         fontSize: 30
