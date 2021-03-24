@@ -1,3 +1,5 @@
+const serviceUUID = "d858069e-e72c-4314-b38c-b05f7515a3f6";
+const writeCharUUID = "4423d64a-5bfb-4838-aaa3-784909691293"
 
 // helper functions
 
@@ -14,6 +16,8 @@ const ParameterObjectToString1 = ( parameterObject ) => {
     parString += parameterObject.SoundLevel + " ";
     parString += parameterObject.GpsLatitude + " ";
     parString += parameterObject.GpsLongitude + " ";
+    parString += parameterObject.IsSettingClock + " ";
+    parString += parameterObject.newClockVal + " ";
 
     return parString
 }
@@ -37,10 +41,11 @@ const ParameterStringsToObject = ( parameterString0, parameterString1 ) => {
     parameterObject.SoundLevel = par1Array[7];
     parameterObject.GpsLatitude = par1Array[8];
     parameterObject.GpsLongitude = par1Array[9];
+    parameterObject.IsSettingClock = par1Array[10];
+    parameterObject.newClockVal = par1Array[11];
 
     return parameterObject;
 }
-
 
 
 
