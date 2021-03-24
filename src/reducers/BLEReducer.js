@@ -1,5 +1,4 @@
-import { ActionSheet } from 'native-base';
-import { Value } from 'react-native-reanimated';
+
 import initialParameterObject from '../components/DeviceData';
 
 export const INITIAL_STATE = {
