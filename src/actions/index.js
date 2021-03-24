@@ -231,6 +231,10 @@ return (dispatch, getState, { DeviceManager } ) => {
 export const changeParameter = ( parameter, newValue ) => {
     return (dispatch, getState, { DeviceManager } ) => {
 
+        if (parameter === "NewClockVal") {
+            dispatch(changeParameterObject( "IsSettingClock", "true" ));
+        }
+
         dispatch(changeParameterObject( parameter, newValue ));
         let parameterObject = getState().BLEs.parameters;
         console.log("new parameter: ", parameterObject[parameter]);
@@ -239,11 +243,18 @@ export const changeParameter = ( parameter, newValue ) => {
 
         let base64ParString = base64.encode(parameterString1);
 
-        let char1 = getState().BLEs.characteristics[1];
-        char1.writeWithResponse(base64ParString);
-        // also implement the write to chracteristic here
-
-
+        let deviceID = getState().BLEs.connectedDevice.id;
+        DeviceManager.writeCharacteristicWithResponseForDevice(
+            deviceID,           // deviceID
+            serviceUUID,        // service UUID           
+            writeCharUUID,      // characteristic UUID
+            base64ParString     // par value string
+        )
+        .then(() => {
+            if ( getState().BLEs.parameters.IsSettingClock === "true" ) {
+                dispatch(changeParameterObject( "IsSettingClock", "false" ));
+            }
+        })
     }
 }
 
