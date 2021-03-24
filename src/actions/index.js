@@ -165,7 +165,7 @@ import base64 from 'react-native-base64'
 
 export const connectDevice = ( item ) => {
     return (dispatch, getState, { DeviceManager } ) => {
-        if (getState().BLEs.connectionStatus === "Connected") return;
+        if (getState().BLEs.connectionStatus !== "Disconnected") return;
         dispatch(changeConnectionStatus("Connecting"));
         const device = item.item;
         let charsArray = [];
@@ -181,8 +181,8 @@ export const connectDevice = ( item ) => {
             dispatch(addConnectedBLE( device ));
             let deviceID = getState().BLEs.connectedDevice.id;
             return DeviceManager.characteristicsForDevice(
-                deviceID,         //device ID
-                serviceUUID       //service UUID
+                deviceID,   
+                serviceUUID 
             )
         })
         .then(( characteristics ) => {
