@@ -2,7 +2,7 @@
 import React from 'react';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateSensitivity } from '../actions';
+import { changeParameter } from '../actions';
 import { Container, Content,Picker, Form, Card, CardItem, Text, Item } from 'native-base';
 import { onChange } from 'react-native-reanimated';
 
@@ -11,7 +11,8 @@ const SetSensitivityScreen = () => {
     let device = useSelector(state => state.BLEs.connectedDevice);
     
     let parameters = useSelector(state => state.BLEs.parameters);
-
+    const thisParameter = "Sensitivity"
+    console.log("parameter in form screen:", parameters[thisParameter]);
 
     return (
         <Container>
@@ -29,11 +30,7 @@ const SetSensitivityScreen = () => {
                             style={{ width: '100%' }}
                             selectedValue={parameters.Sensitivity}
                             onValueChange={(value) => {
-                                console.log(value);
-                                //dispatch(updateSensitivity(value));
-                                onChange(parameters.Sensitivity);
-                                console.log(parameters.Sensitivity);
-
+                                dispatch(changeParameter(thisParameter, value));
                             }}
                         >
                             <Picker.Item label="High" value="High" />

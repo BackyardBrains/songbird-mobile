@@ -2,16 +2,17 @@
 import React from 'react';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateSound } from '../actions';
+import { changeParameter, updateSound } from '../actions';
 import { Container, Content,Picker, Form, Card, CardItem, Text } from 'native-base';
 import { onChange } from 'react-native-reanimated';
 
 const SetSoundScreen = () => {
+
     const dispatch = useDispatch();
     let device = useSelector(state => state.BLEs.connectedDevice);
     
     let parameters = useSelector(state => state.BLEs.parameters);
-
+    const thisParameter = "SoundLevel"
 
     return (
         <Container>
@@ -29,10 +30,7 @@ const SetSoundScreen = () => {
                         selectedValue={parameters.SoundLevel}
                         onValueChange={(value) => {
                             console.log(value);
-                            //dispatch(updateSound(value));
-                            onChange(parameters.SoundLevel);
-                            console.log(parameters.SoundLevel);
-
+                            dispatch(changeParameter(thisParameter, value));
                         }}
                     >
                         <Picker.Item label="High" value="High" />

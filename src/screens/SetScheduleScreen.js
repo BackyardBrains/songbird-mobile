@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import { View, TouchableOpacity, Button } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateSchedule } from '../actions';
+import { changeParameter } from '../actions';
 import { Container, Content, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 
 const SetScheduleScreen = () => {
@@ -11,8 +11,11 @@ const SetScheduleScreen = () => {
     let device = useSelector(state => state.BLEs.connectedDevice);
     
     let parameters = useSelector(state => state.BLEs.parameters);
-    const [start, setStart] = useState(parameters.ScheduleStart);
-    const [end, setEnd] = useState(parameters.ScheduleEnd);
+    const scheduleStart = "ScheduleStart";
+    const scheduleEnd = "ScheduleEnd";
+    let scheduleStartVal = parameters[scheduleStart];
+    let scheduleEndVal = parameters[scheduleEnd];
+    let anyAlert = false;
 
     return (
         <Container>
@@ -30,35 +33,49 @@ const SetScheduleScreen = () => {
                 <Form>
                     <Item fixedLabel>
                         <Label>New Start</Label>
-                        <Input onChangeText={(value) => {
+                        <Input onChangeText={(value) => {  //check the value later
                             var reg = new RegExp(/^\d\d{0,1}(\:\d{2}){1}$/);
-                            if (reg.test(value)) {
-                                setStart(value);
-                            }
-                            else{
-                                alert('Songbirds will ignore any inputs other than time in this section');
+                            if (!reg.test(value)) {
+                                if (!anyAlert){
+                                    alert('Songbirds will ignore any inputs other than time in this section');
+                                    anyAlert = true;
+                                }
                                 value = value.replace(/[^0-9:]/g, "");
                             }
-                            console.log(start);
+                            scheduleStartVal = value;
+                            console.log(scheduleStartVal);
                         }}/>
                     </Item>
                     <Item fixedLabel>
                         <Label>New End</Label>
                         <Input onChangeText={(value) => {
                             var reg = new RegExp(/^\d\d{0,1}(\:\d{2}){1}$/);
-                            if (reg.test(value)) {
-                                setEnd(value);
-                            }
-                            else{
-                                alert('Songbirds will ignore any inputs other than time in this section');
+                            if (!reg.test(value)) {
+                                if (!anyAlert){
+                                    alert('Songbirds will ignore any inputs other than time in this section');
+                                    anyAlert = true;
+                                }                              
                                 value = value.replace(/[^0-9:]/g, "");
                             }
-                            console.log(end);
+                            scheduleEndVal = value;
+                            console.log(scheduleEndVal);
                         }}/>
                     </Item>
                 </Form>
                 <Button
-                    title="Submit">
+                    title="Submit"
+                    onPress={ () => {
+                        var reg = new RegExp(/^\d\d{0,1}(\:\d{2}){1}$/);
+                        if (!reg.test(scheduleStartVal) || !reg.test(scheduleEndVal)){
+                            alert('Songbirds will ignore any inputs other than time in this section');
+                        }
+                        else{
+                            dispatch(changeParameter(scheduleStart, scheduleStartVal));
+                            dispatch(changeParameter(scheduleEnd, scheduleEndVal));
+                        }
+                        
+                    }}
+                >
                 </Button>
             </Content>
       </Container>

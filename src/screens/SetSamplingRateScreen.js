@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { View, TouchableOpacity, Button } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateSampleRate } from '../actions';
+import { changeParameter } from '../actions';
 import { Container, Content, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 
 
@@ -11,7 +11,9 @@ const SetSamplingRateScreen = () => {
     let device = useSelector(state => state.BLEs.connectedDevice);
     
     let parameters = useSelector(state => state.BLEs.parameters);
-    const [rate, setRate] = useState(parameters.SamplingRate);
+    const thisParameter = "SamplingRate"
+    let newVal = "";
+    let anyAlert = false;
 
     return (
         <Container>
@@ -26,26 +28,38 @@ const SetSamplingRateScreen = () => {
                     </Body>
                 </CardItem>
                 </Card>
-                <Form>
+                <Form> 
                     <Item fixedLabel>
                         <Label>New Sampling Rate</Label>
-                        <Input 
+                        <Input // could use a picker instead
                             keyboardType = 'numeric'
                             onChangeText={(value) => {
-                                var reg = new RegExp(/^[1-9]\d*(\.\d{1,2})?$/);
-                                if (reg.test(value)) {
-                                    setRate(value);
-                                }
-                                else{
-                                    alert('Songbirds will ignore any inputs other than number in this section');
+                                var reg = new RegExp(/^[1-9]\d*(\.\d{1,2})?$/); // keep two digits after the decimal
+                                if (!reg.test(value)) { 
+                                    if (!anyAlert){
+                                        alert('Songbirds will ignore any inputs other than number in this section');
+                                        anyAlert = true;
+                                    }
                                     value = value.replace(/[^0-9.]/g, "");
                                 }
-                                console.log(rate);
+                                newVal = value;
+                                console.log(newVal);
+
                         }}/>
                     </Item>
                 </Form>
                 <Button
-                    title="Submit">
+                    title="Submit"
+                    onPress={() => {
+                        var reg = new RegExp(/^[1-9]\d*(\.\d{1,2})?$/);
+                        if (!reg.test(newVal)) {
+                            alert('Songbirds will ignore any inputs other than number in this section');
+                            newVal = newVal.replace(/[^0-9.]/g, "");
+                        }
+                        else{
+                            dispatch(changeParameter(thisParameter, newVal));
+                        }
+                }}>
                 </Button>
             </Content>
       </Container>

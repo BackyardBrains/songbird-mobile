@@ -1,3 +1,5 @@
+import { ActionSheet } from 'native-base';
+import { Value } from 'react-native-reanimated';
 import initialParameterObject from '../components/DeviceData';
 
 export const INITIAL_STATE = {
@@ -5,7 +7,7 @@ export const INITIAL_STATE = {
 	status: 'Disconnected',
 	connectedDevice: {},
 	services: [],
-	characteristic: {},
+	characteristics: [],
 	counter: 0,
 	parameters: initialParameterObject,
   };
@@ -57,56 +59,29 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				...state,
 				services: action.payload,
 			}
-		case 'addCharacteristic':
+		case 'updateCharacteristicsArray':
 			return {
 				...state,
-				characteristic: action.payload,
+				characteristics: action.payload,
+			}
+		case  'initParameterObjectAction':
+			return {
+				...state, 
+				parameters: action.payload,
+			}
+		case 'changeParameterObject':
+			console.log("changing parameter in reducer")
+			let newParameters = {...state.parameters};
+			newParameters[action.par] = action.val;
+			return {
+				...state,
+				parameters: newParameters,
 			}
 		case 'disconnectedBLE':
 			return {
 				...state,
 				status: 'Disconnected',
 				connectedDevice: {},
-			}
-		case 'updateParameter/light':
-			return{
-				...state,
-				parameters: {...parameters, LightIntensity: action.payload},
-			}
-		case 'updateParameter/sound':
-			return{
-				...state,
-				parameters: {...parameters, SoundLevel: action.payload},
-			}
-		case 'updateParameter/sensitivity':
-			return{
-				...state,
-				parameters: {...parameters, Sensitivity: action.payload},
-			}
-		case 'updateParameter/clock':
-			return{
-				...state,
-				parameters: {...parameters, DeviceClock: action.payload},
-			}
-		case 'updateParameter/duration':
-			return{
-				...state,
-				parameters: {...parameters, RecordingDuration: action.payload},
-			}
-		case 'updateParameter/sample_rate':
-			return{
-				...state,
-				parameters: {...parameters, SamplingRate: action.payload},
-			}
-		case 'updateParameter/schedule':
-			return{
-				...state,
-				parameters: {...parameters, ScheduleStart: action.payload[0], ScheduleEnd: action.payload[1]},
-			}
-		case 'updateParameter/gps':
-			return{
-				...state,
-				parameters: {...parameters, GpsCoordinates: action.payload},
 			}
 	 	default: return state;
 	}

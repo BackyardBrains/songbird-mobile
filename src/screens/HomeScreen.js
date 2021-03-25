@@ -31,7 +31,7 @@ const HomeScreen = ( {navigation} ) => {
             <ListItem onPress={() => {
               dispatch(connectDevice({item})); // still needs thorough testing
 
-              navigation.navigate('Device'); // go to Device Screen
+              navigation.navigate('Device'); // go to Device Screen // update this later to test if communication is built successfully.
             }}
             >
               <Text>{item.name}</Text> 

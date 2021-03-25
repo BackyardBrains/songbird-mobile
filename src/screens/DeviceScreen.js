@@ -16,11 +16,11 @@ const DeviceScreen = ( { navigation } ) => {
     
     const parameters = useSelector(state => state.BLEs.parameters);
 
-    const characteristic = useSelector(state => state.BLEs.characteristic);
-    console.log("characteristic: ", characteristic);
+    const characteristic = useSelector(state => state.BLEs.characteristics[0]);
+    // console.log("characteristics[0] in deviceScreen: ", characteristic);
     
     // NOTE: need to do base64 decode and encode of all characteristic values
-    const englishVal = base64.decode(`${characteristic.value}`);
+    
     
 
     return (
@@ -136,7 +136,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <View style={styles.listLeft}>
                             <Text>GPS Coordinates:</Text>
                         </View>
-                        <Text>{parameters.GpsCoordinates}</Text>
+                        <Text>{parameters.GpsLatitude}, {parameters.GpsLongitude}</Text>
                     </Left>
                     <Right>
                         <Icon name="arrow-forward" />
@@ -148,8 +148,7 @@ const DeviceScreen = ( { navigation } ) => {
             <View style={styles.container} />
             
 
-            <Text>Characteristic UUID: {characteristic.uuid}</Text>
-            <Text>Characteristic value: {englishVal}</Text>
+
             
             <View style={styles.container} />
             

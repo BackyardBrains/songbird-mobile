@@ -1,8 +1,7 @@
-import React, {useState} from 'react';
-import { View, TouchableOpacity, Button } from 'react-native';
-import styles from '../styles/style';
+import React from 'react';
+import { Button } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateDuration } from '../actions';
+import { changeParameter } from '../actions';
 import { Container, Content, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 
 
@@ -11,7 +10,9 @@ const SetDurationScreen = () => {
     let device = useSelector(state => state.BLEs.connectedDevice);
     
     let parameters = useSelector(state => state.BLEs.parameters);
-    const [duration, setDuration] = useState(parameters.RecordingDuration);
+    const thisParameter = "RecordingDuration";
+    let durationVal = parameters[thisParameter];
+    let anyAlert = false;
 
     return (
         <Container>
@@ -33,23 +34,35 @@ const SetDurationScreen = () => {
                             keyboardType = 'numeric'
                             onChangeText={(value) => {
                                 var reg = new RegExp(/^[1-9]\d*(\.\d{1})?$/);
-                                if (reg.test(value)) {
-                                    setDuration(value);
-                                }
-                                else{
-                                    alert('Songbirds will ignore any inputs other than number in this section');
+                                if (!reg.test(value)) {
+                                    if (!anyAlert){
+                                        alert('Songbirds will ignore any inputs other than number in this section');
+                                        anyAlert = true;
+                                    }
                                     value = value.replace(/[^0-9.]/g, "");
                                 }
-                                console.log(duration);
+                                durationVal = value;
+                                console.log(durationVal);
                         }}/>
                     </Item>
                 </Form>
                 <Button
-                    title="Submit">
+                    title="Submit"
+                    onPress={ () => {
+                        var reg = new RegExp(/^[1-9]\d*(\.\d{1})?$/);
+                        if (!reg.test(durationVal)) {
+                            alert('Songbirds will ignore any inputs other than number in this section');
+                            durationVal = durationVal.replace(/[^0-9.]/g, "");
+                        }
+                        else{
+                            dispatch(changeParameter(thisParameter, durationVal));
+                        }
+                        
+                    }}
+                >
                 </Button>
             </Content>
       </Container>
-      //onPress={dispatch(updateDuration(duration))}
     );
 };
 
