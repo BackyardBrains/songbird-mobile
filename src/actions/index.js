@@ -101,6 +101,12 @@ export const changeParameterObject = (parameter, value) => ({
     val: value,
 })
 
+export const changeNewParameterObject = (parameter, value) => ({
+    type: "changeNewParameterObject",
+    par: parameter,
+    val: value,
+})
+
 export const disconnectedBLE = () => ({
     type: "disconnectedBLE",
 })
@@ -168,10 +174,7 @@ export const connectDevice = ( item ) => {
         if (getState().BLEs.connectionStatus !== "Disconnected") return;
         dispatch(changeConnectionStatus("Connecting"));
         const device = item.item;
-        let charsArray = [];
-
         
-
         device.connect( { autoConnect: true, refreshGatt: true } )
         .then(( device ) => {
             return device.discoverAllServicesAndCharacteristics();
@@ -179,12 +182,22 @@ export const connectDevice = ( item ) => {
         .then(( device ) => {
             dispatch(changeStatus("Discovered"));
             dispatch(addConnectedBLE( device ));
-            let deviceID = getState().BLEs.connectedDevice.id;
-            return DeviceManager.characteristicsForDevice(
-                deviceID,   
-                serviceUUID 
-            )
+            dispatch(refreshDevice());
         })
+            
+    }
+}
+
+export const refreshDevice = () => {
+    return (dispatch, getState, { DeviceManager } ) => {
+
+        let charsArray = [];
+        let deviceID = getState().BLEs.connectedDevice.id;
+
+        DeviceManager.characteristicsForDevice(
+            deviceID,   
+            serviceUUID 
+        )
         .then(( characteristics ) => {
             dispatch(updateCharacteristicsArray( characteristics ));
             return characteristics[0].read();
@@ -199,9 +212,8 @@ export const connectDevice = ( item ) => {
             dispatch(updateCharacteristicsArray( charsArray ));
             dispatch(initParameterObject());
         })
+    }
 }
-}
-
 
 export const initParameterObject = () => {
 return (dispatch, getState, { DeviceManager } ) => {
@@ -232,14 +244,14 @@ export const changeParameter = ( parameter, newValue ) => {
     return (dispatch, getState, { DeviceManager } ) => {
 
         if (parameter === "NewClockVal") {
-            dispatch(changeParameterObject( "IsSettingClock", "true" ));
+            dispatch(changeNewParameterObject( "IsSettingClock", "true" ));
         }
-
-        dispatch(changeParameterObject( parameter, newValue ));
-        let parameterObject = getState().BLEs.parameters;
-        console.log("new parameter: ", parameterObject[parameter]);
+        dispatch(changeParameterObject(parameter, "..."));
+        dispatch(changeNewParameterObject( parameter, newValue ));
+        let newParameterObject = getState().BLEs.newParameters;
         
-        let parameterString1 = ParameterObjectToString1(parameterObject);
+        
+        let parameterString1 = ParameterObjectToString1(newParameterObject);
 
         let base64ParString = base64.encode(parameterString1);
 
@@ -251,9 +263,10 @@ export const changeParameter = ( parameter, newValue ) => {
             base64ParString     // par value string
         )
         .then(() => {
-            if ( getState().BLEs.parameters.IsSettingClock === "true" ) {
-                dispatch(changeParameterObject( "IsSettingClock", "false" ));
-            }
+            setTimeout( () => {
+                dispatch(refreshDevice());},
+                200
+            );
         })
     }
 }

@@ -10,6 +10,7 @@ export const INITIAL_STATE = {
 	characteristics: [],
 	counter: 0,
 	parameters: initialParameterObject,
+	newParameters: initialParameterObject
   };
 
 const BLEreducer = (state = INITIAL_STATE, action = {}) => {
@@ -75,12 +76,18 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				parameters: action.payload,
 			}
 		case 'changeParameterObject':
-			console.log("changing parameter in reducer")
 			let newParameters = {...state.parameters};
 			newParameters[action.par] = action.val;
 			return {
 				...state,
 				parameters: newParameters,
+			}
+		case 'changeNewParameterObject':
+			let newNewParameters = {...state.parameters};
+			newNewParameters[action.par] = action.val;
+			return {
+				...state,
+				newParameters: newNewParameters,
 			}
 		case 'disconnectedBLE':
 			return {
