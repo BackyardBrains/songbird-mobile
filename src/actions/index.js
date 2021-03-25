@@ -171,10 +171,11 @@ import base64 from 'react-native-base64'
 
 export const connectDevice = ( item ) => {
     return (dispatch, getState, { DeviceManager } ) => {
-        if (getState().BLEs.connectionStatus !== "Disconnected") return;
-        dispatch(changeConnectionStatus("Connecting"));
-        const device = item.item;
         
+        const device = item.item;
+        if (getState().BLEs.connectedDevice.id === device.id) return;
+        dispatch(changeConnectionStatus("Connecting"));
+
         device.connect( { autoConnect: true, refreshGatt: true } )
         .then(( device ) => {
             return device.discoverAllServicesAndCharacteristics();
