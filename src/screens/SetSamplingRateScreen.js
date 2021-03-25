@@ -32,7 +32,14 @@ const SetSamplingRateScreen = () => {
                         <Input 
                             keyboardType = 'numeric'
                             onChangeText={(value) => {
-                                setRate(value);
+                                var reg = new RegExp(/^[1-9]\d*(\.\d{1,2})?$/);
+                                if (reg.test(value)) {
+                                    setRate(value);
+                                }
+                                else{
+                                    alert('Songbirds will ignore any inputs other than number in this section');
+                                    value = value.replace(/[^0-9.]/g, "");
+                                }
                                 console.log(rate);
                         }}/>
                     </Item>

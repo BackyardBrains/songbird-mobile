@@ -30,7 +30,14 @@ const SetClockScreen = () => {
                     <Item fixedLabel>
                         <Label>New Clock</Label>
                         <Input onChangeText={(value) => {
-                            setClock(value);
+                            var reg = new RegExp(/^\d\d{0,1}(\:\d{2}){2}$/);
+                            if (reg.test(value)) {
+                                setClock(value);
+                            }
+                            else{
+                                alert('Songbirds will ignore any inputs other than number in this section');
+                                value = value.replace(/[^0-9:]/g, "");
+                            }
                             console.log(clock);
                         }}/>
                     </Item>

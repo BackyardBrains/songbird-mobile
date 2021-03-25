@@ -31,14 +31,28 @@ const SetScheduleScreen = () => {
                     <Item fixedLabel>
                         <Label>New Start</Label>
                         <Input onChangeText={(value) => {
-                            setStart(value);
+                            var reg = new RegExp(/^\d\d{0,1}(\:\d{2}){1}$/);
+                            if (reg.test(value)) {
+                                setStart(value);
+                            }
+                            else{
+                                alert('Songbirds will ignore any inputs other than time in this section');
+                                value = value.replace(/[^0-9:]/g, "");
+                            }
                             console.log(start);
                         }}/>
                     </Item>
                     <Item fixedLabel>
                         <Label>New End</Label>
                         <Input onChangeText={(value) => {
-                            setEnd(value);
+                            var reg = new RegExp(/^\d\d{0,1}(\:\d{2}){1}$/);
+                            if (reg.test(value)) {
+                                setEnd(value);
+                            }
+                            else{
+                                alert('Songbirds will ignore any inputs other than time in this section');
+                                value = value.replace(/[^0-9:]/g, "");
+                            }
                             console.log(end);
                         }}/>
                     </Item>
