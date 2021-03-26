@@ -22,7 +22,7 @@ const HomeScreen = ( {navigation} ) => {
    
   return (
   <View style={styles.contentContainer}>
-    <View>
+
     <Card style={{alignItems: 'center'}}>
       <CardItem header bordered>
         <Text>Find and select your Songbird device </Text>
@@ -43,7 +43,7 @@ const HomeScreen = ( {navigation} ) => {
         );
       }}
     />
-    </View>
+    
     <View style={styles.footer}>
       <Button 
         title="Refresh" 
@@ -53,6 +53,7 @@ const HomeScreen = ( {navigation} ) => {
        }} 
       />
     </View>
+    
   </View>
   );
 };

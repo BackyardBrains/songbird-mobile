@@ -47,8 +47,6 @@ const ParameterStringsToObject = ( parameterString0, parameterString1 ) => {
     return parameterObject;
 }
 
-
-
 // actions
 
 export const changeStatus = (newStatus) => ({
@@ -246,7 +244,7 @@ export const changeParameter = ( parameter, newValue, parameter2, newValue2 ) =>
     return (dispatch, getState, { DeviceManager } ) => {
 
         const prevParObject = getState().BLEs.parameters;
-        dispatch(initNewParameterObjectAction(prevParObject));
+        dispatch(initNewParameterObjectAction(prevParObject)); // copies existing parameters into newParameter object
 
         if (parameter === "NewClockVal") {
             dispatch(changeNewParameterObject( "IsSettingClock", "true" ));
@@ -255,7 +253,7 @@ export const changeParameter = ( parameter, newValue, parameter2, newValue2 ) =>
         dispatch(changeNewParameterObject( parameter, newValue ));
         
         
-        if (typeof newValue2 !== 'undefined' && newValue2 !== null) {
+        if (typeof newValue2 !== 'undefined' && newValue2 !== null) { // if two parameters to change, change second parameter
             dispatch(changeParameterObject(parameter2, "..."));
             dispatch(changeNewParameterObject( parameter2, newValue2 ));
         }
