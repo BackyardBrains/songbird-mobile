@@ -101,6 +101,11 @@ export const changeParameterObject = (parameter, value) => ({
     val: value,
 })
 
+export const initNewParameterObjectAction = (parameterObject) => ({
+    type: "initNewParameterObjectAction",
+    payload: parameterObject,
+})
+
 export const changeNewParameterObject = (parameter, value) => ({
     type: "changeNewParameterObject",
     par: parameter,
@@ -154,16 +159,13 @@ export const scan = () => {
                 console.log("found named device"); 
             }
 
-            const appState = getState();
-            const counter = appState.BLEs.counter;
+            const counter = getState().BLEs.counter;
             console.log("counter val: ", counter);
             if (counter >= 20    // stops scan after 20 iterations
                 || getState().BLEs.connectionStatus !== "Disconnected") {
                 DeviceManager.stopDeviceScan();
             }
-
         });
-
     }
 }
 
@@ -185,7 +187,6 @@ export const connectDevice = ( item ) => {
             dispatch(addConnectedBLE( device ));
             dispatch(refreshDevice());
         })
-            
     }
 }
 
@@ -241,17 +242,26 @@ return (dispatch, getState, { DeviceManager } ) => {
 }
 
 
-export const changeParameter = ( parameter, newValue ) => {
+export const changeParameter = ( parameter, newValue, parameter2, newValue2 ) => {
     return (dispatch, getState, { DeviceManager } ) => {
+
+        const prevParObject = getState().BLEs.parameters;
+        dispatch(initNewParameterObjectAction(prevParObject));
 
         if (parameter === "NewClockVal") {
             dispatch(changeNewParameterObject( "IsSettingClock", "true" ));
         }
         dispatch(changeParameterObject(parameter, "..."));
         dispatch(changeNewParameterObject( parameter, newValue ));
+        
+        
+        if (typeof newValue2 !== 'undefined' && newValue2 !== null) {
+            dispatch(changeParameterObject(parameter2, "..."));
+            dispatch(changeNewParameterObject( parameter2, newValue2 ));
+        }
+        
         let newParameterObject = getState().BLEs.newParameters;
-        
-        
+
         let parameterString1 = ParameterObjectToString1(newParameterObject);
 
         let base64ParString = base64.encode(parameterString1);

@@ -51,8 +51,10 @@ const SetGpsScreen = () => {
                 <Button
                     title="Submit"
                     onPress={ () => {
-                        dispatch(changeParameter(GpsLatitude, GpsLatVal));
-                        dispatch(changeParameter(GpsLongitude, GpsLongVal));
+                        dispatch(changeParameter(GpsLatitude, 
+                                                GpsLatVal, 
+                                                GpsLongitude, 
+                                                GpsLongVal));
                     }}
                 >
                 </Button>

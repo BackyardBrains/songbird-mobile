@@ -75,6 +75,11 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				...state, 
 				parameters: action.payload,
 			}
+		case  'initNewParameterObjectAction':
+			return {
+				...state, 
+				newParameters: action.payload,
+			}
 		case 'changeParameterObject':
 			let newParameters = {...state.parameters};
 			newParameters[action.par] = action.val;
@@ -83,7 +88,7 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				parameters: newParameters,
 			}
 		case 'changeNewParameterObject':
-			let newNewParameters = {...state.parameters};
+			let newNewParameters = {...state.newParameters};
 			newNewParameters[action.par] = action.val;
 			return {
 				...state,

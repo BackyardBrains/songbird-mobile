@@ -47,8 +47,10 @@ const SetScheduleScreen = () => {
                 <Button
                     title="Submit"
                     onPress={ () => {
-                        dispatch(changeParameter(scheduleStart, scheduleStartVal));
-                        dispatch(changeParameter(scheduleEnd, scheduleEndVal))
+                        dispatch(changeParameter(scheduleStart, 
+                                                scheduleStartVal, 
+                                                scheduleEnd, 
+                                                scheduleEndVal));
                     }}
                 >
                 </Button>
