@@ -12,6 +12,7 @@ const SetClockScreen = () => {
     let parameters = useSelector(state => state.BLEs.parameters);
     const thisParameter = "DeviceClock";
     let clockVal = parameters[thisParameter];
+    let anyAlert = false;
     
 
     return (
@@ -31,14 +32,30 @@ const SetClockScreen = () => {
                     <Item fixedLabel>
                         <Label>New Clock</Label>
                         <Input onChangeText={(value) => {
+                            var reg = new RegExp(/^\d{1,2}(\:\d{2}){2}$/);
+                            if (!reg.test(value)) {
+                                if (!anyAlert){
+                                    alert('Songbirds will ignore any inputs other than number in this section');
+                                    anyAlert = true;
+                                }
+                                value = value.replace(/[^0-9:]/g, "");
+                            }
                             clockVal = value;
+                            console.log(clockVal);
                         }}/>
                     </Item>
                 </Form>
                 <Button
                     title="Submit"
                     onPress={ () => {
-                        dispatch(changeParameter(thisParameter, clockVal))
+                        var reg = new RegExp(/^\d\d{0,1}(\:\d{2}){2}$/);
+                        if (!reg.test(clockVal)) {
+                            alert('Songbirds will ignore any inputs other than number in this section');
+                            clockVal = clockVal.replace(/[^0-9:]/g, "");
+                        }
+                        else{
+                            dispatch(changeParameter(thisParameter, clockVal));
+                        }
                     }}
                 >
                 </Button>

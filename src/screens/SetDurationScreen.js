@@ -12,6 +12,7 @@ const SetDurationScreen = () => {
     let parameters = useSelector(state => state.BLEs.parameters);
     const thisParameter = "RecordingDuration";
     let durationVal = parameters[thisParameter];
+    let anyAlert = false;
 
     return (
         <Container>
@@ -32,14 +33,31 @@ const SetDurationScreen = () => {
                         <Input 
                             keyboardType = 'numeric'
                             onChangeText={(value) => {
+                                var reg = new RegExp(/^[1-9]\d*(\.\d{1})?$/);
+                                if (!reg.test(value)) {
+                                    if (!anyAlert){
+                                        alert('Songbirds will ignore any inputs other than number in this section');
+                                        anyAlert = true;
+                                    }
+                                    value = value.replace(/[^0-9.]/g, "");
+                                }
                                 durationVal = value;
+                                console.log(durationVal);
                         }}/>
                     </Item>
                 </Form>
                 <Button
                     title="Submit"
                     onPress={ () => {
-                        dispatch(changeParameter(thisParameter, durationVal))
+                        var reg = new RegExp(/^[1-9]\d*(\.\d{1})?$/);
+                        if (!reg.test(durationVal)) {
+                            alert('Songbirds will ignore any inputs other than number in this section');
+                            durationVal = durationVal.replace(/[^0-9.]/g, "");
+                        }
+                        else{
+                            dispatch(changeParameter(thisParameter, durationVal));
+                        }
+                        
                     }}
                 >
                 </Button>

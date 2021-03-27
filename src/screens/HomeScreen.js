@@ -29,6 +29,7 @@ const HomeScreen = ( {navigation} ) => {
       </CardItem>
     </Card>
 
+
     <FlatList 
       keyExtractor={ device => device.name}
       data={BLEList}

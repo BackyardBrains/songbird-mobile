@@ -13,6 +13,7 @@ const SetSamplingRateScreen = () => {
     let parameters = useSelector(state => state.BLEs.parameters);
     const thisParameter = "SamplingRate"
     let newVal = "";
+    let anyAlert = false;
 
     return (
         <Container>
@@ -33,14 +34,32 @@ const SetSamplingRateScreen = () => {
                         <Input // could use a picker instead
                             keyboardType = 'numeric'
                             onChangeText={(value) => {
+                                var reg = new RegExp(/^[1-9]\d*(\.\d{1,2})?$/); // keep two digits after the decimal
+                                if (!reg.test(value)) { 
+                                    if (!anyAlert){
+                                        alert('Songbirds will ignore any inputs other than number in this section');
+                                        anyAlert = true;
+                                    }
+                                    value = value.replace(/[^0-9.]/g, "");
+                                }
                                 newVal = value;
+                                console.log(newVal);
+
                         }}/>
                     </Item>
                 </Form>
                 <Button
                     title="Submit"
-                    onPress={() => dispatch(changeParameter(thisParameter, newVal))}
-                >
+                    onPress={() => {
+                        var reg = new RegExp(/^[1-9]\d*(\.\d{1,2})?$/);
+                        if (!reg.test(newVal)) {
+                            alert('Songbirds will ignore any inputs other than number in this section');
+                            newVal = newVal.replace(/[^0-9.]/g, "");
+                        }
+                        else{
+                            dispatch(changeParameter(thisParameter, newVal));
+                        }
+                }}>
                 </Button>
             </Content>
       </Container>
