@@ -249,11 +249,19 @@ export const changeParameter = ( parameter, newValue, parameter2, newValue2 ) =>
         if (parameter === "NewClockVal") {
             dispatch(changeNewParameterObject( "IsSettingClock", "true" ));
         }
-        dispatch(changeParameterObject(parameter, "..."));
-        dispatch(changeNewParameterObject( parameter, newValue ));
+
+        if (typeof newValue !== 'undefined' 
+            && newValue !== null 
+            && newValue !== ""
+            && newValue !== prevParObject[parameter]) { // if new first parameter, change it
+            dispatch(changeParameterObject(parameter, "..."));
+            dispatch(changeNewParameterObject( parameter, newValue ));
+        }
         
-        
-        if (typeof newValue2 !== 'undefined' && newValue2 !== null) { // if two parameters to change, change second parameter
+        if (typeof newValue2 !== 'undefined' 
+            && newValue2 !== null 
+            && newValue2 !== ""
+            && newValue2 !== prevParObject[parameter2]) { // if new second parameter, change it
             dispatch(changeParameterObject(parameter2, "..."));
             dispatch(changeNewParameterObject( parameter2, newValue2 ));
         }

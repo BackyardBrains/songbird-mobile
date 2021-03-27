@@ -1,10 +1,10 @@
 import React from "react";
-import { Button, View, FlatList, TouchableOpacity } from "react-native";
+import { View, FlatList, TouchableOpacity } from "react-native";
 import styles from '../styles/style';
 import { useDispatch, shallowEqual, useSelector } from 'react-redux';
 import { changeStatus, connectDevice, disconnectDevice, resetBleList, startScan, updateCounter } from '../actions/index';
 import { Container, Header, Content, List, ListItem, 
-  Text, Left, Right, Icon, Card, CardItem, Body } from 'native-base';
+  Text, Left, Right, Icon, Card, CardItem, Button, Body, Grid, Col } from 'native-base';
 
 const HomeScreen = ( {navigation} ) => {
   
@@ -23,7 +23,7 @@ const HomeScreen = ( {navigation} ) => {
   return (
   <View style={styles.contentContainer}>
 
-    <Card style={{alignItems: 'center'}}>
+    <Card style={styles.cardAStyle} >
       <CardItem header bordered>
         <Text>Find and select your Songbird device </Text>
       </CardItem>
@@ -44,16 +44,18 @@ const HomeScreen = ( {navigation} ) => {
       }}
     />
     
-    <View style={styles.footer}>
-      <Button 
+    <View style={styles.ButtonSection} >
+      <Button rounded 
         title="Refresh" 
         onPress={() => {
           if (Object.keys(currDevice).length !== 0) dispatch(disconnectDevice());
           dispatch(resetBleList());
        }} 
-      />
+      >
+        <Text>Refresh</Text>
+      </Button>
     </View>
-    
+
   </View>
   );
 };

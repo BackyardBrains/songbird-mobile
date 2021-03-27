@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, TouchableOpacity, Button } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { disconnectDevice, changeStatus } from '../actions';
 import base64 from 'react-native-base64'
 import { Container, Header, Content, List, ListItem, 
-    Text, Left, Right, Icon, Card, CardItem, Body } from 'native-base';
+    Text, Left, Right, Icon, Card, CardItem, Body, Button } from 'native-base';
 
 // device.serviceUUIDs[0] === "4fafc201-1fb5..." // in theory
 
@@ -24,8 +24,8 @@ const DeviceScreen = ( { navigation } ) => {
         
 
         <Content> 
-            <Card>
-                <CardItem header bordered>
+            <Card style={styles.cardBStyle}>
+                <CardItem header bordered >
                     <Text>Connected: {device.name}</Text>
                 </CardItem>
                 <CardItem bordered>
@@ -142,14 +142,16 @@ const DeviceScreen = ( { navigation } ) => {
 
             </List>
 
-            <View style={styles.container} />
-            
-
 
             
-            <View style={styles.container} />
-            
-            <Button title="Disconnect from Device" onPress={() => dispatch(disconnectDevice())} />
+            <View style={styles.ButtonSection} >
+                <Button rounded 
+                    onPress={() => dispatch(disconnectDevice())}
+                >
+                    <Text>Disconnect</Text>
+                </Button>
+            </View>
+           
 
         </Content>
     );
