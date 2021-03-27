@@ -10,7 +10,8 @@ export const INITIAL_STATE = {
 	characteristics: [],
 	counter: 0,
 	parameters: initialParameterObject,
-	newParameters: initialParameterObject
+	newParameters: initialParameterObject,
+	location: {}
   };
 
 const BLEreducer = (state = INITIAL_STATE, action = {}) => {
@@ -99,6 +100,11 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				...state,
 				status: 'Disconnected',
 				connectedDevice: {},
+			}
+		case 'initLocation':
+			return {
+				...state,
+				location: action.payload,
 			}
 	 	default: return state;
 	}

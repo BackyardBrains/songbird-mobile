@@ -2,13 +2,15 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import {BleManager} from 'react-native-ble-plx';
-import thunk from 'redux-thunk';
 
 import React, { Component } from 'react'
 
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from './src/reducers/index';
+import thunk from 'redux-thunk';
+
+import RNLocation from 'react-native-location';
 
 import HomeScreen from './src/screens/HomeScreen';
 import DeviceScreen from './src/screens/DeviceScreen';
@@ -51,6 +53,11 @@ const navigator = createStackNavigator(
     },
   }
 );
+
+
+RNLocation.configure({
+ distanceFilter: 2 // number of meters you move before location updates
+})
 
 const DeviceManager = new BleManager();
 const store = createStore(

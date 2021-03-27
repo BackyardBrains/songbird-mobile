@@ -16,7 +16,7 @@ const HomeScreen = ( {navigation} ) => {
   
   //disconnects form device if device is connected
 
-  dispatch(startScan());
+  
   const BLEList = useSelector(state => state.BLEs.BLEList);
   
    
@@ -25,7 +25,7 @@ const HomeScreen = ( {navigation} ) => {
 
     <Card style={styles.cardAStyle} >
       <CardItem header bordered>
-        <Text>Find and select your Songbird device </Text>
+        <Text>Scan to find your Songbird device </Text>
       </CardItem>
     </Card>
 
@@ -47,13 +47,13 @@ const HomeScreen = ( {navigation} ) => {
     
     <View style={styles.ButtonSection} >
       <Button rounded 
-        title="Refresh" 
         onPress={() => {
           if (Object.keys(currDevice).length !== 0) dispatch(disconnectDevice());
           dispatch(resetBleList());
+          dispatch(startScan());
        }} 
       >
-        <Text>Refresh</Text>
+        <Text>Scan</Text>
       </Button>
     </View>
 
