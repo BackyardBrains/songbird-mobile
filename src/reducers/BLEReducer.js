@@ -1,15 +1,16 @@
-import { ActionSheet } from 'native-base';
-import { Value } from 'react-native-reanimated';
+
 import initialParameterObject from '../components/DeviceData';
 
 export const INITIAL_STATE = {
 	BLEList: [],
-	status: 'Disconnected',
+	status: 'None',
+	connectionStatus: 'Disconnected',
 	connectedDevice: {},
 	services: [],
 	characteristics: [],
 	counter: 0,
 	parameters: initialParameterObject,
+	newParameters: initialParameterObject
   };
 
 const BLEreducer = (state = INITIAL_STATE, action = {}) => {
@@ -29,6 +30,11 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 			return {
 				...state,
 				status: action.payload,
+			}
+		case 'changeConnectionStatus':
+			return {
+				...state,
+				connectionStatus: action.payload,
 			}
 		case 'addBLE':
 
@@ -69,13 +75,24 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				...state, 
 				parameters: action.payload,
 			}
+		case  'initNewParameterObjectAction':
+			return {
+				...state, 
+				newParameters: action.payload,
+			}
 		case 'changeParameterObject':
-			console.log("changing parameter in reducer")
 			let newParameters = {...state.parameters};
 			newParameters[action.par] = action.val;
 			return {
 				...state,
 				parameters: newParameters,
+			}
+		case 'changeNewParameterObject':
+			let newNewParameters = {...state.newParameters};
+			newNewParameters[action.par] = action.val;
+			return {
+				...state,
+				newParameters: newNewParameters,
 			}
 		case 'disconnectedBLE':
 			return {

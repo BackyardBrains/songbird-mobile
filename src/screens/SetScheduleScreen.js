@@ -70,10 +70,12 @@ const SetScheduleScreen = () => {
                             alert('Songbirds will ignore any inputs other than time in this section');
                         }
                         else{
-                            dispatch(changeParameter(scheduleStart, scheduleStartVal));
-                            dispatch(changeParameter(scheduleEnd, scheduleEndVal));
+                            dispatch(changeParameter(scheduleStart, 
+                                                scheduleStartVal, 
+                                                scheduleEnd, 
+                                                scheduleEndVal));
                         }
-                        
+                    
                     }}
                 >
                 </Button>

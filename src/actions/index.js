@@ -1,3 +1,5 @@
+const serviceUUID = "d858069e-e72c-4314-b38c-b05f7515a3f6";
+const writeCharUUID = "4423d64a-5bfb-4838-aaa3-784909691293"
 
 // helper functions
 
@@ -14,6 +16,8 @@ const ParameterObjectToString1 = ( parameterObject ) => {
     parString += parameterObject.SoundLevel + " ";
     parString += parameterObject.GpsLatitude + " ";
     parString += parameterObject.GpsLongitude + " ";
+    parString += parameterObject.IsSettingClock + " ";
+    parString += parameterObject.newClockVal + " ";
 
     return parString
 }
@@ -37,18 +41,22 @@ const ParameterStringsToObject = ( parameterString0, parameterString1 ) => {
     parameterObject.SoundLevel = par1Array[7];
     parameterObject.GpsLatitude = par1Array[8];
     parameterObject.GpsLongitude = par1Array[9];
+    parameterObject.IsSettingClock = par1Array[10];
+    parameterObject.newClockVal = par1Array[11];
 
     return parameterObject;
 }
-
-
-
 
 // actions
 
 export const changeStatus = (newStatus) => ({
     type: "changeStatus",
     payload: newStatus,
+});
+
+export const changeConnectionStatus = (newConnectionStatus) => ({
+    type: "changeConnectionStatus",
+    payload: newConnectionStatus,
 });
 
 export const addBLE = (device) => ({
@@ -91,6 +99,17 @@ export const changeParameterObject = (parameter, value) => ({
     val: value,
 })
 
+export const initNewParameterObjectAction = (parameterObject) => ({
+    type: "initNewParameterObjectAction",
+    payload: parameterObject,
+})
+
+export const changeNewParameterObject = (parameter, value) => ({
+    type: "changeNewParameterObject",
+    par: parameter,
+    val: value,
+})
+
 export const disconnectedBLE = () => ({
     type: "disconnectedBLE",
 })
@@ -100,17 +119,19 @@ export const disconnectedBLE = () => ({
 export const startScan = () => {
     return (dispatch, getState, { DeviceManager } ) => {
         const appState = getState();
+        const counter = appState.BLEs.counter;
+
         
+        console.log("running startScan");
         if (appState.BLEs.status === "Discovering" 
         || appState.BLEs.status === "Discovered") {
+        //|| appState.BLEs.status === "Scanning") {
+            console.log("returning");
             return;
         }
         console.log("status: ", appState.BLEs.status);
 
-        const counter = appState.BLEs.counter;
         dispatch(updateCounter(-1 * counter)); // resets counter to 0;
-
-        DeviceManager.state().then( (State) => console.log("manager state:", State));
 
         const subscription = DeviceManager.onStateChange((state) => {
             if (state === 'PoweredOn') {
@@ -123,9 +144,8 @@ export const startScan = () => {
 
 export const scan = () => {
     return (dispatch, getState, { DeviceManager } ) => {
-        
+        console.log("scan() running");
         DeviceManager.startDeviceScan(null, null, (error, device) => {
-            // dispatch(changeStatus("Scanning"));
 
             dispatch(updateCounter(1)); // increments counter
 
@@ -137,15 +157,13 @@ export const scan = () => {
                 console.log("found named device"); 
             }
 
-            const appState = getState();
-            const counter = appState.BLEs.counter;
-            console.log("counter val at stopDeviceScan check: ", counter);
-            if (counter >= 60) { // stops scan after 60 iterations
+            const counter = getState().BLEs.counter;
+            console.log("counter val: ", counter);
+            if (counter >= 20    // stops scan after 20 iterations
+                || getState().BLEs.connectionStatus !== "Disconnected") {
                 DeviceManager.stopDeviceScan();
             }
-
         });
-
     }
 }
 
@@ -153,75 +171,120 @@ import base64 from 'react-native-base64'
 
 export const connectDevice = ( item ) => {
     return (dispatch, getState, { DeviceManager } ) => {
-        dispatch(changeStatus("Discovering"));
+        
         const device = item.item;
-        let charsArray = [];
+        if (getState().BLEs.connectedDevice.id === device.id) return;
+        dispatch(changeConnectionStatus("Connecting"));
 
         device.connect( { autoConnect: true, refreshGatt: true } )
-            .then(( device ) => {
-                return device.discoverAllServicesAndCharacteristics();
-            })
-            .then(( device ) => {
-                dispatch(changeStatus("Discovered"));
-                dispatch(addConnectedBLE( device ));
-                return device.services();
-            })
-            .then(( services ) => {
-                dispatch(updateServicesArray( services ));
-                return services[2].characteristics();
-            })
-            .then(( characteristics ) => {
-                dispatch(updateCharacteristicsArray( characteristics ));
-                return characteristics[0].read();
-            })
-            .then(( characteristics0 ) => {
-                charsArray[0] = characteristics0;
-                let characteristics = getState().BLEs.characteristics;
-                return characteristics[1].read();
-            })
-            .then(( characteristics1 ) => {
-                charsArray[1] = characteristics1;
-                dispatch(updateCharacteristicsArray( charsArray ));
-                dispatch(initParameterObject());
-            })
+        .then(( device ) => {
+            return device.discoverAllServicesAndCharacteristics();
+        })
+        .then(( device ) => {
+            dispatch(changeStatus("Discovered"));
+            dispatch(addConnectedBLE( device ));
+            dispatch(refreshDevice());
+        })
     }
 }
 
+export const refreshDevice = () => {
+    return (dispatch, getState, { DeviceManager } ) => {
+
+        let charsArray = [];
+        let deviceID = getState().BLEs.connectedDevice.id;
+
+        DeviceManager.characteristicsForDevice(
+            deviceID,   
+            serviceUUID 
+        )
+        .then(( characteristics ) => {
+            dispatch(updateCharacteristicsArray( characteristics ));
+            return characteristics[0].read();
+        })
+        .then(( characteristics0 ) => {
+            charsArray[0] = characteristics0;
+            let characteristics = getState().BLEs.characteristics;
+            return characteristics[1].read();
+        })
+        .then(( characteristics1 ) => {
+            charsArray[1] = characteristics1;
+            dispatch(updateCharacteristicsArray( charsArray ));
+            dispatch(initParameterObject());
+        })
+    }
+}
 
 export const initParameterObject = () => {
-    return (dispatch, getState, { DeviceManager } ) => {
-        let char0Encoded = getState().BLEs.characteristics[0].value;
-        let char1Encoded = getState().BLEs.characteristics[1].value;
-        
-        let char0Decoded = base64.decode(char0Encoded);
-        let char1Decoded = base64.decode(char1Encoded);
-        
-        console.log("char0: ", char0Decoded);
-        console.log("char1: ", char1Decoded);
+return (dispatch, getState, { DeviceManager } ) => {
+    let char0Encoded = getState().BLEs.characteristics[0].value;
+    let char1Encoded = getState().BLEs.characteristics[1].value;
+    
+    let char0Decoded = base64.decode(char0Encoded);
+    let char1Decoded = base64.decode(char1Encoded);
+    
+    console.log("char0: ", char0Decoded);
+    console.log("char1: ", char1Decoded);
 
-        let parameterObject = ParameterStringsToObject(char0Decoded, char1Decoded);
-        //console.log("parameter object: ",parameterObject);
-        dispatch(initParameterObjectAction(parameterObject));
+    let parameterObject = {};
+    
+    if (char0Decoded.length > char1Decoded.length) {
+        parameterObject = ParameterStringsToObject(char1Decoded, char0Decoded);
     }
+    else {
+        parameterObject = ParameterStringsToObject(char0Decoded, char1Decoded);
+    }
+    
+    dispatch(initParameterObjectAction(parameterObject));
+}
 }
 
 
-export const changeParameter = ( parameter, newValue ) => {
+export const changeParameter = ( parameter, newValue, parameter2, newValue2 ) => {
     return (dispatch, getState, { DeviceManager } ) => {
 
-        dispatch(changeParameterObject( parameter, newValue ));
-        let parameterObject = getState().BLEs.parameters;
-        console.log("new parameter: ", parameterObject[parameter]);
+        const prevParObject = getState().BLEs.parameters;
+        dispatch(initNewParameterObjectAction(prevParObject)); // copies existing parameters into newParameter object
+
+        if (parameter === "NewClockVal") {
+            dispatch(changeNewParameterObject( "IsSettingClock", "true" ));
+        }
+
+        if (typeof newValue !== 'undefined' 
+            && newValue !== null 
+            && newValue !== ""
+            && newValue !== prevParObject[parameter]) { // if new first parameter, change it
+            dispatch(changeParameterObject(parameter, "..."));
+            dispatch(changeNewParameterObject( parameter, newValue ));
+        }
         
-        let parameterString1 = ParameterObjectToString1(parameterObject);
+        if (typeof newValue2 !== 'undefined' 
+            && newValue2 !== null 
+            && newValue2 !== ""
+            && newValue2 !== prevParObject[parameter2]) { // if new second parameter, change it
+            dispatch(changeParameterObject(parameter2, "..."));
+            dispatch(changeNewParameterObject( parameter2, newValue2 ));
+        }
+        
+        let newParameterObject = getState().BLEs.newParameters;
+
+        let parameterString1 = ParameterObjectToString1(newParameterObject);
 
         let base64ParString = base64.encode(parameterString1);
 
-        let char1 = getState().BLEs.characteristics[1];
-        char1.writeWithResponse(base64ParString);
-        // also implement the write to chracteristic here
-
-
+        let deviceID = getState().BLEs.connectedDevice.id;
+        DeviceManager.writeCharacteristicWithResponseForDevice(
+            deviceID,           // deviceID
+            serviceUUID,        // service UUID           
+            writeCharUUID,      // characteristic UUID
+            base64ParString     // par value string
+        )
+        .then(() => {
+            setTimeout( () => {
+                dispatch(refreshDevice());},
+                200
+            );
+        })
     }
 }
 
@@ -235,6 +298,8 @@ export const disconnectDevice = () => {
 
         DeviceManager.cancelDeviceConnection(deviceID)
             .then((device) => {
+                dispatch(changeStatus("Disconnected"));
+                dispatch(changeConnectionStatus("Disconnected"));
                 dispatch(disconnectedBLE());
                 dispatch(updateServicesArray([]));
                 dispatch(updateCharacteristicsArray([]));
