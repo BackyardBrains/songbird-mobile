@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import { View, TouchableOpacity, Button } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeParameter } from '../actions';
-import { Container, Content, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
+import { Container, Content, Form, Button, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 
 
 
@@ -24,30 +24,35 @@ const SetGpsScreen = () => {
             <Content>
                 <Card>
                     <CardItem header bordered>
-                        <Text>Connected: {device.name}</Text>
+                        <Text >Connected: {device.name}</Text>
                     </CardItem>
                     <CardItem bordered>
                     <Body>
-                        <Text>GPS Coordinates on device:</Text>
-                        <Text>      Lat: {parameters.GpsLatitude} </Text>
-                        <Text>      Long: {parameters.GpsLongitude} </Text>
-                        
-                        <Text>GPS Coordinates on phone:</Text>
-                        <Text>      Lat: {location.latitude}</Text>
-                        <Text>      Long: {location.longitude} </Text>
+                        <Text style={{fontWeight: "bold"}}>GPS Coordinates on Songbird device:</Text>
+                        <Text>              Lat: {parameters.GpsLatitude} </Text>
+                        <Text>              Long: {parameters.GpsLongitude} </Text>
+                    </Body>
+                    </CardItem>
+                    <CardItem bordered>
+                    <Body>
+                        <Text style={{fontWeight: "bold"}}>GPS Coordinates on phone:</Text>
+                        <Text>              Lat: {location.latitude}</Text>
+                        <Text>              Long: {location.longitude} </Text>
                     </Body>
                 </CardItem>
                 </Card>
-                <Button
-                    title="Submit current coordinates"
-                    onPress={ () => {
-                        dispatch(changeParameter(GpsLatitude, 
+                <View style={styles.ButtonSection} >
+                    <Button rounded 
+                        onPress={ () => {
+                            dispatch(changeParameter(GpsLatitude, 
                                                 location.latitude, 
                                                 GpsLongitude, 
                                                 location.longitude));
-                    }}
-                >
-                </Button>
+                        }}
+                    >
+                        <Text>Submit phone coordinates</Text>
+                    </Button>
+                </View>
             </Content>
       </Container>
       //onPress={dispatch(updateGps(gps))}
