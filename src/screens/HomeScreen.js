@@ -5,6 +5,7 @@ import { useDispatch, shallowEqual, useSelector } from 'react-redux';
 import { changeStatus, connectDevice, disconnectDevice, resetBleList, startScan, updateCounter } from '../actions/index';
 import { Container, Header, Content, List, ListItem, 
   Text, Left, Right, Icon, Card, CardItem, Button, Body, Grid, Col } from 'native-base';
+import { handleLocation } from "../actions/LocationMethods";
 
 const HomeScreen = ( {navigation} ) => {
   
@@ -13,11 +14,8 @@ const HomeScreen = ( {navigation} ) => {
   dispatch(changeStatus("render homescreen"));
 
   const currDevice = useSelector(state => state.BLEs.connectedDevice);
-  
-  //disconnects form device if device is connected
-
-  
   const BLEList = useSelector(state => state.BLEs.BLEList);
+  const location = useSelector(state => state.BLEs.location);
   
    
   return (
@@ -49,6 +47,7 @@ const HomeScreen = ( {navigation} ) => {
       <Button rounded 
         onPress={() => {
           if (Object.keys(currDevice).length !== 0) dispatch(disconnectDevice());
+          if (Object.keys(location).length === 0) dispatch(handleLocation());
           dispatch(resetBleList());
           dispatch(startScan());
        }} 

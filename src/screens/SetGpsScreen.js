@@ -12,6 +12,7 @@ const SetGpsScreen = () => {
     let device = useSelector(state => state.BLEs.connectedDevice);
     
     let parameters = useSelector(state => state.BLEs.parameters);
+    let location = useSelector(state => state.BLEs.location);
     const GpsLatitude = "GpsLatitude";
     const GpsLongitude = "GpsLongitude";
     let GpsLatVal = parameters[GpsLatitude];
@@ -27,53 +28,23 @@ const SetGpsScreen = () => {
                     </CardItem>
                     <CardItem bordered>
                     <Body>
-                        <Text>Current GPS Coordinates:  {GpsLatVal}, {GpsLongVal}</Text>
+                        <Text>GPS Coordinates on device:</Text>
+                        <Text>      Lat: {parameters.GpsLatitude} </Text>
+                        <Text>      Long: {parameters.GpsLongitude} </Text>
+                        
+                        <Text>GPS Coordinates on phone:</Text>
+                        <Text>      Lat: {location.latitude}</Text>
+                        <Text>      Long: {location.longitude} </Text>
                     </Body>
                 </CardItem>
                 </Card>
-                <Form>
-                    <Item fixedLabel>
-                        <Label>New GPS Latitude</Label>
-                        <Input 
-                            keyboardType = 'numeric'
-                            onChangeText={(value) => {
-                                var reg = new RegExp(/^[1-9-]\d{0,3}(\.\d{1,3}){1}$/); // need updation later
-                                if (!reg.test(value)) {
-                                    if (!anyAlert){
-                                        alert('Songbirds will ignore any inputs other than number in this section');
-                                        anyAlert = true;
-                                    }    
-                                    value = value.replace(/[^0-9.-]/g, "");
-                                }
-                                GpsLatVal = value;
-                                console.log(GpsLatVal);
-                        }}/>
-                    </Item>
-                    <Item fixedLabel>
-                        <Label>New GPS Longitude</Label>
-                        <Input 
-                            keyboardType = 'numeric'
-                            onChangeText={(value) => {
-                                var reg = new RegExp(/^[1-9-]\d{0,3}(\.\d{1,3}){1}$/); // need updation later
-                                if (!reg.test(value)) {
-                                    if (!anyAlert){
-                                        alert('Songbirds will ignore any inputs other than number in this section');
-                                        anyAlert = true;
-                                    }
-                                    value = value.replace(/[^0-9.-]/g, "");
-                                }
-                                GpsLongVal = value;
-                                console.log(GpsLongVal);
-                        }}/>
-                    </Item>
-                </Form>
                 <Button
-                    title="Submit"
+                    title="Submit current coordinates"
                     onPress={ () => {
                         dispatch(changeParameter(GpsLatitude, 
-                                                GpsLatVal, 
+                                                location.latitude, 
                                                 GpsLongitude, 
-                                                GpsLongVal));
+                                                location.longitude));
                     }}
                 >
                 </Button>

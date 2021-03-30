@@ -10,7 +10,7 @@ import { createStore, applyMiddleware } from 'redux';
 import rootReducer from './src/reducers/index';
 import thunk from 'redux-thunk';
 
-import RNLocation from 'react-native-location';
+
 
 import HomeScreen from './src/screens/HomeScreen';
 import DeviceScreen from './src/screens/DeviceScreen';
@@ -55,9 +55,7 @@ const navigator = createStackNavigator(
 );
 
 
-RNLocation.configure({
- distanceFilter: 2 // number of meters you move before location updates
-})
+
 
 const DeviceManager = new BleManager();
 const store = createStore(
