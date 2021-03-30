@@ -110,6 +110,11 @@ export const changeNewParameterObject = (parameter, value) => ({
     val: value,
 })
 
+export const initLocation = (locationObj) => ({
+    type: "initLocation",
+    payload: locationObj,
+})
+
 export const disconnectedBLE = () => ({
     type: "disconnectedBLE",
 })
