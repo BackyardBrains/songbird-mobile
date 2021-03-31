@@ -34,10 +34,10 @@ const SetScheduleScreen = () => {
                     <Item fixedLabel>
                         <Label>New Start</Label>
                         <Input onChangeText={(value) => {  //check the value later
-                            var reg = new RegExp(/^\d\d{0,1}(\:\d{2}){1}$/);
+                            var reg = new RegExp(/^\d\d{0,1}(\:\d{2})?$/);
                             if (!reg.test(value)) {
                                 if (!anyAlert){
-                                    alert('Songbirds will ignore any inputs other than time in this section');
+                                    //alert('Songbirds will ignore any inputs other than time in this section');
                                     anyAlert = true;
                                 }
                                 value = value.replace(/[^0-9:]/g, "");

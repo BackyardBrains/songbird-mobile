@@ -37,10 +37,10 @@ const SetGpsScreen = () => {
                         <Input 
                             keyboardType = 'numeric'
                             onChangeText={(value) => {
-                                var reg = new RegExp(/^[1-9-]\d{0,3}(\.\d{1,3}){1}$/); // need updation later
+                                var reg = new RegExp(/^[1-9-]\d{0,3}(\.\d{1,3})?$/); // need updation later
                                 if (!reg.test(value)) {
                                     if (!anyAlert){
-                                        alert('Songbirds will ignore any inputs other than number in this section');
+                                        // alert('Songbirds will ignore any inputs other than number in this section');
                                         anyAlert = true;
                                     }    
                                     value = value.replace(/[^0-9.-]/g, "");
