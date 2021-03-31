@@ -34,14 +34,6 @@ const SetScheduleScreen = () => {
                     <Item fixedLabel>
                         <Label>New Start</Label>
                         <Input onChangeText={(value) => {  //check the value later
-                            var reg = new RegExp(/^\d\d{0,1}(\:\d{2})?$/);
-                            if (!reg.test(value)) {
-                                if (!anyAlert){
-                                    //alert('Songbirds will ignore any inputs other than time in this section');
-                                    anyAlert = true;
-                                }
-                                value = value.replace(/[^0-9:]/g, "");
-                            }
                             scheduleStartVal = value;
                             console.log(scheduleStartVal);
                         }}/>
@@ -49,14 +41,6 @@ const SetScheduleScreen = () => {
                     <Item fixedLabel>
                         <Label>New End</Label>
                         <Input onChangeText={(value) => {
-                            var reg = new RegExp(/^\d\d{0,1}(\:\d{2}){1}$/);
-                            if (!reg.test(value)) {
-                                if (!anyAlert){
-                                    alert('Songbirds will ignore any inputs other than time in this section');
-                                    anyAlert = true;
-                                }                              
-                                value = value.replace(/[^0-9:]/g, "");
-                            }
                             scheduleEndVal = value;
                             console.log(scheduleEndVal);
                         }}/>
@@ -70,10 +54,12 @@ const SetScheduleScreen = () => {
                             alert('Songbirds will ignore any inputs other than time in this section');
                         }
                         else{
-                            dispatch(changeParameter(scheduleStart, scheduleStartVal));
-                            dispatch(changeParameter(scheduleEnd, scheduleEndVal));
+                            dispatch(changeParameter(scheduleStart, 
+                                                scheduleStartVal, 
+                                                scheduleEnd, 
+                                                scheduleEndVal));
                         }
-                        
+                    
                     }}
                 >
                 </Button>

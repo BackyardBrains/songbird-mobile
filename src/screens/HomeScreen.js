@@ -1,49 +1,71 @@
 import React from "react";
-import { Button, View, FlatList, TouchableOpacity } from "react-native";
+import { View, FlatList, TouchableOpacity } from "react-native";
 import styles from '../styles/style';
-import { useDispatch, useSelector } from 'react-redux';
-import { changeStatus, connectDevice, disconnectDevice, startScan } from '../actions/index';
+import { useDispatch, shallowEqual, useSelector } from 'react-redux';
+import { changeStatus, connectDevice, disconnectDevice, resetBleList, startScan, updateCounter } from '../actions/index';
 import { Container, Header, Content, List, ListItem, 
-  Text, Left, Right, Icon, Card, CardItem, Body } from 'native-base';
+  Text, Left, Right, Icon, Card, CardItem, Button, Body, Grid, Col } from 'native-base';
+import { handleLocation } from "../actions/LocationMethods";
 
 const HomeScreen = ( {navigation} ) => {
   
   const dispatch = useDispatch();
   
-  //dispatch(disconnectDevice());
-  dispatch(startScan());
+  dispatch(changeStatus("render homescreen"));
+
+  const currDevice = useSelector(state => state.BLEs.connectedDevice);
   const BLEList = useSelector(state => state.BLEs.BLEList);
-  const status = useSelector(state => state.BLEs.status);
+  const location = useSelector(state => state.BLEs.location);
   
    
   return (
-  <View>
-    
-    <View style={styles.container}>
+  <View style={styles.contentContainer}>
 
-    <Button title="Refresh" onPress={() => dispatch(changeStatus(`${status}.`))} />
+    <Card style={styles.cardAStyle} >
+      <CardItem header bordered>
+        <Text>Scan to find your Songbird device </Text>
+      </CardItem>
+    </Card>
 
-      <FlatList 
-        keyExtractor={ device => device.name}
-        data={BLEList}
-        renderItem={({item}) => {
-          return (
-            <ListItem onPress={() => {
-              dispatch(connectDevice({item})); // still needs thorough testing
 
-              navigation.navigate('Device'); // go to Device Screen // update this later to test if communication is built successfully.
-            }}
-            >
+    <FlatList 
+      keyExtractor={ device => device.name}
+      data={BLEList}
+      renderItem={({item}) => {
+        return (
+          <ListItem onPress={() => {
+            dispatch(connectDevice({item}));
+            navigation.navigate('Device'); // go to Device Screen
+          }}>
               <Text>{item.name}</Text> 
-            </ListItem>
-          );
-
-        }}
-      />
+          </ListItem>
+        );
+      }}
+    />
+    
+    <View style={styles.ButtonSection} >
+      <Button rounded 
+        onPress={() => {
+          if (Object.keys(currDevice).length !== 0) dispatch(disconnectDevice());
+          if (Object.keys(location).length === 0) dispatch(handleLocation());
+          dispatch(resetBleList());
+          dispatch(startScan());
+       }} 
+      >
+        <Text>Scan</Text>
+      </Button>
     </View>
+
   </View>
   );
 };
+
+HomeScreen.navigationOptions = () => ({
+  // title: 'ggggg',
+  headerStyle: {
+    backgroundColor: '#FF9E00',
+  },
+});
 
 export default HomeScreen;
 

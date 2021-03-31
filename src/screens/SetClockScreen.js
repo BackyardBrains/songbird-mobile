@@ -1,4 +1,3 @@
-
 import React, {useState} from 'react';
 import { View, TouchableOpacity, Button } from 'react-native';
 import styles from '../styles/style';
@@ -33,14 +32,6 @@ const SetClockScreen = () => {
                     <Item fixedLabel>
                         <Label>New Clock</Label>
                         <Input onChangeText={(value) => {
-                            var reg = new RegExp(/^\d{1,2}(\:\d{2}){2}$/);
-                            if (!reg.test(value)) {
-                                if (!anyAlert){
-                                    alert('Songbirds will ignore any inputs other than number in this section');
-                                    anyAlert = true;
-                                }
-                                value = value.replace(/[^0-9:]/g, "");
-                            }
                             clockVal = value;
                             console.log(clockVal);
                         }}/>

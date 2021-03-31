@@ -32,15 +32,7 @@ const SetDurationScreen = () => {
                         <Label>New Duration</Label>
                         <Input 
                             keyboardType = 'numeric'
-                            onChangeText={(value) => {
-                                var reg = new RegExp(/^[1-9]\d*(\.\d{1})?$/);
-                                if (!reg.test(value)) {
-                                    if (!anyAlert){
-                                        alert('Songbirds will ignore any inputs other than number in this section');
-                                        anyAlert = true;
-                                    }
-                                    value = value.replace(/[^0-9.]/g, "");
-                                }
+                            onChangeText={(value) => { 
                                 durationVal = value;
                                 console.log(durationVal);
                         }}/>

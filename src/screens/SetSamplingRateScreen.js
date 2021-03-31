@@ -34,14 +34,6 @@ const SetSamplingRateScreen = () => {
                         <Input // could use a picker instead
                             keyboardType = 'numeric'
                             onChangeText={(value) => {
-                                var reg = new RegExp(/^[1-9]\d*(\.\d{1,2})?$/); // keep two digits after the decimal
-                                if (!reg.test(value)) { 
-                                    if (!anyAlert){
-                                        alert('Songbirds will ignore any inputs other than number in this section');
-                                        anyAlert = true;
-                                    }
-                                    value = value.replace(/[^0-9.]/g, "");
-                                }
                                 newVal = value;
                                 console.log(newVal);
 
