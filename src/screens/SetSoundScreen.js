@@ -43,5 +43,10 @@ const SetSoundScreen = () => {
     );
 };
 
+SetSoundScreen.navigationOptions = () => ({
+    title: 'Set Sound Trigger Sensitivity'
+  });
+
+
 
 export default SetSoundScreen;

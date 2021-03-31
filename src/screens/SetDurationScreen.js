@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button } from 'react-native';
+import { View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeParameter } from '../actions';
-import { Container, Content, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
-
+import { Container, Button, Content, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
+import styles from '../styles/style';
 
 const SetDurationScreen = () => {
     const dispatch = useDispatch();
@@ -38,25 +38,31 @@ const SetDurationScreen = () => {
                         }}/>
                     </Item>
                 </Form>
-                <Button
-                    title="Submit"
-                    onPress={ () => {
-                        var reg = new RegExp(/^[1-9]\d*(\.\d{1})?$/);
-                        if (!reg.test(durationVal)) {
-                            alert('Songbirds will ignore any inputs other than number in this section');
-                            durationVal = durationVal.replace(/[^0-9.]/g, "");
-                        }
-                        else{
-                            dispatch(changeParameter(thisParameter, durationVal));
-                        }
-                        
-                    }}
-                >
-                </Button>
+                <View style={styles.ButtonSection} >
+                    <Button rounded 
+                        onPress={ () => {
+                            var reg = new RegExp(/^[1-9]\d*(\.\d{1})?$/);
+                            if (!reg.test(durationVal)) {
+                                alert('Songbirds will ignore any inputs other than number in this section');
+                                durationVal = durationVal.replace(/[^0-9.]/g, "");
+                            }
+                            else{
+                                dispatch(changeParameter(thisParameter, durationVal));
+                            }
+                            
+                        }}
+                    >
+                        <Text>Submit</Text>
+                    </Button>
+                </View>
             </Content>
       </Container>
     );
 };
+
+SetDurationScreen.navigationOptions = () => ({
+    title: 'Set Recording Duration'
+  });
 
 
 export default SetDurationScreen;

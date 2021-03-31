@@ -43,5 +43,10 @@ const SetLightScreen = () => {
     );
 };
 
+SetLightScreen.navigationOptions = () => ({
+    title: 'Set Light Trigger Sensitivity'
+  });
+
+
 
 export default SetLightScreen;

@@ -13,7 +13,7 @@ const HomeScreen = ( {navigation} ) => {
   
   dispatch(changeStatus("render homescreen"));
 
-  const currDevice = useSelector(state => state.BLEs.connectedDevice);
+  const connectionStatus = useSelector(state => state.BLEs.connectionStatus);
   const BLEList = useSelector(state => state.BLEs.BLEList);
   const location = useSelector(state => state.BLEs.location);
   
@@ -46,7 +46,7 @@ const HomeScreen = ( {navigation} ) => {
     <View style={styles.ButtonSection} >
       <Button rounded 
         onPress={() => {
-          if (Object.keys(currDevice).length !== 0) dispatch(disconnectDevice());
+          if (connectionStatus === "Connected") dispatch(disconnectDevice());
           if (Object.keys(location).length === 0) dispatch(handleLocation());
           dispatch(resetBleList());
           dispatch(startScan());
@@ -60,12 +60,7 @@ const HomeScreen = ( {navigation} ) => {
   );
 };
 
-HomeScreen.navigationOptions = () => ({
-  // title: 'ggggg',
-  headerStyle: {
-    backgroundColor: '#FF9E00',
-  },
-});
+
 
 export default HomeScreen;
 

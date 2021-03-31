@@ -44,5 +44,10 @@ const SetSensitivityScreen = () => {
     );
 };
 
+SetSensitivityScreen.navigationOptions = () => ({
+    title: 'Set Recording Sensitivity'
+  });
+
+
 
 export default SetSensitivityScreen;

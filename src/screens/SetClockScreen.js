@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import { View, TouchableOpacity, Button } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeParameter } from '../actions';
-import { Container, Content, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
+import { Container, Content, Form, Button, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 
 const SetClockScreen = () => {
     const dispatch = useDispatch();
@@ -24,38 +24,43 @@ const SetClockScreen = () => {
                     </CardItem>
                     <CardItem bordered>
                     <Body>
-                        <Text> Clock on last re-render: {parameters.DeviceClock} </Text>
+                        <Text> Current Time: {parameters.DeviceClock} </Text>
                     </Body>
                 </CardItem>
                 </Card>
                 <Form>
                     <Item fixedLabel>
-                        <Label>New Clock</Label>
+                        <Label>New Time</Label>
                         <Input onChangeText={(value) => {
                             clockVal = value;
                             console.log(clockVal);
                         }}/>
                     </Item>
                 </Form>
-                <Button
-                    title="Submit"
-                    onPress={ () => {
-                        var reg = new RegExp(/^\d\d{0,1}(\:\d{2}){2}$/);
-                        if (!reg.test(clockVal)) {
-                            alert('Songbirds will ignore any inputs other than number in this section');
-                            clockVal = clockVal.replace(/[^0-9:]/g, "");
-                        }
-                        else{
-                            dispatch(changeParameter(thisParameter, clockVal));
-                        }
-                    }}
-                >
-                </Button>
+                <View style={styles.ButtonSection} >
+                    <Button rounded 
+                        onPress={ () => {
+                            var reg = new RegExp(/^\d\d{0,1}(\:\d{2}){1}$/);
+                            if (!reg.test(clockVal)){
+                                alert('Songbirds will ignore any inputs other than time in this section');
+                            }
+                            else{
+                                dispatch(changeParameter(thisParameter, clockVal));
+                            }
+                        }}
+                    >
+                        <Text>Submit</Text>
+                    </Button>
+                </View>
             </Content>
       </Container>
       //onPress={dispatch(updateClock(clock))}
     );
 };
 
+
+SetClockScreen.navigationOptions = () => ({
+    title: 'Set Device Clock'
+  });
 
 export default SetClockScreen;

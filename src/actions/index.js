@@ -186,6 +186,7 @@ export const connectDevice = ( item ) => {
             return device.discoverAllServicesAndCharacteristics();
         })
         .then(( device ) => {
+            dispatch(changeConnectionStatus("Connected"));
             dispatch(changeStatus("Discovered"));
             dispatch(addConnectedBLE( device ));
             dispatch(refreshDevice());

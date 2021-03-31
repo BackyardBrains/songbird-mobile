@@ -45,17 +45,7 @@ const DeviceScreen = ( { navigation } ) => {
                 <ListItem itemHeader first>
                     <Text>Recording Settings</Text>
                 </ListItem>
-                <ListItem onPress={() => navigation.navigate('SetClock')}>
-                    <Left>
-                        <View style={styles.listLeft}>
-                            <Text>Device Clock:</Text>   
-                        </View>
-                        <Text>{parameters.DeviceClock}</Text>
-                    </Left>
-                    <Right>
-                        <Icon name="arrow-forward" />
-                    </Right>
-                </ListItem>
+                
                 <ListItem onPress={() => navigation.navigate('SetDuration')}>
                     <Left>
                         <View style={styles.listLeft}>
@@ -134,6 +124,17 @@ const DeviceScreen = ( { navigation } ) => {
                             <Text>GPS Coordinates:</Text>
                         </View>
                         <Text>{parameters.GpsLatitude}, {parameters.GpsLongitude}</Text>
+                    </Left>
+                    <Right>
+                        <Icon name="arrow-forward" />
+                    </Right>
+                </ListItem>
+                <ListItem onPress={() => navigation.navigate('SetClock')}>
+                    <Left>
+                        <View style={styles.listLeft}>
+                            <Text>Device Clock:</Text>   
+                        </View>
+                        <Text>{parameters.DeviceClock}</Text>
                     </Left>
                     <Right>
                         <Icon name="arrow-forward" />

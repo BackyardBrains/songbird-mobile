@@ -27,11 +27,11 @@ const SetGpsScreen = () => {
                         <Text >Connected: {device.name}</Text>
                     </CardItem>
                     <CardItem bordered>
-                    <Body>
-                        <Text style={{fontWeight: "bold"}}>GPS Coordinates on Songbird device:</Text>
-                        <Text>              Lat: {parameters.GpsLatitude} </Text>
-                        <Text>              Long: {parameters.GpsLongitude} </Text>
-                    </Body>
+                        <Body>
+                            <Text style={{fontWeight: "bold"}}>GPS Coordinates on Songbird device:</Text>
+                            <Text>              Lat: {parameters.GpsLatitude} </Text>
+                            <Text>              Long: {parameters.GpsLongitude} </Text>
+                        </Body>
                     </CardItem>
                     <CardItem bordered>
                     <Body>
@@ -58,6 +58,11 @@ const SetGpsScreen = () => {
       //onPress={dispatch(updateGps(gps))}
     );
 };
+
+SetGpsScreen.navigationOptions = () => ({
+    title: 'Set GPS Coordinates'
+  });
+
 
 
 export default SetGpsScreen;
