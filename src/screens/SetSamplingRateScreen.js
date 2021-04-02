@@ -4,16 +4,16 @@ import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeParameter } from '../actions';
 import { Container, Content, Button, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
+import { writePar } from '../actions/interface';
 
 
 const SetSamplingRateScreen = () => {
     const dispatch = useDispatch();
     let device = useSelector(state => state.BLEs.connectedDevice);
     
-    let parameters = useSelector(state => state.BLEs.parameters);
-    const thisParameter = "SamplingRate"
+    let SamplingRate = useSelector(state => state.BLEs.parameters.SamplingRate);
+    
     let newVal = "";
-    let anyAlert = false;
 
     return (
         <Container>
@@ -24,7 +24,7 @@ const SetSamplingRateScreen = () => {
                     </CardItem>
                     <CardItem bordered>
                     <Body>
-                        <Text>Current Sampling Rate: {parameters.SamplingRate} kHz</Text>
+                        <Text>Current Sampling Rate: {SamplingRate} kHz</Text>
                     </Body>
                 </CardItem>
                 </Card>
@@ -49,7 +49,7 @@ const SetSamplingRateScreen = () => {
                                 newVal = newVal.replace(/[^0-9.]/g, "");
                             }
                             else{
-                                dispatch(changeParameter(thisParameter, newVal));
+                                dispatch(writePar("SamplingRate", newVal));
                             }
                         }}
                     >

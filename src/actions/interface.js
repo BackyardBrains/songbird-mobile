@@ -75,6 +75,7 @@ export const readAllPars = () => {
 
 export const readPar = ( parameterName ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
+        if (getState.BLEs.connectionStatus === "Talking") return;
         await dispatch(sendRequest("read", parameterName));
         await dispatch(getResponse());
         //  clean up response
@@ -90,6 +91,7 @@ export const readPar = ( parameterName ) => {
 
 export const writePar = ( parameterName, parameterValue ) => {
     return (dispatch, getState, { DeviceManager } ) => {
+        if (getState.BLEs.connectionStatus === "Talking") return;
         await dispatch(sendRequest("write", parameterName, parameterValue));
         await dispatch(getResponse());
         let response = getState.BLEs.lastResponse;
@@ -101,7 +103,7 @@ export const writePar = ( parameterName, parameterValue ) => {
 }
 
 
-import { updateLastResponse } from '.';
+import { changeConnectionStatus, updateLastResponse } from '.';
 import initialParameterObject from '../components/DeviceData';
 export const disconnectDevice = () => {
     return (dispatch, getState, { DeviceManager } ) => {
@@ -124,7 +126,7 @@ export const sendRequest = (readWrite, parameterName, parameterValue ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
         const deviceID = getState().BLEs.connectedDevice.id;
         let message;
-        
+        dispatch(changeConnectionStatus("Talking"));
         // choose message
         switch(readWrite){
             case "read":
@@ -176,6 +178,7 @@ export const getResponse = () => {
         let characteristic = await DeviceManager.readCharacteristicForDevice(
                                                 deviceID, serviceUUID, responseUUID  );
         dispatch(updateLastResponse(characteristic.value));
+        dispatch(changeConnectionStatus("Connected"));
     }
 }
 

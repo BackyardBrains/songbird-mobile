@@ -6,6 +6,7 @@ import { disconnectDevice, changeStatus } from '../actions';
 import base64 from 'react-native-base64'
 import { Container, Header, Content, List, ListItem, 
     Text, Left, Right, Icon, Card, CardItem, Body, Button } from 'native-base';
+import { readPar } from '../actions/interface';
 
 // device.serviceUUIDs[0] === "4fafc201-1fb5..." // in theory
 
@@ -13,7 +14,6 @@ const DeviceScreen = ( { navigation } ) => {
     
     const dispatch = useDispatch();
     const device = useSelector(state => state.BLEs.connectedDevice);
-    
     const parameters = useSelector(state => state.BLEs.parameters);
 
     let recordingString, toggle, toggleView;
@@ -29,8 +29,6 @@ const DeviceScreen = ( { navigation } ) => {
     }
 
     return (
-        
-
         <Content> 
             <Card style={styles.cardBStyle}>
                 <CardItem header bordered >
@@ -100,7 +98,10 @@ const DeviceScreen = ( { navigation } ) => {
                         <Icon name="arrow-forward" />
                     </Right>
                 </ListItem>
-                <ListItem onPress={() => navigation.navigate('SetClock')}>
+                <ListItem onPress={() => {
+                    dispatch(readPar("DeviceClock"));
+                    navigation.navigate('SetClock');
+                }}>
                     <Left>
                         <View style={styles.listLeft}>
                             <Text>Device Clock:</Text>   

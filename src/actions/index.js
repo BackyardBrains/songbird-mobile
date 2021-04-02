@@ -3,11 +3,6 @@
 
 // actions
 
-export const changeStatus = (newStatus) => ({
-    type: "changeStatus",
-    payload: newStatus,
-});
-
 export const changeConnectionStatus = (newConnectionStatus) => ({
     type: "changeConnectionStatus",
     payload: newConnectionStatus,
