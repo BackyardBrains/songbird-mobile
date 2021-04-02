@@ -4,15 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { changeParameter } from '../actions';
 import { Container, Button, Content, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 import styles from '../styles/style';
+import { writePar } from '../actions/interface';
 
 const SetDurationScreen = () => {
     const dispatch = useDispatch();
     let device = useSelector(state => state.BLEs.connectedDevice);
     
-    let parameters = useSelector(state => state.BLEs.parameters);
-    const thisParameter = "RecordingDuration";
-    let durationVal = parameters[thisParameter];
-    let anyAlert = false;
+    let RecordingDuration = useSelector(state => state.BLEs.parameters.RecordingDuration);
+    let durationVal = RecordingDuration;
 
     return (
         <Container>
@@ -23,7 +22,7 @@ const SetDurationScreen = () => {
                     </CardItem>
                     <CardItem bordered>
                     <Body>
-                        <Text>Current Duration: {parameters.RecordingDuration} hours</Text>
+                        <Text>Current Duration: {RecordingDuration} hours</Text>
                     </Body>
                 </CardItem>
                 </Card>
@@ -47,7 +46,7 @@ const SetDurationScreen = () => {
                                 durationVal = durationVal.replace(/[^0-9.]/g, "");
                             }
                             else{
-                                dispatch(changeParameter(thisParameter, durationVal));
+                                dispatch(writePar("RecordingDuration", durationVal));
                             }
                             
                         }}

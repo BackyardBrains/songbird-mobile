@@ -19,10 +19,6 @@ import DeviceScreen from './src/screens/DeviceScreen';
 import SetClockScreen from './src/screens/SetClockScreen';
 import SetDurationScreen from './src/screens/SetDurationScreen';
 import SetSamplingRateScreen from './src/screens/SetSamplingRateScreen';
-import SetSensitivityScreen from './src/screens/SetSensitivityScreen';
-import SetScheduleScreen from './src/screens/SetScheduleScreen';
-import SetLightScreen from './src/screens/SetLightScreen';
-import SetSoundScreen from './src/screens/SetSoundScreen';
 import SetGpsScreen from './src/screens/SetGpsScreen';
 
 
@@ -34,10 +30,6 @@ const navigator = createStackNavigator(
     SetClock: SetClockScreen,
     SetDuration: SetDurationScreen,
     SetSamplingRate: SetSamplingRateScreen,
-    SetSensitivity: SetSensitivityScreen,
-    SetSchedule: SetScheduleScreen,
-    SetLight: SetLightScreen,
-    SetSound: SetSoundScreen,
     SetGps: SetGpsScreen,
 
 

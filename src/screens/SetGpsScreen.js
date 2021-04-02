@@ -11,13 +11,11 @@ const SetGpsScreen = () => {
     const dispatch = useDispatch();
     let device = useSelector(state => state.BLEs.connectedDevice);
     
-    let parameters = useSelector(state => state.BLEs.parameters);
+    let GpsCoordinates = useSelector(state => state.BLEs.parameters.GpsCoordinates);
     let location = useSelector(state => state.BLEs.location);
-    const GpsLatitude = "GpsLatitude";
-    const GpsLongitude = "GpsLongitude";
-    let GpsLatVal = parameters[GpsLatitude];
-    let GpsLongVal = parameters[GpsLongitude];
-    let anyAlert = false;
+    
+    let coords = GpsCoordinates.split(':');
+    let GpsNew = location.latitude + ":" + location.longitude
 
     return (
         <Container>
@@ -29,8 +27,8 @@ const SetGpsScreen = () => {
                     <CardItem bordered>
                         <Body>
                             <Text style={{fontWeight: "bold"}}>GPS Coordinates on Songbird device:</Text>
-                            <Text>              Lat: {parameters.GpsLatitude} </Text>
-                            <Text>              Long: {parameters.GpsLongitude} </Text>
+                            <Text>              Lat: {coords[0]} </Text>
+                            <Text>              Long: {coords[1]} </Text>
                         </Body>
                     </CardItem>
                     <CardItem bordered>
@@ -44,10 +42,7 @@ const SetGpsScreen = () => {
                 <View style={styles.ButtonSection} >
                     <Button rounded 
                         onPress={ () => {
-                            dispatch(changeParameter(GpsLatitude, 
-                                                location.latitude, 
-                                                GpsLongitude, 
-                                                location.longitude));
+                            dispatch(WritePar("GpsCoordinates", GpsNew));
                         }}
                     >
                         <Text>Submit phone coordinates</Text>
