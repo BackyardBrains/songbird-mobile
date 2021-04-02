@@ -13,6 +13,7 @@ const SetDurationScreen = () => {
     let RecordingDuration = useSelector(state => state.BLEs.parameters.RecordingDuration);
     let durationVal = RecordingDuration;
 
+   
     return (
         <Container>
             <Content>

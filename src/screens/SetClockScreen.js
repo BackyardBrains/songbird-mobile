@@ -11,7 +11,7 @@ const SetClockScreen = () => {
     
     let DeviceClock = useSelector(state => state.BLEs.parameters.DeviceClock);
     let clockVal = DeviceClock;
-
+    // will have to add function to convert user input to correct syntax
     return (
         <Container>
             <Content>
