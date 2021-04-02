@@ -32,31 +32,20 @@ export const addConnectedBLE = (device) => ({
     payload: device,
 })
 
-export const updateCharacteristicsArray = ( characteristicsArray ) => ({
-    type: "updateCharacteristicsArray",
-    payload: characteristicsArray,
-})
-
-export const initParameterObjectAction = (parameterObject) => ({
-    type: "initParameterObjectAction",
-    payload: parameterObject,
-})
-
 export const changeParameterObject = (parameter, value) => ({
     type: "changeParameterObject",
     par: parameter,
     val: value,
 })
 
-export const initNewParameterObjectAction = (parameterObject) => ({
-    type: "initNewParameterObjectAction",
+export const setParameterObject = (parameterObject) => ({
+    type: "setParameterObject",
     payload: parameterObject,
 })
 
-export const changeNewParameterObject = (parameter, value) => ({
-    type: "changeNewParameterObject",
-    par: parameter,
-    val: value,
+export const updateLastResponse = (response) => ({
+    type: "updateLastResponse",
+    payload: response
 })
 
 export const initLocation = (locationObj) => ({

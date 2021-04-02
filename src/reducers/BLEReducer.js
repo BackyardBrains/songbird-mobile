@@ -5,11 +5,10 @@ export const INITIAL_STATE = {
 	BLEList: [],
 	connectionStatus: 'Disconnected',
 	connectedDevice: {},
-	characteristics: [],
 	counter: 0,
 	parameters: initialParameterObject,
-	newParameters: initialParameterObject,
-	location: {}
+	location: {},
+	lastResponse: ''
   };
 
 const BLEreducer = (state = INITIAL_STATE, action = {}) => {
@@ -25,11 +24,6 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				 ...state,
 				 connectedDevice: {deviceID: action.payload},
 			 }
-		case 'changeStatus':
-			return {
-				...state,
-				status: action.payload,
-			}
 		case 'changeConnectionStatus':
 			return {
 				...state,
@@ -42,7 +36,6 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 			if (state.BLEList.some(device => device.name === action.payload.name)) { 
 				return state;
 			}
-
 			return {
 				...state,
 				BLEList: [...state.BLEList, action.payload],
@@ -59,20 +52,10 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				...state,
 				connectedDevice: action.payload,
 			}
-		case 'updateCharacteristicsArray':
-			return {
-				...state,
-				characteristics: action.payload,
-			}
-		case  'initParameterObjectAction':
+		case  'setParameterObject':
 			return {
 				...state, 
 				parameters: action.payload,
-			}
-		case  'initNewParameterObjectAction':
-			return {
-				...state, 
-				newParameters: action.payload,
 			}
 		case 'changeParameterObject':
 			let newParameters = {...state.parameters};
@@ -87,6 +70,11 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 			return {
 				...state,
 				newParameters: newNewParameters,
+			}
+		case 'updateLastResponse':
+			return {
+				...state,
+				lastResponse: action.payload
 			}
 		case 'disconnectedBLE':
 			return {

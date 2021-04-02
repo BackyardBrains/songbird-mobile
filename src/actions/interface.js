@@ -45,8 +45,6 @@ export const scan = () => {
     }
 }
 
-import base64 from 'react-native-base64'
-
 export const connectDevice = ( item ) => {
     return (dispatch, getState, { DeviceManager } ) => {
         
@@ -57,43 +55,54 @@ export const connectDevice = ( item ) => {
         device.connect( { autoConnect: true, refreshGatt: true } )
         .then(( device ) => {
             dispatch(changeConnectionStatus("Connected"));
-            dispatch(addConnectedBLE( device ));
+            dispatch(addConnectedBLE(device));
             dispatch(readAllPars());
         })
     }
 }
 
-export const readAllPars = ( item ) => {
-    return (dispatch, getState, { DeviceManager } ) => {
-        
-
-
+export const readAllPars = () => {
+    return async (dispatch, getState, { DeviceManager } ) => {
+        await dispatch(readPar("BatteryLevel"));
+        await dispatch(readPar("StorageCapacity"));
+        await dispatch(readPar("IsRecording"));
+        await dispatch(readPar("DeviceClock"));
+        await dispatch(readPar("RecordingDuration"));
+        await dispatch(readPar("SamplingRate"));
+        await dispatch(readPar("GpsCoordinates"));
     }
 }
 
 export const readPar = ( parameterName ) => {
-    return (dispatch, getState, { DeviceManager } ) => {
-        
-        switch(parameterName){
-            case "BatteryLevel":
-                // code 
-            case "StorageCapacity" :
-                
-            case "IsRecording" : 
-
-            case "DeviceClock" : 
-
-            case "RecordingDuration" : 
-
-            case "SamplingRate" : 
-            
-            case "GpsCoordinates" :
-        }
-
+    return async (dispatch, getState, { DeviceManager } ) => {
+        await dispatch(sendRequest("read", parameterName));
+        await dispatch(getResponse());
+        //  clean up response
+        //  response == 'GPS:x:y\r' ==> response == 'x:y'
+        let response = getState.BLEs.lastResponse;
+        if (response === 'ERR') return;
+        response = response.replace('\r','');
+        response = response.slice(response.indexOf(':')+1);
+        //  update parameter with response
+        dispatch(changeParameterObject(parameterName, response));
     }
 }
-import initialParameterObject from '../components/DeviceData';
 
+export const writePar = ( parameterName, parameterValue ) => {
+    return (dispatch, getState, { DeviceManager } ) => {
+        await dispatch(sendRequest("write", parameterName, parameterValue));
+        await dispatch(getResponse());
+        let response = getState.BLEs.lastResponse;
+        if (response === 'ERR') console.log("error writing to device");
+        if (response === 'OK') {
+            dispatch(changeParameterObject(parameterName, parameterValue));
+        };
+    }
+}
+
+
+import { updateLastResponse } from '.';
+import initialParameterObject from '../components/DeviceData';
 export const disconnectDevice = () => {
     return (dispatch, getState, { DeviceManager } ) => {
         let deviceID = getState().BLEs.connectedDevice.id;
@@ -109,3 +118,64 @@ export const disconnectDevice = () => {
             })
     }
 }
+
+
+export const sendRequest = (readWrite, parameterName, parameterValue ) => {
+    return async (dispatch, getState, { DeviceManager } ) => {
+        const deviceID = getState().BLEs.connectedDevice.id;
+        let message;
+        
+        // choose message
+        switch(readWrite){
+            case "read":
+                switch(parameterName){
+                    case "BatteryLevel":
+                        message = "BAT?\r"
+                    case "StorageCapacity":
+                        message = "CS?\r"
+                    case "IsRecording": 
+                        message = "!!!\r" // this is unknown currently
+                    case "DeviceClock": 
+                        message = "RTC?\r"
+                    case "RecordingDuration": 
+                        message = "RD?\r"
+                    case "SamplingRate": 
+                        message = "RS?\r"
+                    case "GpsCoordinates":
+                        message = "GPS?\r"
+                    default: 
+                        message = "\r"
+                }
+            case "write":
+                switch(parameterName){
+                    case "IsRecording": 
+                        message = "!!!:" + parameterValue + "\r" // this is unknown currently
+                    case "DeviceClock": 
+                        message = "RTC:" + parameterValue + "\r"
+                    case "RecordingDuration": 
+                        message = "WD:" + parameterValue + "\r"
+                    case "SamplingRate": 
+                        message = "WS:" + parameterValue + "\r"
+                    case "GpsCoordinates":
+                        message = "GPS:" + parameterValue + "\r"
+                    default: 
+                        message = "\r"
+                }
+            default: 
+                message = "\r"
+        }
+        
+        await DeviceManager.writeCharacteristicWithResponseForDevice(
+                            deviceID, serviceUUID, requestUUID, message  );
+    }
+}
+
+export const getResponse = () => {
+    return async (dispatch, getState, { DeviceManager } ) => {
+        const deviceID = getState().BLEs.connectedDevice.id;
+        let characteristic = await DeviceManager.readCharacteristicForDevice(
+                                                deviceID, serviceUUID, responseUUID  );
+        dispatch(updateLastResponse(characteristic.value));
+    }
+}
+

@@ -16,10 +16,18 @@ const DeviceScreen = ( { navigation } ) => {
     
     const parameters = useSelector(state => state.BLEs.parameters);
 
-    const characteristic = useSelector(state => state.BLEs.characteristics[0]);
-    // console.log("characteristics[0] in deviceScreen: ", characteristic);
-    
-    // NOTE: need to do base64 decode and encode of all characteristic values
+    let recordingString, toggle, toggleView;
+    switch (parameters.IsRecording){
+        case "true":
+            recordingString = "Recording";
+            toggle = "false";
+            toggleView = "Stop Recording";
+        case "false":
+            recordingString = "Not Recording";
+            toggle = "true";
+            toggleView = "Start Recording";
+    }
+
     return (
         
 
@@ -38,18 +46,31 @@ const DeviceScreen = ( { navigation } ) => {
                         <Text>Storage Capacity: {parameters.StorageCapacity}%</Text>
                     </Body>
                 </CardItem>
+                <CardItem bordered>
+                    <Body>
+                        <Text>{recordingString}</Text>
+                    </Body>
+                </CardItem>
             </Card>
             
-            <List>
+            <View style={styles.ButtonSection} // recording button
+            >
+                <Button rounded 
+                    onPress={() => dispatch(writePar("IsRecording", toggle))}
+                >
+                    <Text>{toggleView}</Text>
+                </Button>
+            </View>
 
+            <List>
                 <ListItem itemHeader first>
-                    <Text>Recording Settings</Text>
+                    <Text>Settings</Text>
                 </ListItem>
                 
                 <ListItem onPress={() => navigation.navigate('SetDuration')}>
                     <Left>
                         <View style={styles.listLeft}>
-                            <Text>Duration:</Text>   
+                            <Text>Recording Duration:</Text>   
                         </View>
                         <Text>{parameters.RecordingDuration} hrs</Text>
                     </Left>
@@ -67,56 +88,6 @@ const DeviceScreen = ( { navigation } ) => {
                     <Right>
                         <Icon name="arrow-forward" />
                     </Right>
-                </ListItem>
-                <ListItem onPress={() => navigation.navigate('SetSensitivity')}>
-                    <Left>
-                        <View style={styles.listLeft}>
-                            <Text>Sensitivity:</Text>
-                        </View>
-                        <Text>{parameters.Sensitivity}</Text>
-                    </Left>
-                    <Right>
-                        <Icon name="arrow-forward" />
-                    </Right>
-                </ListItem>
-                <ListItem itemHeader>
-                    <Text>Trigger Mode</Text>
-                </ListItem>
-                <ListItem onPress={() => navigation.navigate('SetSchedule')}>
-                    <Left>
-                        <View style={styles.listLeft}>
-                            <Text>Schedule: </Text>
-                        </View>
-                        <Text>{parameters.ScheduleStart} - {parameters.ScheduleEnd}</Text>
-                    </Left>
-                    <Right>
-                        <Icon name="arrow-forward" />
-                    </Right>
-                </ListItem>
-                <ListItem onPress={() => navigation.navigate('SetLight')}>
-                    <Left>
-                        <View style={styles.listLeft}>
-                            <Text>Light Intensity: </Text>
-                        </View>
-                        <Text>{parameters.LightIntensity}</Text>
-                    </Left>
-                    <Right>
-                        <Icon name="arrow-forward" />
-                    </Right>
-                </ListItem>
-                <ListItem onPress={() => navigation.navigate('SetSound')}>
-                    <Left>
-                        <View style={styles.listLeft}>
-                            <Text>Sound Level: </Text>
-                        </View>
-                        <Text>{parameters.SoundLevel}</Text>
-                    </Left>
-                    <Right>
-                        <Icon name="arrow-forward" />
-                    </Right>
-                </ListItem>
-                <ListItem itemHeader>
-                    <Text>Tags</Text>
                 </ListItem>
                 <ListItem onPress={() => navigation.navigate('SetGps')}>
                     <Left>
@@ -142,9 +113,6 @@ const DeviceScreen = ( { navigation } ) => {
                 </ListItem>
 
             </List>
-
-
-            
             <View style={styles.ButtonSection} >
                 <Button rounded 
                     onPress={() => dispatch(disconnectDevice())}
