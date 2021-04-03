@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeParameter } from '../actions';
-import { Container, Content, Form, Button, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
+import { writePar } from '../actions/interface';
+import { Container, Content, Button, Text, Card, CardItem, Body } from 'native-base';
 
 
 
@@ -42,7 +42,7 @@ const SetGpsScreen = () => {
                 <View style={styles.ButtonSection} >
                     <Button rounded 
                         onPress={ () => {
-                            dispatch(WritePar("GpsCoordinates", GpsNew));
+                            dispatch(writePar("GpsCoordinates", GpsNew));
                         }}
                     >
                         <Text>Submit phone coordinates</Text>

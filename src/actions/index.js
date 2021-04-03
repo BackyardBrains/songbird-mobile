@@ -33,6 +33,11 @@ export const changeParameterObject = (parameter, value) => ({
     val: value,
 })
 
+export const setParameterObject = (parameterObject) => ({
+    type: "setParameterObject",
+    payload: parameterObject,
+})
+
 export const updateLastResponse = (response) => ({
     type: "updateLastResponse",
     payload: response

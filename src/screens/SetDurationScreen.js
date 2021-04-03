@@ -1,10 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeParameter } from '../actions';
+import { writePar } from '../actions/interface';
 import { Container, Button, Content, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 import styles from '../styles/style';
-import { writePar } from '../actions/interface';
 
 const SetDurationScreen = () => {
     const dispatch = useDispatch();

@@ -1,10 +1,9 @@
-import React, {useState} from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeParameter } from '../actions';
-import { Container, Content, Button, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 import { writePar } from '../actions/interface';
+import { Container, Content, Button, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 
 
 const SetSamplingRateScreen = () => {

@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { disconnectDevice } from '../actions/interface';
+import { disconnectDevice, writePar, readPar } from '../actions/interface';
 import base64 from 'react-native-base64'
-import { Container, Header, Content, List, ListItem, 
+import { Content, List, ListItem, 
     Text, Left, Right, Icon, Card, CardItem, Body, Button } from 'native-base';
-import { readPar } from '../actions/interface';
 
 const DeviceScreen = ( { navigation } ) => {
     
@@ -14,16 +13,21 @@ const DeviceScreen = ( { navigation } ) => {
     const device = useSelector(state => state.BLEs.connectedDevice);
     const parameters = useSelector(state => state.BLEs.parameters);
 
+    let coords = parameters.GpsCoordinates.split(':');
+
     let recordingString, toggle, toggleView;
+    console.log("recording?", parameters.IsRecording)
     switch (parameters.IsRecording){
-        case "true":
-            recordingString = "Recording";
-            toggle = "false";
+        case "1":
+            recordingString = "Recording...";
+            toggle = "0";
             toggleView = "Stop Recording";
-        case "false":
+            break;
+        case "0":
             recordingString = "Not Recording";
-            toggle = "true";
+            toggle = "1";
             toggleView = "Start Recording";
+            break;
     }
 
     return (
@@ -90,7 +94,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <View style={styles.listLeft}>
                             <Text>GPS Coordinates:</Text>
                         </View>
-                        <Text>{parameters.GpsLatitude}, {parameters.GpsLongitude}</Text>
+                        <Text>{coords[0]}, {coords[1]}</Text>
                     </Left>
                     <Right>
                         <Icon name="arrow-forward" />
