@@ -45,7 +45,7 @@ const HomeScreen = ( {navigation} ) => {
     <View style={styles.ButtonSection} >
       <Button rounded 
         onPress={() => {
-          if (connectionStatus === "Connected") dispatch(disconnectDevice());
+          if (connectionStatus !== "Disconnected") dispatch(disconnectDevice());
           if (Object.keys(location).length === 0) dispatch(handleLocation());
           dispatch(resetBleList());
           dispatch(startScan());

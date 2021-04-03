@@ -1,28 +1,23 @@
+import base64 from 'react-native-base64'
+import initialParameterObject from '../components/DeviceData';
 import { changeConnectionStatus, disconnectedBLE, 
     addConnectedBLE, addBLE, changeParameterObject, 
     updateLastResponse, updateCounter, setParameterObject } from '.';
-
-import base64 from 'react-native-base64'
 
 const serviceUUID = "d858069e-e72c-4314-b38c-b05f7515a3f6";
 const requestUUID = "54fd8ba8-fd8f-4862-97c0-71948babd2d3";
 const responseUUID = "ada3eca6-fd1b-4995-8928-3f8e4688769c";
 
-// sleep function
+// sleep function -- use with async, await
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
-  }
-  // use async await
-  
+}
 
 // thunks
 
 export const startScan = () => {
     return (dispatch, getState, { DeviceManager } ) => {
-        const counter = getState().BLEs.counter;
-        dispatch(updateCounter(-1 * counter)); // resets counter to 0;
-        console.log("running startScan()");
-        
+        dispatch(updateCounter(-1 * getState().BLEs.counter)); // resets counter to 0;
         const subscription = DeviceManager.onStateChange((state) => {
             if (state === 'PoweredOn') {
                 dispatch(scan());
@@ -35,7 +30,6 @@ export const startScan = () => {
 export const scan = () => {
     return (dispatch, getState, { DeviceManager } ) => {
         console.log("running scan()");
-
         DeviceManager.startDeviceScan(null, null, (error, device) => {
             dispatch(updateCounter(1)); // increments counter
             if (error) {
@@ -88,14 +82,14 @@ export const readPar = ( parameterName ) => {
         if (getState().BLEs.connectionStatus === "Talking") return;
         await dispatch(sendRequest("read", parameterName));
         await sleep(20);
-        await dispatch(getResponse());
+        await dispatch(getResponse()); // puts response in state under lastResponse
         let response = getState().BLEs.lastResponse; // example: 'GPS:x:y\r'
-        if (response === 'ERR') return;
-        //  clean up response
-        response = response.replace('\r',''); // -> 'GPS:x:y'
-        response = response.slice(response.indexOf(':')+1); // -> 'x:y'
-        //  update parameter with response
-        dispatch(changeParameterObject(parameterName, response));
+        if (response === 'ERR') console.log("error reading ",  parameterName);
+        else { //  clean up response
+            response = response.replace('\r',''); // -> 'GPS:x:y'
+            response = response.slice(response.indexOf(':')+1); // -> 'x:y'
+            dispatch(changeParameterObject(parameterName, response));
+        }
     }
 }
 
@@ -108,13 +102,12 @@ export const writePar = ( parameterName, parameterValue ) => {
         await dispatch(getResponse());
         let response = getState().BLEs.lastResponse;
         if (response === 'ERR') console.log("error writing to device");
-        if (response === 'OK') {
+        else if (response === 'OK') {
             dispatch(changeParameterObject(parameterName, parameterValue));
-        };
+        }
     }
 }
 
-import initialParameterObject from '../components/DeviceData';
 export const disconnectDevice = () => {
     return async (dispatch, getState, { DeviceManager } ) => {
         let deviceID = getState().BLEs.connectedDevice.id;
@@ -133,7 +126,6 @@ export const sendRequest = (readWrite, parameterName, parameterValue ) => {
         let message;
         dispatch(changeConnectionStatus("Talking"));
         // choose message
-        
         switch(readWrite){
             case "read":
                 switch(parameterName){
