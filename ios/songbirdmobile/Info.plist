@@ -4,6 +4,12 @@
 <dict>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Our app uses bluetooth to find, connect and transfer data between different devices</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Our app uses location services to find GPS coordinates.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Our app uses location services, to find GPS coordinates</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Our app uses location services to find GPS coordinates</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
