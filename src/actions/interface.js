@@ -1,9 +1,10 @@
+import { changeConnectionStatus, connectDevice, disconnectedBLE, 
+    addConnectedBLE, addBLE, changeParameterObject, 
+    updateLastResponse, updateCounter } from '.';
 
 const serviceUUID = "d858069e-e72c-4314-b38c-b05f7515a3f6";
 const requestUUID = "54fd8ba8-fd8f-4862-97c0-71948babd2d3";
 const responseUUID = "ada3eca6-fd1b-4995-8928-3f8e4688769c";
-
-
 
 // thunks
 
@@ -46,18 +47,17 @@ export const scan = () => {
 }
 
 export const connectDevice = ( item ) => {
-    return (dispatch, getState, { DeviceManager } ) => {
+    return async (dispatch, getState, { DeviceManager } ) => {
         
         const device = item.item;
         if (getState().BLEs.connectedDevice.id === device.id) return;
         dispatch(changeConnectionStatus("Connecting"));
 
-        device.connect( { autoConnect: true, refreshGatt: true } )
-        .then(( device ) => {
-            dispatch(changeConnectionStatus("Connected"));
-            dispatch(addConnectedBLE(device));
-            dispatch(readAllPars());
-        })
+        let connectedDevice = await device.connect( { autoConnect: true, refreshGatt: true } )
+        dispatch(changeConnectionStatus("Connected"));
+        dispatch(addConnectedBLE(connectedDevice));
+        dispatch(readAllPars());
+    
     }
 }
 
@@ -77,22 +77,23 @@ export const readPar = ( parameterName ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
         if (getState.BLEs.connectionStatus === "Talking") return;
         await dispatch(sendRequest("read", parameterName));
+        // may need to add time buffer here
         await dispatch(getResponse());
-        //  clean up response
-        //  response == 'GPS:x:y\r' ==> response == 'x:y'
-        let response = getState.BLEs.lastResponse;
+        let response = getState.BLEs.lastResponse; // example: 'GPS:x:y\r'
         if (response === 'ERR') return;
-        response = response.replace('\r','');
-        response = response.slice(response.indexOf(':')+1);
+        //  clean up response
+        response = response.replace('\r',''); // -> 'GPS:x:y'
+        response = response.slice(response.indexOf(':')+1); // -> 'x:y'
         //  update parameter with response
         dispatch(changeParameterObject(parameterName, response));
     }
 }
 
 export const writePar = ( parameterName, parameterValue ) => {
-    return (dispatch, getState, { DeviceManager } ) => {
+    return async (dispatch, getState, { DeviceManager } ) => {
         if (getState.BLEs.connectionStatus === "Talking") return;
         await dispatch(sendRequest("write", parameterName, parameterValue));
+        // may need to add time buffer here
         await dispatch(getResponse());
         let response = getState.BLEs.lastResponse;
         if (response === 'ERR') console.log("error writing to device");
@@ -102,25 +103,18 @@ export const writePar = ( parameterName, parameterValue ) => {
     }
 }
 
-
-import { changeConnectionStatus, updateLastResponse } from '.';
 import initialParameterObject from '../components/DeviceData';
 export const disconnectDevice = () => {
-    return (dispatch, getState, { DeviceManager } ) => {
+    return async (dispatch, getState, { DeviceManager } ) => {
         let deviceID = getState().BLEs.connectedDevice.id;
-
         if (deviceID == null) return;
 
-        DeviceManager.cancelDeviceConnection(deviceID)
-            .then((device) => {
-                dispatch(changeConnectionStatus("Disconnected"));
-                dispatch(disconnectedBLE());
-                dispatch(initParameterObjectAction(initialParameterObject));
-                return device;
-            })
+        await DeviceManager.cancelDeviceConnection(deviceID);  
+        dispatch(changeConnectionStatus("Disconnected"));
+        dispatch(disconnectedBLE());
+        dispatch(initParameterObjectAction(initialParameterObject));  
     }
 }
-
 
 export const sendRequest = (readWrite, parameterName, parameterValue ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
