@@ -1,10 +1,17 @@
-import { changeConnectionStatus, connectDevice, disconnectedBLE, 
+import { changeConnectionStatus, disconnectedBLE, 
     addConnectedBLE, addBLE, changeParameterObject, 
-    updateLastResponse, updateCounter } from '.';
+    updateLastResponse, updateCounter, resetBleList } from '.';
 
 const serviceUUID = "d858069e-e72c-4314-b38c-b05f7515a3f6";
 const requestUUID = "54fd8ba8-fd8f-4862-97c0-71948babd2d3";
 const responseUUID = "ada3eca6-fd1b-4995-8928-3f8e4688769c";
+
+// sleep function
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  // use async await
+  
 
 // thunks
 
@@ -130,7 +137,7 @@ export const sendRequest = (readWrite, parameterName, parameterValue ) => {
                     case "StorageCapacity":
                         message = "CS?\r"
                     case "IsRecording": 
-                        message = "!!!\r" // this is unknown currently
+                        message = "SR?\r" // this is unknown currently
                     case "DeviceClock": 
                         message = "RTC?\r"
                     case "RecordingDuration": 
@@ -145,7 +152,7 @@ export const sendRequest = (readWrite, parameterName, parameterValue ) => {
             case "write":
                 switch(parameterName){
                     case "IsRecording": 
-                        message = "!!!:" + parameterValue + "\r" // this is unknown currently
+                        message = "SR:" + parameterValue + "\r" // this is unknown currently
                     case "DeviceClock": 
                         message = "RTC:" + parameterValue + "\r"
                     case "RecordingDuration": 

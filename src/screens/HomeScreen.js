@@ -10,8 +10,6 @@ import { handleLocation } from "../actions/LocationMethods";
 const HomeScreen = ( {navigation} ) => {
   
   const dispatch = useDispatch();
-  
-  dispatch(changeStatus("render homescreen"));
 
   const connectionStatus = useSelector(state => state.BLEs.connectionStatus);
   const BLEList = useSelector(state => state.BLEs.BLEList);
