@@ -2,13 +2,11 @@ import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { disconnectDevice, changeStatus } from '../actions';
+import { disconnectDevice } from '../actions/interface';
 import base64 from 'react-native-base64'
 import { Container, Header, Content, List, ListItem, 
     Text, Left, Right, Icon, Card, CardItem, Body, Button } from 'native-base';
 import { readPar } from '../actions/interface';
-
-// device.serviceUUIDs[0] === "4fafc201-1fb5..." // in theory
 
 const DeviceScreen = ( { navigation } ) => {
     

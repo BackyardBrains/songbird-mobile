@@ -2,9 +2,10 @@ import React from "react";
 import { View, FlatList, TouchableOpacity } from "react-native";
 import styles from '../styles/style';
 import { useDispatch, shallowEqual, useSelector } from 'react-redux';
-import { changeStatus, connectDevice, disconnectDevice, resetBleList, startScan, updateCounter } from '../actions/index';
+import { connectDevice, disconnectDevice, startScan } from '../actions/interface';
+import { resetBleList, updateCounter } from '../actions/index';
 import { Container, Header, Content, List, ListItem, 
-  Text, Left, Right, Icon, Card, CardItem, Button, Body, Grid, Col } from 'native-base';
+      Text, Left, Right, Icon, Card, CardItem, Button, Body, Grid, Col } from 'native-base';
 import { handleLocation } from "../actions/LocationMethods";
 
 const HomeScreen = ( {navigation} ) => {

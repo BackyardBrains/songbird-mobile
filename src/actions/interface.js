@@ -60,7 +60,8 @@ export const connectDevice = ( item ) => {
         if (getState().BLEs.connectedDevice.id === device.id) return;
         dispatch(changeConnectionStatus("Connecting"));
 
-        let connectedDevice = await device.connect( { autoConnect: true, refreshGatt: true } )
+        let connectedDevice = await device.connect( { autoConnect: true, refreshGatt: true } );
+        connectedDevice = await connectedDevice.discoverAllServicesAndCharacteristics();
         dispatch(changeConnectionStatus("Connected"));
         dispatch(addConnectedBLE(connectedDevice));
         dispatch(readAllPars());
@@ -82,7 +83,7 @@ export const readAllPars = () => {
 
 export const readPar = ( parameterName ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
-        if (getState.BLEs.connectionStatus === "Talking") return;
+        if (getState().BLEs.connectionStatus === "Talking") return;
         await dispatch(sendRequest("read", parameterName));
         // may need to add time buffer here
         await dispatch(getResponse());
