@@ -51,11 +51,9 @@ export const scan = () => {
 
 export const connectDevice = ( item ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
-        
         const device = item.item;
-        if (getState().BLEs.connectedDevice.id === device.id) return;
+        if (getState().BLEs.connectionStatus !== "Disconnected") return;
         dispatch(changeConnectionStatus("Connecting"));
-
         let connectedDevice = await device.connect( { autoConnect: true, refreshGatt: true } );
         connectedDevice = await connectedDevice.discoverAllServicesAndCharacteristics();
         dispatch(changeConnectionStatus("Connected"));
@@ -112,7 +110,6 @@ export const disconnectDevice = () => {
     return async (dispatch, getState, { DeviceManager } ) => {
         let deviceID = getState().BLEs.connectedDevice.id;
         if (deviceID == null) return;
-
         await DeviceManager.cancelDeviceConnection(deviceID);  
         dispatch(changeConnectionStatus("Disconnected"));
         dispatch(disconnectedBLE());
