@@ -22,5 +22,5 @@ target 'songbirdmobile' do
   #    flipper_post_install(installer)
   #  end
   pod 'react-native-ble-plx', :path => '../node_modules/react-native-ble-plx'
-
+  # pod 'react-native-location', :path => '../node_modules/react-native-location/react-native-location.podspec'
 end

@@ -1,20 +1,17 @@
-import React, {useState} from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeParameter } from '../actions';
+import { writePar } from '../actions/interface';
 import { Container, Content, Form, Button, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 
 const SetClockScreen = () => {
     const dispatch = useDispatch();
     let device = useSelector(state => state.BLEs.connectedDevice);
     
-    let parameters = useSelector(state => state.BLEs.parameters);
-    const thisParameter = "DeviceClock";
-    let clockVal = parameters[thisParameter];
-    let anyAlert = false;
-    
-
+    let DeviceClock = useSelector(state => state.BLEs.parameters.DeviceClock);
+    let clockVal = DeviceClock;
+    // will have to add function to convert user input to correct syntax
     return (
         <Container>
             <Content>
@@ -24,7 +21,7 @@ const SetClockScreen = () => {
                     </CardItem>
                     <CardItem bordered>
                     <Body>
-                        <Text> Current Time: {parameters.DeviceClock} </Text>
+                        <Text> Current Time: {DeviceClock} </Text>
                     </Body>
                 </CardItem>
                 </Card>
@@ -45,7 +42,7 @@ const SetClockScreen = () => {
                                 alert('Songbirds will ignore any inputs other than time in this section');
                             }
                             else{
-                                dispatch(changeParameter(thisParameter, clockVal));
+                                dispatch(writePar("DeviceClock", clockVal));
                             }
                         }}
                     >
