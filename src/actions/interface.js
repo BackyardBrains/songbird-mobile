@@ -66,11 +66,17 @@ export const connectDevice = ( item ) => {
 export const readAllPars = () => {
     return async (dispatch, getState, { DeviceManager } ) => {
         await dispatch(readPar("BatteryLevel"));
+        await sleep(6);
         await dispatch(readPar("StorageCapacity"));
+        await sleep(6);
         await dispatch(readPar("IsRecording"));
+        await sleep(6);
         await dispatch(readPar("DeviceClock"));
+        await sleep(6);
         await dispatch(readPar("RecordingDuration"));
+        await sleep(6);
         await dispatch(readPar("SamplingRate"));
+        await sleep(6);
         await dispatch(readPar("GpsCoordinates"));
     }
 }
@@ -79,7 +85,7 @@ export const readPar = ( parameterName ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
         if (getState().BLEs.connectionStatus === "Talking") return;
         await dispatch(sendRequest("read", parameterName));
-        await sleep(20);
+        await sleep(6);
         await dispatch(getResponse()); // puts response in state under lastResponse
         let response = getState().BLEs.lastResponse; // example: 'GPS:x:y\r'
         if (response === 'ERR') console.log("error reading ",  parameterName);
@@ -96,7 +102,7 @@ export const writePar = ( parameterName, parameterValue ) => {
         if (getState().BLEs.connectionStatus === "Talking") return;
         dispatch(changeParameterObject(parameterName, "..."));
         await dispatch(sendRequest("write", parameterName, parameterValue));
-        await sleep(20);
+        await sleep(6);
         await dispatch(getResponse());
         let response = getState().BLEs.lastResponse;
         if (response === 'ERR') console.log("error writing to device");

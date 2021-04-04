@@ -14,6 +14,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		15731EA132DD42B6B3E14290 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 95FA313EF17744D3A524C1EC /* Entypo.ttf */; };
 		1D165A9F9C6A45E28BC38B21 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D3142D7FFC5D4EABBDC7DC5A /* Feather.ttf */; };
+		1DE1C239261936890012C47B /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DE1C238261936890012C47B /* CoreLocation.framework */; };
 		1FF4068398864C5689518336 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FA4404600677439B9109B911 /* FontAwesome.ttf */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		42ABE289C6994C59B8ECC1EE /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8B13E410CECB420BB08ABFBE /* Roboto.ttf */; };
@@ -48,6 +49,7 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = songbirdmobile/main.m; sourceTree = "<group>"; };
 		158F28175F61479AACB9CAF0 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/native-base/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		1BA06B605A2F4D51BB805DA5 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/native-base/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
+		1DE1C238261936890012C47B /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		3F53AE4B04F54CF58AACCD29 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		46FAF9B481C0409FAC43D48A /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		57B7C22F0F92462298B778F1 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/native-base/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DE1C239261936890012C47B /* CoreLocation.framework in Frameworks */,
 				96905EF65AED1B983A6B3ABC /* libPods-songbirdmobile.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -103,6 +106,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1DE1C238261936890012C47B /* CoreLocation.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				58EEBF8E8E6FB1BC6CAF49B5 /* libPods-songbirdmobile.a */,
