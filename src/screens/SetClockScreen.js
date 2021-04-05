@@ -1,17 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import { View } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { writePar } from '../actions/interface';
-import { Container, Content, Form, Button, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
+import { Container, Content, Button, Text, Card, CardItem, Body } from 'native-base';
+import convertToDisplay from '../actions/TimeLocation';
+
 
 const SetClockScreen = () => {
     const dispatch = useDispatch();
     let device = useSelector(state => state.BLEs.connectedDevice);
     
     let DeviceClock = useSelector(state => state.BLEs.parameters.DeviceClock);
-    let clockVal = DeviceClock;
-    // will have to add function to convert user input to correct syntax
+
+    const [dateTime, setDt] = useState(new Date());
+    useEffect(() => {
+        let secTimer = setInterval( () => {
+          setDt(new Date())
+        },1000)
+
+        return () => clearInterval(secTimer);
+    }, []);
+    // https://stackoverflow.com/questions/41294576/react-native-show-current-time-and-update-the-seconds-in-real-time
+
+    
+    let date = dateTime.getDate(); //Current Day-Of-Month
+    let month = dateTime.getMonth() + 1; //Current Month
+    let year = dateTime.getFullYear(); //Current Year
+    let hours = dateTime.getHours(); //Current Hours
+    let min = dateTime.getMinutes(); //Current Minutes
+    let sec = dateTime.getSeconds(); //Current Seconds
+    clockVal = hours + ':' + min + ':' + sec + ':' + date + ':' + month + ':' + year;
+
+    let displayDeviceClock = convertToDisplay(DeviceClock);
+    let displayPhoneClock = convertToDisplay(clockVal);
+
+
+
     return (
         <Container>
             <Content>
@@ -21,37 +46,26 @@ const SetClockScreen = () => {
                     </CardItem>
                     <CardItem bordered>
                     <Body>
-                        <Text> Current Time: {DeviceClock} </Text>
+                        <Text style={{fontWeight: "bold"}}> Device Time (last refresh): </Text>
+                        <Text>              {displayDeviceClock} </Text>
+                        <Text style={{fontWeight: "bold"}}> Phone Time: </Text>
+                        <Text>              {displayPhoneClock} </Text>
                     </Body>
                 </CardItem>
                 </Card>
-                <Form>
-                    <Item fixedLabel>
-                        <Label>New Time</Label>
-                        <Input onChangeText={(value) => {
-                            clockVal = value;
-                            console.log(clockVal);
-                        }}/>
-                    </Item>
-                </Form>
                 <View style={styles.ButtonSection} >
                     <Button rounded 
                         onPress={ () => {
-                            var reg = new RegExp(/^\d\d{0,1}(\:\d{2}){1}$/);
-                            if (!reg.test(clockVal)){
-                                alert('Songbirds will ignore any inputs other than time in this section');
-                            }
-                            else{
-                                dispatch(writePar("DeviceClock", clockVal));
-                            }
+                            
+                            console.log(clockVal);
+                            dispatch(writePar("DeviceClock", clockVal));
                         }}
                     >
-                        <Text>Submit</Text>
+                        <Text>Submit Phone Time</Text>
                     </Button>
                 </View>
             </Content>
       </Container>
-      //onPress={dispatch(updateClock(clock))}
     );
 };
 

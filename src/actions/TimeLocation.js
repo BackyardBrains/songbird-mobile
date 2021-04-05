@@ -47,3 +47,17 @@ export const handleLocation = () => {
     return location;
   }
 }
+
+  const convertToDisplay = ( clockStr ) => {
+  if (clockStr === "...") return clockStr;
+  let returnStr = '';
+  let clockArr = clockStr.split(':');
+  returnStr += (parseInt(clockArr[0])%12).toString();
+  returnStr += ":" + clockArr[1] + ":" + clockArr[2] + " ";
+  if (parseInt(clockArr[0]) >= 12) returnStr += "PM,  ";
+  else returnStr += "AM,  ";
+  returnStr += clockArr[3] + "/" + clockArr[4] + "/" + clockArr[5];
+
+  return returnStr;
+}
+export default convertToDisplay;
