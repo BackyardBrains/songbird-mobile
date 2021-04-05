@@ -6,6 +6,7 @@ import { disconnectDevice, writePar, readPar } from '../actions/interface';
 import base64 from 'react-native-base64'
 import { Content, List, ListItem, 
     Text, Left, Right, Icon, Card, CardItem, Body, Button } from 'native-base';
+import convertToDisplay from '../actions/TimeLocation';
 
 const DeviceScreen = ( { navigation } ) => {
     
@@ -14,7 +15,7 @@ const DeviceScreen = ( { navigation } ) => {
     const parameters = useSelector(state => state.BLEs.parameters);
 
     let coords = parameters.GpsCoordinates.split(':');
-
+    let displayTime = convertToDisplay(parameters.DeviceClock);
     let recordingString, toggle, toggleView;
     console.log("recording?", parameters.IsRecording)
     switch (parameters.IsRecording){
@@ -99,7 +100,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <View style={styles.listLeft}>
                             <Text>GPS Coordinates:</Text>
                         </View>
-                        <Text>{coords[0]}, {coords[1]}</Text>
+                        <Text>{coords[0]},{'\n'}{coords[1]}</Text>
                     </Left>
                     <Right>
                         <Icon name="arrow-forward" />
@@ -113,7 +114,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <View style={styles.listLeft}>
                             <Text>Device Clock:</Text>   
                         </View>
-                        <Text>{parameters.DeviceClock}</Text>
+                        <Text>{displayTime}</Text>
                     </Left>
                     <Right>
                         <Icon name="arrow-forward" />

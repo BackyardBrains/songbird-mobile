@@ -6,7 +6,7 @@ import { connectDevice, disconnectDevice, startScan } from '../actions/interface
 import { resetBleList, updateCounter } from '../actions/index';
 import { Container, Header, Content, List, ListItem, 
       Text, Left, Right, Icon, Card, CardItem, Button, Body, Grid, Col } from 'native-base';
-import { handleLocation } from "../actions/LocationMethods";
+import { handleLocation } from "../actions/TimeLocation";
 
 const HomeScreen = ( {navigation} ) => {
   
