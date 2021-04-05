@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { writePar } from '../actions/interface';
-import { Container, Content, Form, Button, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
+import { Container, Content, Button, Text, Card, CardItem, Body } from 'native-base';
 
 const SetClockScreen = () => {
     const dispatch = useDispatch();
@@ -25,25 +25,18 @@ const SetClockScreen = () => {
                     </Body>
                 </CardItem>
                 </Card>
-                <Form>
-                    <Item fixedLabel>
-                        <Label>New Time</Label>
-                        <Input onChangeText={(value) => {
-                            clockVal = value;
-                            console.log(clockVal);
-                        }}/>
-                    </Item>
-                </Form>
                 <View style={styles.ButtonSection} >
                     <Button rounded 
                         onPress={ () => {
-                            var reg = new RegExp(/^\d\d{0,1}(\:\d{2}){1}$/);
-                            if (!reg.test(clockVal)){
-                                alert('Songbirds will ignore any inputs other than time in this section');
-                            }
-                            else{
-                                dispatch(writePar("DeviceClock", clockVal));
-                            }
+                            let date = new Date().getDate(); //Current Date
+                            let month = new Date().getMonth() + 1; //Current Month
+                            let year = new Date().getFullYear(); //Current Year
+                            let hours = new Date().getHours(); //Current Hours
+                            let min = new Date().getMinutes(); //Current Minutes
+                            let sec = new Date().getSeconds(); //Current Seconds
+                            clockVal = date + '/' + month + '/' + year + ' ' + hours + ':' + min + ':' + sec;
+                            console.log(clockVal);
+                            dispatch(writePar("DeviceClock", clockVal));
                         }}
                     >
                         <Text>Submit</Text>
@@ -51,7 +44,6 @@ const SetClockScreen = () => {
                 </View>
             </Content>
       </Container>
-      //onPress={dispatch(updateClock(clock))}
     );
 };
 
