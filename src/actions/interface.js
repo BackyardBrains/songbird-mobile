@@ -13,6 +13,18 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// map sampling rate code to kHz
+export const mapSRCodeToVal = {
+    "0x35" : "12",
+    "0x34" : "24",
+    "0x33" : "48",
+    "0x32" : "96",
+    "0x31" : "192",
+    "0x30" : "384",
+    "..." : "..."
+
+}
+
 // thunks
 
 export const startScan = () => {

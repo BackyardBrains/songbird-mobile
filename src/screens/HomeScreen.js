@@ -6,6 +6,7 @@ import { connectDevice, disconnectDevice, startScan } from '../actions/interface
 import { resetBleList, updateCounter } from '../actions/index';
 import { Container, Header, Content, List, ListItem, 
       Text, Left, Right, Icon, Card, CardItem, Button, Body, Grid, Col } from 'native-base';
+import colors from 'native-base/src/theme/variables/commonColor';
 import { handleLocation } from "../actions/TimeLocation";
 import { showMessage, hideMessage } from "react-native-flash-message";
 
@@ -52,9 +53,10 @@ const HomeScreen = ( {navigation} ) => {
         return (
           <ListItem onPress={() => {
             showMessage({
-              message: "Loading, please wait",
+              message: "Connecting, please wait",
               type: "default",
-              backgroundColor: "#007aff"
+              backgroundColor: colors.brandPrimary,
+              titleStyle: styles.AlertText,
             });
             dispatch(connectDevice({item}));
           }}>

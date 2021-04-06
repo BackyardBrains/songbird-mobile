@@ -25,8 +25,8 @@ export default StyleSheet.create({
         marginBottom: 5
       },
 
-      SubheadText: {
-        fontSize: 20
+      AlertText: {
+        fontSize: 18
       },
       
       listLeft: {

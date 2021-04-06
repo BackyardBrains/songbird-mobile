@@ -2,8 +2,8 @@ import React from 'react';
 import { View } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { writePar } from '../actions/interface';
-import { Container, Content, Button, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
+import { writePar, mapSRCodeToVal } from '../actions/interface';
+import { Container, Picker, Content, Button, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 
 
 const SetSamplingRateScreen = () => {
@@ -23,38 +23,30 @@ const SetSamplingRateScreen = () => {
                     </CardItem>
                     <CardItem bordered>
                     <Body>
-                        <Text>Current Sampling Rate: {SamplingRate} kHz</Text>
+                        <Text>Current Sampling Rate: {mapSRCodeToVal[SamplingRate]} kHz</Text>
                     </Body>
                 </CardItem>
                 </Card>
-                <Form> 
-                    <Item fixedLabel>
-                        <Label>New Sampling Rate</Label>
-                        <Input // could use a picker instead
-                            keyboardType = 'numeric'
-                            onChangeText={(value) => {
-                                newVal = value;
-                                console.log(newVal);
-
-                        }}/>
+                <Form>
+                    <Item picker>
+                        <Picker
+                            note
+                            mode="dropdown"
+                            style={{ width: '100%' }}
+                            selectedValue={SamplingRate}
+                            onValueChange={(value) => {
+      		                    dispatch(writePar('SamplingRate', value));
+                            }}
+                        >
+                            <Picker.Item label="12 kHz" value="0x35" />
+                            <Picker.Item label="24 kHz" value="0x34" />
+                            <Picker.Item label="48 kHz" value="0x33" />
+                            <Picker.Item label="96 kHz" value="0x32" />
+                            <Picker.Item label="192 kHz" value="0x31" />
+                            <Picker.Item label="384 kHz" value="0x30" />
+                        </Picker>
                     </Item>
                 </Form>
-                <View style={styles.ButtonSection} >
-                    <Button rounded 
-                        onPress={() => {
-                            var reg = new RegExp(/^[1-9]\d*(\.\d{1,2})?$/);
-                            if (!reg.test(newVal)) {
-                                alert('Songbirds will ignore any inputs other than number in this section');
-                                newVal = newVal.replace(/[^0-9.]/g, "");
-                            }
-                            else{
-                                dispatch(writePar("SamplingRate", newVal));
-                            }
-                        }}
-                    >
-                        <Text>Submit</Text>
-                    </Button>
-                </View>
             </Content>
       </Container>
       //onPress={dispatch(updateSampleRate(rate))}

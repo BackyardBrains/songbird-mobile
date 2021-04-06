@@ -65,7 +65,7 @@ export default class App extends Component {
     return (
       <Provider store={store}>
         <Navigation />
-        <FlashMessage position="center" duration={3650} />
+        <FlashMessage position="center" duration={3350} />
       </Provider>
     );
   }

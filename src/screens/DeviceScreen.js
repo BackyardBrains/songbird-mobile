@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { disconnectDevice, writePar, readPar } from '../actions/interface';
+import { disconnectDevice, writePar, readPar, mapSRCodeToVal } from '../actions/interface';
 import base64 from 'react-native-base64'
 import { Content, List, ListItem, 
     Text, Left, Right, Icon, Card, CardItem, Body, Button } from 'native-base';
@@ -89,7 +89,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <View style={styles.listLeft}>
                             <Text>Sampling Rate:</Text>   
                         </View>
-                        <Text>{parameters.SamplingRate} kHz</Text>
+                        <Text>{mapSRCodeToVal[parameters.SamplingRate]} kHz</Text>
                     </Left>
                     <Right>
                         <Icon name="arrow-forward" />
@@ -124,7 +124,10 @@ const DeviceScreen = ( { navigation } ) => {
             </List>
             <View style={styles.ButtonSection} >
                 <Button rounded 
-                    onPress={() => dispatch(disconnectDevice())}
+                    onPress={() => {
+                        dispatch(disconnectDevice());
+                        navigation.navigate('Home');
+                    }}
                 >
                     <Text>Disconnect</Text>
                 </Button>
@@ -136,10 +139,8 @@ const DeviceScreen = ( { navigation } ) => {
 };
 
 DeviceScreen.navigationOptions = () => ({
-    // title: 'ggggg',
-    headerStyle: {
-      backgroundColor: '#FF9E00',
-    },
+    headerLeft: () => null
+    
   });
 
 export default DeviceScreen;
