@@ -7,6 +7,7 @@ import { resetBleList, updateCounter } from '../actions/index';
 import { Container, Header, Content, List, ListItem, 
       Text, Left, Right, Icon, Card, CardItem, Button, Body, Grid, Col } from 'native-base';
 import { handleLocation } from "../actions/TimeLocation";
+import { showMessage, hideMessage } from "react-native-flash-message";
 
 const HomeScreen = ( {navigation} ) => {
   
@@ -15,8 +16,9 @@ const HomeScreen = ( {navigation} ) => {
   const connectionStatus = useSelector(state => state.BLEs.connectionStatus);
   const BLEList = useSelector(state => state.BLEs.BLEList);
   const location = useSelector(state => state.BLEs.location);
-  
-   
+  const readStatus = useSelector(state => state.BLEs.readStatus)
+  if (readStatus === "finish") navigation.navigate('Device'); // go to Device Screen
+
   return (
   <View style={styles.contentContainer}>
 
@@ -33,8 +35,12 @@ const HomeScreen = ( {navigation} ) => {
       renderItem={({item}) => {
         return (
           <ListItem onPress={() => {
+            showMessage({
+              message: "Loading, please wait",
+              type: "default",
+              backgroundColor: "#007aff"
+            });
             dispatch(connectDevice({item}));
-            navigation.navigate('Device'); // go to Device Screen
           }}>
               <Text>{item.name}</Text> 
           </ListItem>
@@ -45,6 +51,7 @@ const HomeScreen = ( {navigation} ) => {
     <View style={styles.ButtonSection} >
       <Button rounded 
         onPress={() => {
+          console.log(connectionStatus);
           if (connectionStatus !== "Disconnected") dispatch(disconnectDevice());
           if (Object.keys(location).length === 0) dispatch(handleLocation());
           dispatch(resetBleList());

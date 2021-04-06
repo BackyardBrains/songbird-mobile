@@ -30,7 +30,7 @@ const SetClockScreen = () => {
     let hours = dateTime.getHours(); //Current Hours
     let min = dateTime.getMinutes(); //Current Minutes
     let sec = dateTime.getSeconds(); //Current Seconds
-    clockVal = hours + ':' + min + ':' + sec + ':' + date + ':' + month + ':' + year;
+    clockVal = hours + ':' + min + ':' + sec + ':'+ month + ':' + date + ':' + year;
 
     let displayDeviceClock = convertToDisplay(DeviceClock);
     let displayPhoneClock = convertToDisplay(clockVal);

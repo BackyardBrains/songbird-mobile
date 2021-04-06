@@ -2,7 +2,7 @@ import base64 from 'react-native-base64'
 import initialParameterObject from '../components/DeviceData';
 import { changeConnectionStatus, disconnectedBLE, 
     addConnectedBLE, addBLE, changeParameterObject, 
-    updateLastResponse, updateCounter, setParameterObject } from '.';
+    updateLastResponse, updateCounter, setParameterObject, toggleReadStatus } from '.';
 
 const serviceUUID = "d858069e-e72c-4314-b38c-b05f7515a3f6";
 const requestUUID = "54fd8ba8-fd8f-4862-97c0-71948babd2d3";
@@ -78,6 +78,9 @@ export const readAllPars = () => {
         await dispatch(readPar("SamplingRate"));
         await sleep(6);
         await dispatch(readPar("GpsCoordinates"));
+        dispatch(toggleReadStatus("finish")); // tells homescreen that pars are read
+        await sleep(3);
+        dispatch(toggleReadStatus("null"));
     }
 }
 
