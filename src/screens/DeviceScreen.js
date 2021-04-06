@@ -15,7 +15,7 @@ const DeviceScreen = ( { navigation } ) => {
     const parameters = useSelector(state => state.BLEs.parameters);
 
     let coords = parameters.GpsCoordinates.split(':');
-    let displayTime = convertToDisplay(parameters.DeviceClock);
+    let displayTime = convertToDisplay(parameters.DeviceClock, "deviceScreen");
     let recordingString, toggle, toggleView;
     console.log("recording?", parameters.IsRecording)
     switch (parameters.IsRecording){
