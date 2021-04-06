@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, FlatList, TouchableOpacity } from "react-native";
 import styles from '../styles/style';
 import { useDispatch, shallowEqual, useSelector } from 'react-redux';
@@ -18,6 +18,22 @@ const HomeScreen = ( {navigation} ) => {
   const location = useSelector(state => state.BLEs.location);
   const readStatus = useSelector(state => state.BLEs.readStatus)
   if (readStatus === "finish") navigation.navigate('Device'); // go to Device Screen
+
+
+  const [isDisabled, toggle] = useState(false);
+
+  const scanPressEvent = () => {
+    console.log(connectionStatus);
+    if (connectionStatus !== "Disconnected") dispatch(disconnectDevice());
+    if (Object.keys(location).length === 0) dispatch(handleLocation());
+    dispatch(resetBleList());
+    dispatch(startScan());
+    toggle(true)
+    setTimeout( () => {
+      toggle(false)
+      },3000
+    )
+  }
 
   return (
   <View style={styles.contentContainer}>
@@ -49,14 +65,9 @@ const HomeScreen = ( {navigation} ) => {
     />
     
     <View style={styles.ButtonSection} >
-      <Button rounded 
-        onPress={() => {
-          console.log(connectionStatus);
-          if (connectionStatus !== "Disconnected") dispatch(disconnectDevice());
-          if (Object.keys(location).length === 0) dispatch(handleLocation());
-          dispatch(resetBleList());
-          dispatch(startScan());
-       }} 
+      <Button rounded
+        disabled={isDisabled} 
+        onPress={() => scanPressEvent()} 
       >
         <Text>Scan</Text>
       </Button>
