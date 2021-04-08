@@ -14,8 +14,18 @@ const DeviceScreen = ( { navigation } ) => {
     const device = useSelector(state => state.BLEs.connectedDevice);
     const parameters = useSelector(state => state.BLEs.parameters);
 
+    //config recording duration display
+    let displayRecDur = parseInt(parameters.RecordingDuration);
+
+    //config battery display
+    let displayBattery = parameters.BatteryLevel;
+    if (displayBattery !== "100") displayBattery = displayBattery.substring(1);
+    
+    //config GPS & time display
     let coords = parameters.GpsCoordinates.split(':');
     let displayTime = convertToDisplay(parameters.DeviceClock, "deviceScreen");
+    
+    //config recording display
     let recordingString, toggle, toggleView;
     console.log("recording?", parameters.IsRecording)
     switch (parameters.IsRecording){
@@ -26,12 +36,12 @@ const DeviceScreen = ( { navigation } ) => {
             break;
         case "0":
             recordingString = "Not Recording";
-            toggle = "1";
+            toggle = "START";
             toggleView = "Start Recording";
             break;
         default:
             recordingString = "Not Recording";
-            toggle = "1";
+            toggle = "STOP";
             toggleView = "Start Recording";
             break;
     }
@@ -44,7 +54,7 @@ const DeviceScreen = ( { navigation } ) => {
                 </CardItem>
                 <CardItem bordered>
                     <Body>
-                        <Text>Battery Level: {parameters.BatteryLevel}%</Text>
+                        <Text>Battery Level: {displayBattery}%</Text>
                     </Body>
                 </CardItem>
                 <CardItem bordered>
@@ -78,7 +88,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <View style={styles.listLeft}>
                             <Text>Recording Duration:</Text>   
                         </View>
-                        <Text>{parameters.RecordingDuration} hrs</Text>
+                        <Text>{displayRecDur} mins</Text>
                     </Left>
                     <Right>
                         <Icon name="arrow-forward" />  

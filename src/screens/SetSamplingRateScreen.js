@@ -38,12 +38,12 @@ const SetSamplingRateScreen = () => {
       		                    dispatch(writePar('SamplingRate', value));
                             }}
                         >
-                            <Picker.Item label="12 kHz" value="0x35" />
-                            <Picker.Item label="24 kHz" value="0x34" />
-                            <Picker.Item label="48 kHz" value="0x33" />
-                            <Picker.Item label="96 kHz" value="0x32" />
-                            <Picker.Item label="192 kHz" value="0x31" />
-                            <Picker.Item label="384 kHz" value="0x30" />
+                            <Picker.Item label="12 kHz" value="5" />
+                            <Picker.Item label="24 kHz" value="4" />
+                            <Picker.Item label="48 kHz" value="3" />
+                            <Picker.Item label="96 kHz" value="2" />
+                            <Picker.Item label="192 kHz" value="1" />
+                            <Picker.Item label="384 kHz" value="0" />
                         </Picker>
                     </Item>
                 </Form>

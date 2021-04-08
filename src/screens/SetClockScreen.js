@@ -26,7 +26,7 @@ const SetClockScreen = () => {
     
     let date = dateTime.getDate(); //Current Day-Of-Month
     let month = dateTime.getMonth() + 1; //Current Month
-    let year = dateTime.getFullYear(); //Current Year
+    let year = dateTime.getFullYear() - 2000; //Current Year
     let hours = dateTime.getHours(); //Current Hours
     let min = dateTime.getMinutes(); //Current Minutes
     let sec = dateTime.getSeconds(); //Current Seconds
