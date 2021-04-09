@@ -5,13 +5,18 @@ import { writePar } from '../actions/interface';
 import { Container, Button, Content, Form, Text, Label, Card, CardItem, Body, Item, Input } from 'native-base';
 import styles from '../styles/style';
 
+
+
 const SetDurationScreen = () => {
     const dispatch = useDispatch();
     let device = useSelector(state => state.BLEs.connectedDevice);
     
-    let RecordingDuration = useSelector(state => state.BLEs.parameters.RecordingDuration);
-    let durationVal = RecordingDuration;
+    
 
+    let RecordingDuration = useSelector(state => state.BLEs.parameters.RecordingDuration);
+    
+    let durationVal = RecordingDuration;
+    if (RecordingDuration !== "...") RecordingDuration = parseInt(RecordingDuration);
    
     return (
         <Container>
@@ -22,7 +27,7 @@ const SetDurationScreen = () => {
                     </CardItem>
                     <CardItem bordered>
                     <Body>
-                        <Text>Current Duration: {RecordingDuration} hours</Text>
+                        <Text>Current Duration: {RecordingDuration} mins</Text>
                     </Body>
                 </CardItem>
                 </Card>
@@ -46,6 +51,9 @@ const SetDurationScreen = () => {
                                 durationVal = durationVal.replace(/[^0-9.]/g, "");
                             }
                             else{
+                                // add zeros to durationval
+                                durationVal = (10000 + parseInt(durationVal)).toString(10).substring(1);
+                                console.log(durationVal);
                                 dispatch(writePar("RecordingDuration", durationVal));
                             }
                             

@@ -7,7 +7,8 @@ export default StyleSheet.create({
       },
 
       ButtonSection: {
-        paddingTop: 20,
+        paddingTop: 10,
+        paddingBottom: 10,
         width: '100%',
         height: 80,
         justifyContent: 'center',
@@ -25,8 +26,8 @@ export default StyleSheet.create({
         marginBottom: 5
       },
 
-      SubheadText: {
-        fontSize: 20
+      AlertText: {
+        fontSize: 18
       },
       
       listLeft: {

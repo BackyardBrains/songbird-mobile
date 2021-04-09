@@ -48,7 +48,7 @@ export const handleLocation = () => {
   }
 }
 
-  const convertToDisplay = ( clockStr ) => {
+  const convertToDisplay = ( clockStr, screenStr ) => {
   if (clockStr === "...") return clockStr;
   let returnStr = '';
   let clockArr = clockStr.split(':');
@@ -56,6 +56,7 @@ export const handleLocation = () => {
   returnStr += ":" + clockArr[1] + ":" + clockArr[2] + " ";
   if (parseInt(clockArr[0]) >= 12) returnStr += "PM,  ";
   else returnStr += "AM,  ";
+  if (screenStr === "deviceScreen") returnStr += '\n';
   returnStr += clockArr[3] + "/" + clockArr[4] + "/" + clockArr[5];
 
   return returnStr;

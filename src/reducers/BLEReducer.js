@@ -8,7 +8,8 @@ export const INITIAL_STATE = {
 	counter: 0,
 	parameters: initialParameterObject,
 	location: {},
-	lastResponse: ''
+	lastResponse: '',
+	readStatus: 'null'
   };
 
 const BLEreducer = (state = INITIAL_STATE, action = {}) => {
@@ -81,6 +82,11 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				...state,
 				status: 'Disconnected',
 				connectedDevice: {},
+			}
+		case 'toggleReadStatus':
+			return {
+				...state,
+				readStatus: action.payload,
 			}
 		case 'initLocation':
 			return {

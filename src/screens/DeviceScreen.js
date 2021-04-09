@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { disconnectDevice, writePar, readPar } from '../actions/interface';
+import { disconnectDevice, writePar, readPar, mapSRCodeToVal } from '../actions/interface';
 import base64 from 'react-native-base64'
 import { Content, List, ListItem, 
     Text, Left, Right, Icon, Card, CardItem, Body, Button } from 'native-base';
@@ -14,24 +14,34 @@ const DeviceScreen = ( { navigation } ) => {
     const device = useSelector(state => state.BLEs.connectedDevice);
     const parameters = useSelector(state => state.BLEs.parameters);
 
+    //config recording duration display
+    let displayRecDur = parseInt(parameters.RecordingDuration);
+
+    //config battery display
+    let displayBattery = parameters.BatteryLevel;
+    if (displayBattery !== "100") displayBattery = displayBattery.substring(1);
+    
+    //config GPS & time display
     let coords = parameters.GpsCoordinates.split(':');
-    let displayTime = convertToDisplay(parameters.DeviceClock);
+    let displayTime = convertToDisplay(parameters.DeviceClock, "deviceScreen");
+    
+    
+    //config recording display
     let recordingString, toggle, toggleView;
-    console.log("recording?", parameters.IsRecording)
     switch (parameters.IsRecording){
-        case "1":
+        case "START":
             recordingString = "Recording...";
-            toggle = "0";
+            toggle = "STOP";
             toggleView = "Stop Recording";
             break;
-        case "0":
+        case "STOP":
             recordingString = "Not Recording";
-            toggle = "1";
+            toggle = "START";
             toggleView = "Start Recording";
             break;
         default:
             recordingString = "Not Recording";
-            toggle = "1";
+            toggle = "STOP";
             toggleView = "Start Recording";
             break;
     }
@@ -44,7 +54,7 @@ const DeviceScreen = ( { navigation } ) => {
                 </CardItem>
                 <CardItem bordered>
                     <Body>
-                        <Text>Battery Level: {parameters.BatteryLevel}%</Text>
+                        <Text>Battery Level: {displayBattery}%</Text>
                     </Body>
                 </CardItem>
                 <CardItem bordered>
@@ -78,7 +88,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <View style={styles.listLeft}>
                             <Text>Recording Duration:</Text>   
                         </View>
-                        <Text>{parameters.RecordingDuration} hrs</Text>
+                        <Text>{displayRecDur} mins</Text>
                     </Left>
                     <Right>
                         <Icon name="arrow-forward" />  
@@ -89,7 +99,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <View style={styles.listLeft}>
                             <Text>Sampling Rate:</Text>   
                         </View>
-                        <Text>{parameters.SamplingRate} kHz</Text>
+                        <Text>{mapSRCodeToVal[parameters.SamplingRate]} kHz</Text>
                     </Left>
                     <Right>
                         <Icon name="arrow-forward" />
@@ -124,7 +134,10 @@ const DeviceScreen = ( { navigation } ) => {
             </List>
             <View style={styles.ButtonSection} >
                 <Button rounded 
-                    onPress={() => dispatch(disconnectDevice())}
+                    onPress={() => {
+                        dispatch(disconnectDevice());
+                        navigation.navigate('Home');
+                    }}
                 >
                     <Text>Disconnect</Text>
                 </Button>
@@ -136,10 +149,8 @@ const DeviceScreen = ( { navigation } ) => {
 };
 
 DeviceScreen.navigationOptions = () => ({
-    // title: 'ggggg',
-    headerStyle: {
-      backgroundColor: '#FF9E00',
-    },
+    headerLeft: () => null
+    
   });
 
 export default DeviceScreen;
