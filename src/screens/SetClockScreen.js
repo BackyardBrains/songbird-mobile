@@ -24,14 +24,17 @@ const SetClockScreen = () => {
     // https://stackoverflow.com/questions/41294576/react-native-show-current-time-and-update-the-seconds-in-real-time
 
     
-    let date = dateTime.getDate(); //Current Day-Of-Month
-    let month = dateTime.getMonth() + 1; //Current Month
-    let year = dateTime.getFullYear() - 2000; //Current Year
-    let hours = dateTime.getHours(); //Current Hours
-    let min = dateTime.getMinutes(); //Current Minutes
-    let sec = dateTime.getSeconds(); //Current Seconds
+    //Current Day-Of-Month
+    let date = (100 + parseInt(dateTime.getDate())).toString(10).substring(1); //Current Day-Of-Month
+    let month = (100 + parseInt(dateTime.getMonth() + 1)).toString(10).substring(1); //Current Month
+    let year = (100 + parseInt(dateTime.getFullYear() - 2000)).toString(10).substring(1); //Current Year
+    let hours = (100 + parseInt(dateTime.getHours())).toString(10).substring(1); //Current Hours
+    let min = (100 + parseInt(dateTime.getMinutes())).toString(10).substring(1); //Current Minutes
+    let sec = (100 + parseInt(dateTime.getSeconds())).toString(10).substring(1); //Current Seconds
+
     clockVal = hours + ':' + min + ':' + sec + ':'+ month + ':' + date + ':' + year;
 
+//
     let displayDeviceClock = convertToDisplay(DeviceClock);
     let displayPhoneClock = convertToDisplay(clockVal);
 

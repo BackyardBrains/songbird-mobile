@@ -25,16 +25,16 @@ const DeviceScreen = ( { navigation } ) => {
     let coords = parameters.GpsCoordinates.split(':');
     let displayTime = convertToDisplay(parameters.DeviceClock, "deviceScreen");
     
+    
     //config recording display
     let recordingString, toggle, toggleView;
-    console.log("recording?", parameters.IsRecording)
     switch (parameters.IsRecording){
-        case "1":
+        case "START":
             recordingString = "Recording...";
-            toggle = "0";
+            toggle = "STOP";
             toggleView = "Stop Recording";
             break;
-        case "0":
+        case "STOP":
             recordingString = "Not Recording";
             toggle = "START";
             toggleView = "Start Recording";

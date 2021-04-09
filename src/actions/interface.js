@@ -77,7 +77,7 @@ export const connectDevice = ( item ) => {
         const device = item.item;
         if (getState().BLEs.connectionStatus !== "Disconnected") return;
         dispatch(changeConnectionStatus("Connecting"));
-        let connectedDevice = await device.connect( { autoConnect: true, refreshGatt: true } );
+        let connectedDevice = await device.connect( { autoConnect: true, refreshGatt: true, requestMTU: 50 } );
         connectedDevice = await connectedDevice.discoverAllServicesAndCharacteristics();
         console.log("CP1");
         dispatch(changeConnectionStatus("Connected"));
@@ -89,22 +89,20 @@ export const connectDevice = ( item ) => {
 
 export const readAllPars = () => {
     return async (dispatch, getState, { DeviceManager } ) => {
-        let deviceID = getState().BLEs.connectedDevice.id;
-        await dispatch(subscribeToDevice(deviceID));
         await dispatch(readPar("BatteryLevel"));
         // await sleep(6);
         // await dispatch(readPar("StorageCapacity"));
         // await sleep(6);
         // await dispatch(readPar("IsRecording"));
-        await sleep(6);
+        await sleep(10);
         await dispatch(readPar("DeviceClock"));
-        await sleep(6);
+        await sleep(10);
         await dispatch(readPar("RecordingDuration"));
-        await sleep(6);
+        await sleep(10);
         await dispatch(readPar("SamplingRate"));
-        // await sleep(6);
+        // await sleep(10);
         // await dispatch(readPar("GpsCoordinates"));
-        await sleep(1000);
+        await sleep(10);
         dispatch(toggleReadStatus("finish")); // tells homescreen that pars are read
         await sleep(3);
         dispatch(toggleReadStatus("null"));
@@ -113,13 +111,13 @@ export const readAllPars = () => {
 
 export const readPar = ( parameterName ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
-
         if (getState().BLEs.connectionStatus === "Talking") return;
         await dispatch(sendRequest("read", parameterName));
-        await sleep(3000);
-        dispatch(changeConnectionStatus("Connected"));
+        await sleep(50);
+        await dispatch(getResponse()); // puts response in state under lastResponse
         let response = getState().BLEs.lastResponse; // example: 'GPS:x:y\r'
-        if (response === 'ERR') console.log("error reading ",  parameterName);
+        console.log("response", response)
+        if (response === errorMessage) console.log("error reading ",  parameterName);
         else { //  clean up response
             response = response.replace('\r',''); // -> 'GPS:x:y'
             response = response.slice(response.indexOf(':')+1); // -> 'x:y'
@@ -133,9 +131,10 @@ export const writePar = ( parameterName, parameterValue ) => {
         if (getState().BLEs.connectionStatus === "Talking") return;
         dispatch(changeParameterObject(parameterName, "..."));
         await dispatch(sendRequest("write", parameterName, parameterValue));
-        await sleep(3000);
-        dispatch(changeConnectionStatus("Connected"));
+        await sleep(50);
+        await dispatch(getResponse()); 
         let response = getState().BLEs.lastResponse;
+        console.log("response", response)
         if (response === errorMessage) console.log("error writing to device");
         else {
             dispatch(changeParameterObject(parameterName, parameterValue));
@@ -170,7 +169,7 @@ export const sendRequest = (readWrite, parameterName, parameterValue ) => {
                         message = "CS?";
                         break;
                     case "IsRecording": 
-                        message = "SR?"; // this is unknown currently
+                        message = "SR?";
                         break;
                     case "DeviceClock": 
                         message = "RTC?";
@@ -211,34 +210,13 @@ export const sendRequest = (readWrite, parameterName, parameterValue ) => {
     }
 }
 
-export const handleResponse = (response) => {
+export const getResponse = () => {
     return async (dispatch, getState, { DeviceManager } ) => {
-
-        
+        const deviceID = getState().BLEs.connectedDevice.id;
+        let characteristic = await DeviceManager.readCharacteristicForDevice(
+                                                deviceID, serviceUUID, responseUUID  );
+        dispatch(updateLastResponse(base64.decode(characteristic.value)));
         dispatch(changeConnectionStatus("Connected"));
-    }
-}
-
-
-export const subscribeToDevice = (deviceID) => {
-    return async (dispatch, getState, { DeviceManager } ) => {
-        DeviceManager.monitorCharacteristicForDevice(
-            deviceID,
-            serviceUUID,
-            responseUUID,
-            (error, characteristic) => {
-                console.log("in monitor");
-                if (error) {
-                    console.error("Recieving Error", error);
-                } 
-                else {
-                    console.log("value", characteristic.value);
-                    const response = base64.decode(characteristic.value);
-                    console.log("response:", response);
-                    dispatch(updateLastResponse(response));
-                }
-            }
-        )
     }
 }
 
