@@ -52,7 +52,9 @@ export const handleLocation = () => {
   if (clockStr === "...") return clockStr;
   let returnStr = '';
   let clockArr = clockStr.split(':');
-  returnStr += (parseInt(clockArr[0])%12).toString();
+  let hour = (parseInt(clockArr[0])%12).toString();
+  if (hour === "0") hour = "12";
+  returnStr += hour;
   returnStr += ":" + clockArr[1] + ":" + clockArr[2] + " ";
   if (parseInt(clockArr[0]) >= 12) returnStr += "PM,  ";
   else returnStr += "AM,  ";
