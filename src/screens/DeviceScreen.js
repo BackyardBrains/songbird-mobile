@@ -41,7 +41,7 @@ const DeviceScreen = ( { navigation } ) => {
             break;
         default:
             recordingString = "Not Recording";
-            toggle = "STOP";
+            toggle = "START";
             toggleView = "Start Recording";
             break;
     }

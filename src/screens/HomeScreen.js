@@ -21,7 +21,7 @@ const HomeScreen = ( {navigation} ) => {
   if (readStatus === "finish") navigation.navigate('Device'); // go to Device Screen
 
 
-  const [isDisabled, toggle] = useState(false);
+  const [isDisabled, toggleDisabled] = useState(false);
 
   const scanPressEvent = () => {
     console.log(connectionStatus);
@@ -29,9 +29,9 @@ const HomeScreen = ( {navigation} ) => {
     if (Object.keys(location).length === 0) dispatch(handleLocation());
     dispatch(resetBleList());
     dispatch(startScan());
-    toggle(true)
+    toggleDisabled(true)
     setTimeout( () => {
-      toggle(false)
+      toggleDisabled(false)
       },3000
     )
   }
