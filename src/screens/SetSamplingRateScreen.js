@@ -31,6 +31,7 @@ const SetSamplingRateScreen = () => {
                     <Item picker>
                         <Picker
                             note
+                            placeholder={mapSRCodeToVal[SamplingRate]}
                             mode="dropdown"
                             style={{ width: '100%' }}
                             selectedValue={SamplingRate}

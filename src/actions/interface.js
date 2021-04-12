@@ -201,7 +201,7 @@ export const sendRequest = (readWrite, parameterName, parameterValue ) => {
                 }
         }
         console.log('message', message);
-        await DeviceManager.writeCharacteristicWithoutResponseForDevice(
+        await DeviceManager.writeCharacteristicWithResponseForDevice(
                             deviceID, serviceUUID, requestUUID, base64.encode(message + '\r'));
     }
 }
