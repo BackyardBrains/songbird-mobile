@@ -16,28 +16,25 @@ const SetSamplingRateScreen = () => {
     
     let SamplingRate = useSelector(state => state.BLEs.parameters.SamplingRate);
     
-    let newVal = "";
+    let DisplaySR = mapSRCodeToVal[SamplingRate] + " kHz";
 
     return (
         <Container>
             <Content>
-                <Card>
+                <Card >
                     <CardItem header bordered>
                         <Text>Connected: {device.name}</Text>
                     </CardItem>
                     <CardItem bordered>
-                    <Body>
-                        <Text>Current Sampling Rate: {mapSRCodeToVal[SamplingRate]} kHz</Text>
-                    </Body>
-                </CardItem>
-                </Card>
-                <Form>
-                    <Item picker>
+                    <Body style={{ flexDirection: 'row'}}>
+                        <View style={{ flexDirection: 'column', height: '85%', justifyContent: 'center'}}><Text>Current Sampling Rate:</Text></View>
+                        <Form style={{alignItems: 'stretch'}}>
+                    
                         <Picker
                             note
-                            placeholder={mapSRCodeToVal[SamplingRate]}
+                            placeholder={DisplaySR}
                             mode="dropdown"
-                            style={{ width: '100%' }}
+                            style={{ width: '100%', justifyContent: 'flex-start', marginLeft: 10 }}
                             selectedValue={SamplingRate}
                             onValueChange={(value) => {
       		                    dispatch(writePar('SamplingRate', value));
@@ -50,8 +47,12 @@ const SetSamplingRateScreen = () => {
                             <Picker.Item label="192 kHz" value="1" />
                             <Picker.Item label="384 kHz" value="0" />
                         </Picker>
-                    </Item>
+                    
                 </Form>
+                    </Body>
+                </CardItem>
+                </Card>
+                
             </Content>
       </Container>
       //onPress={dispatch(updateSampleRate(rate))}

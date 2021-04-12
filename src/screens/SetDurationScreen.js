@@ -33,9 +33,9 @@ const SetDurationScreen = () => {
                 </Card>
                 <Form>
                     <Item fixedLabel>
-                        <Label>New Duration</Label>
                         <Input 
-                            keyboardType = 'numeric'
+                            placeholder='New Duration'
+                            keyboardType='numeric'
                             onChangeText={(value) => { 
                                 durationVal = value;
                                 console.log(durationVal);
