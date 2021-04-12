@@ -17,11 +17,23 @@ const HomeScreen = ( {navigation} ) => {
   const connectionStatus = useSelector(state => state.BLEs.connectionStatus);
   const BLEList = useSelector(state => state.BLEs.BLEList);
   const location = useSelector(state => state.BLEs.location);
-  const readStatus = useSelector(state => state.BLEs.readStatus)
-  if (readStatus === "finish") navigation.navigate('Device'); // go to Device Screen
-
 
   const [isDisabled, toggleDisabled] = useState(false);
+
+  const connectPressEvent = (item) => {
+    showMessage({
+      message: "Connecting, please wait",
+      type: "default",
+      backgroundColor: colors.brandPrimary,
+      titleStyle: styles.AlertText,
+    });
+    dispatch(connectDevice({item}))
+    setTimeout( () =>
+      { navigation.navigate('Device'); },
+      3370);
+    
+    
+  }
 
   const scanPressEvent = () => {
     console.log(connectionStatus);
@@ -30,9 +42,9 @@ const HomeScreen = ( {navigation} ) => {
     dispatch(resetBleList());
     dispatch(startScan());
     toggleDisabled(true)
-    setTimeout( () => {
-      toggleDisabled(false)
-      },3000
+    setTimeout( () => 
+      { toggleDisabled(false) },
+      3000
     )
   }
 
@@ -51,15 +63,7 @@ const HomeScreen = ( {navigation} ) => {
       data={BLEList}
       renderItem={({item}) => {
         return (
-          <ListItem onPress={() => {
-            showMessage({
-              message: "Connecting, please wait",
-              type: "default",
-              backgroundColor: colors.brandPrimary,
-              titleStyle: styles.AlertText,
-            });
-            dispatch(connectDevice({item}));
-          }}>
+          <ListItem onPress={() => connectPressEvent(item)}>
               <Text>{item.name}</Text> 
           </ListItem>
         );

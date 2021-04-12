@@ -102,10 +102,6 @@ export const readAllPars = () => {
         await dispatch(readPar("SamplingRate"));
         // await sleep(10);
         // await dispatch(readPar("GpsCoordinates"));
-        await sleep(10);
-        dispatch(toggleReadStatus("finish")); // tells homescreen that pars are read
-        await sleep(3);
-        dispatch(toggleReadStatus("null"));
     }
 }
 
