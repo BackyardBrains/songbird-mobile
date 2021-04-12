@@ -37,8 +37,8 @@ const SetSamplingRateScreen = () => {
                                         marginLeft: 10 }}>
                             <Picker
                                 style={{ width: '100%', 
-                                justifyContent: 'flex-start', 
-                                marginLeft: 10 }}
+                                        justifyContent: 'flex-start', 
+                                        marginLeft: 10 }}
                                 note
                                 placeholder={DisplaySR}
                                 mode="dropdown"
