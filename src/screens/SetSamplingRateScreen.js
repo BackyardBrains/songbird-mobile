@@ -27,14 +27,18 @@ const SetSamplingRateScreen = () => {
                     </CardItem>
                     <CardItem bordered>
                     <Body style={{ flexDirection: 'row'}}>
-                        <View style={{ flexDirection: 'column', height: '85%', justifyContent: 'center'}}><Text>Current Sampling Rate:</Text></View>
-                        <Form style={{alignItems: 'stretch'}}>
+                        <View style={{ flexDirection: 'column', 
+                                    height: '85%', 
+                                    justifyContent: 'center'}}>
+                            <Text>Current Sampling Rate:</Text>
+                        </View>
+                        <Form >
                     
                         <Picker
                             note
                             placeholder={DisplaySR}
                             mode="dropdown"
-                            style={{ width: '100%', justifyContent: 'flex-start', marginLeft: 10 }}
+                            style={{ width: '100%', justifyContent: 'center', marginLeft: 10 }}
                             selectedValue={SamplingRate}
                             onValueChange={(value) => {
       		                    dispatch(writePar('SamplingRate', value));
