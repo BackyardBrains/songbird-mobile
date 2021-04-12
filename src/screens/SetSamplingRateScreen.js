@@ -1,5 +1,5 @@
-import React from 'react';
-import { View } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, LogBox } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { writePar, mapSRCodeToVal } from '../actions/interface';
@@ -9,6 +9,10 @@ import { Container, Picker, Content, Button, Form, Text, Label, Card, CardItem, 
 const SetSamplingRateScreen = () => {
     const dispatch = useDispatch();
     let device = useSelector(state => state.BLEs.connectedDevice);
+    
+    useEffect(() => {
+        LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+    }, [])
     
     let SamplingRate = useSelector(state => state.BLEs.parameters.SamplingRate);
     
