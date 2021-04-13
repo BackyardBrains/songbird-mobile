@@ -7,7 +7,7 @@ export default StyleSheet.create({
       },
 
       ButtonSection: {
-        paddingTop: 10,
+        paddingTop: 20,
         paddingBottom: 10,
         width: '100%',
         height: 80,
@@ -15,6 +15,16 @@ export default StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row'
     },
+
+    DisconnectButtonSection: {
+      paddingTop: 30,
+      paddingBottom: 10,
+      width: '100%',
+      height: 80,
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row'
+  },
     
       header: { 
         fontSize: 30
@@ -46,7 +56,7 @@ export default StyleSheet.create({
       cardBStyle: {
         marginLeft: 10, // regular "margin: x" doesnt work with native base
         marginRight: 10,
-        
+        marginTop: 10,
         marginBottom: 10
       }
 

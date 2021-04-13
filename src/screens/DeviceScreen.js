@@ -78,7 +78,7 @@ const DeviceScreen = ( { navigation } ) => {
                 </Button>
             </View>
 
-            <List>
+            <List >
                 <ListItem itemHeader first>
                     <Text>Settings</Text>
                 </ListItem>
@@ -132,7 +132,7 @@ const DeviceScreen = ( { navigation } ) => {
                 </ListItem>
 
             </List>
-            <View style={styles.ButtonSection} >
+            <View style={styles.DisconnectButtonSection} >
                 <Button rounded 
                     onPress={() => {
                         dispatch(disconnectDevice());

@@ -16,45 +16,50 @@ const SetSamplingRateScreen = () => {
     
     let SamplingRate = useSelector(state => state.BLEs.parameters.SamplingRate);
     
-    let newVal = "";
+    let DisplaySR = mapSRCodeToVal[SamplingRate] + " kHz";
 
     return (
         <Container>
             <Content>
-                <Card>
+                <Card >
                     <CardItem header bordered>
                         <Text>Connected: {device.name}</Text>
                     </CardItem>
                     <CardItem bordered>
-                    <Body>
-                        <Text>Current Sampling Rate: {mapSRCodeToVal[SamplingRate]} kHz</Text>
+                    <Body style={{ flexDirection: 'row', alignItems: 'center'}}>
+                        <View style={{ flexDirection: 'column', 
+                                        height: '50%', 
+                                        justifyContent: 'center'}}>
+                            <Text>Current Sampling Rate:</Text>
+                        </View>
+                        <Form style={{ width: '100%', 
+                                        justifyContent: 'flex-start', 
+                                        marginLeft: 10 }}>
+                            <Picker
+                                style={{ width: '100%', 
+                                        justifyContent: 'flex-start', 
+                                        marginLeft: 10 }}
+                                note
+                                placeholder={DisplaySR}
+                                mode="dropdown"
+                                selectedValue={SamplingRate}
+                                onValueChange={(value) => {
+      		                        dispatch(writePar('SamplingRate', value));
+                                }}
+                            >
+                                <Picker.Item label="12 kHz" value="5" />
+                                <Picker.Item label="24 kHz" value="4" />
+                                <Picker.Item label="48 kHz" value="3" />
+                                <Picker.Item label="96 kHz" value="2" />
+                                <Picker.Item label="192 kHz" value="1" />
+                                <Picker.Item label="384 kHz" value="0" />
+                            </Picker>
+                         </Form>
                     </Body>
                 </CardItem>
-                </Card>
-                <Form>
-                    <Item picker>
-                        <Picker
-                            note
-                            placeholder={mapSRCodeToVal[SamplingRate]}
-                            mode="dropdown"
-                            style={{ width: '100%' }}
-                            selectedValue={SamplingRate}
-                            onValueChange={(value) => {
-      		                    dispatch(writePar('SamplingRate', value));
-                            }}
-                        >
-                            <Picker.Item label="12 kHz" value="5" />
-                            <Picker.Item label="24 kHz" value="4" />
-                            <Picker.Item label="48 kHz" value="3" />
-                            <Picker.Item label="96 kHz" value="2" />
-                            <Picker.Item label="192 kHz" value="1" />
-                            <Picker.Item label="384 kHz" value="0" />
-                        </Picker>
-                    </Item>
-                </Form>
+                </Card>   
             </Content>
       </Container>
-      //onPress={dispatch(updateSampleRate(rate))}
     );
 };
 
