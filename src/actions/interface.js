@@ -36,6 +36,27 @@ export const mapSRCodeToVal = {
     "..." : "..."
 }
 
+export const TranslateStorageCapacity = (inParam) => {
+    if (inParam === "NO CARDS") return 'No SD Cards'
+    let temp1 = inParam.replace('kB','');
+    temp1 = inParam.replace('NO','0');
+    let temp2 = temp1.split(':');
+
+    return ((parseInt(temp2[0],10) + parseInt(temp2[1],10)) / (1000 * 1000)).toPrecision(6) + " GB";
+}
+
+export const TranslateGpsIn = (inParam) => {
+    if (inParam === "NO CARDS") return 'No SD Cards'
+    let temp1 = inParam.replace('kB','');
+    temp1 = inParam.replace('NO','0');
+    let temp2 = temp1.split(':');
+
+    return ((parseInt(temp2[0],10) + parseInt(temp2[1],10)) / (1000 * 1000)).toPrecision(6) + " GB";
+}
+
+
+
+
 // thunks
 
 export const startScan = () => {
@@ -90,18 +111,19 @@ export const connectDevice = ( item ) => {
 export const readAllPars = () => {
     return async (dispatch, getState, { DeviceManager } ) => {
         await dispatch(readPar("BatteryLevel"));
-        // await sleep(6);
-        // await dispatch(readPar("StorageCapacity"));
-        // await sleep(6);
-        // await dispatch(readPar("IsRecording"));
+        await sleep(6);
+        await dispatch(readPar("StorageCapacity"));
+        await sleep(6);
+        await dispatch(readPar("IsRecording"));
         await sleep(10);
         await dispatch(readPar("DeviceClock"));
         await sleep(10);
         await dispatch(readPar("RecordingDuration"));
         await sleep(10);
         await dispatch(readPar("SamplingRate"));
-        // await sleep(10);
-        // await dispatch(readPar("GpsCoordinates"));
+        await sleep(10);
+        await dispatch(readPar("GpsCoordinates"));
+        console.log(getState().BLEs.parameters);
     }
 }
 
@@ -133,6 +155,8 @@ export const writePar = ( parameterName, parameterValue ) => {
         console.log("response", response)
         if (response === errorMessage) console.log("error writing to device");
         else {
+            if (response === "START") response = '1';
+            if (response === "STOP") response = '0';
             dispatch(changeParameterObject(parameterName, parameterValue));
         }
     }
@@ -211,6 +235,7 @@ export const getResponse = () => {
         const deviceID = getState().BLEs.connectedDevice.id;
         let characteristic = await DeviceManager.readCharacteristicForDevice(
                                                 deviceID, serviceUUID, responseUUID  );
+        console.log(base64.decode(characteristic.value));
         dispatch(updateLastResponse(base64.decode(characteristic.value)));
         dispatch(changeConnectionStatus("Connected"));
     }

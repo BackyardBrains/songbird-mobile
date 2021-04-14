@@ -4,7 +4,7 @@ import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { writePar } from '../actions/interface';
 import { Container, Content, Button, Text, Card, CardItem, Body } from 'native-base';
-
+import { convertDMS } from '../actions/TimeLocation'
 
 
 const SetGpsScreen = () => {
@@ -15,7 +15,8 @@ const SetGpsScreen = () => {
     let location = useSelector(state => state.BLEs.location);
     
     let coords = GpsCoordinates.split(':');
-    let GpsNew = location.latitude + ":" + location.longitude
+    let GpsNew = convertDMS(location.latitude, location.longitude);
+    console.log("GpsNew:", GpsNew);
 
     return (
         <Container>

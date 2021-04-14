@@ -2,11 +2,11 @@ import React from 'react';
 import { View } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { disconnectDevice, writePar, readPar, mapSRCodeToVal } from '../actions/interface';
+import { disconnectDevice, TranslateStorageCapacity, writePar, readPar, mapSRCodeToVal } from '../actions/interface';
 import base64 from 'react-native-base64'
 import { Content, List, ListItem, 
     Text, Left, Right, Icon, Card, CardItem, Body, Button } from 'native-base';
-import convertToDisplay from '../actions/TimeLocation';
+import { convertToDisplay } from '../actions/TimeLocation';
 
 const DeviceScreen = ( { navigation } ) => {
     
@@ -21,6 +21,9 @@ const DeviceScreen = ( { navigation } ) => {
     let displayBattery = parameters.BatteryLevel;
     if (displayBattery !== "100") displayBattery = displayBattery.substring(1);
     
+    //config storage display
+    let displayStorage = TranslateStorageCapacity(parameters.StorageCapacity)
+    
     //config GPS & time display
     let coords = parameters.GpsCoordinates.split(':');
     let displayTime = convertToDisplay(parameters.DeviceClock, "deviceScreen");
@@ -29,12 +32,12 @@ const DeviceScreen = ( { navigation } ) => {
     //config recording display
     let recordingString, toggle, toggleView;
     switch (parameters.IsRecording){
-        case "START":
+        case "1":
             recordingString = "Recording...";
             toggle = "STOP";
             toggleView = "Stop Recording";
             break;
-        case "STOP":
+        case "0":
             recordingString = "Not Recording";
             toggle = "START";
             toggleView = "Start Recording";
@@ -59,7 +62,7 @@ const DeviceScreen = ( { navigation } ) => {
                 </CardItem>
                 <CardItem bordered>
                     <Body>
-                        <Text>Storage Capacity: {parameters.StorageCapacity}%</Text>
+                        <Text>Storage Capacity: {displayStorage}</Text>
                     </Body>
                 </CardItem>
                 <CardItem bordered>
