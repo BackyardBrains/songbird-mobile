@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, FlatList, TouchableOpacity } from "react-native";
 import styles from '../styles/style';
 import { useDispatch, shallowEqual, useSelector } from 'react-redux';
@@ -27,6 +27,8 @@ const HomeScreen = ( {navigation} ) => {
     console.log(connectionStatus);
     if (connectionStatus !== "Disconnected") dispatch(disconnectDevice());
     if (Object.keys(location).length === 0) dispatch(handleLocation());
+    //if (location === null) dispatch(initLocation({}));
+    //dispatch(handleLocation());
     dispatch(resetBleList());
     dispatch(startScan());
     toggle(true)

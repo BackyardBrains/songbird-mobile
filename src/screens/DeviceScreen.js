@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { disconnectDevice, writePar, readPar, mapSRCodeToVal } from '../actions/interface';
+import { disconnectDevice, writePar, readPar, mapSRCodeToVal, readAllPars } from '../actions/interface';
 import base64 from 'react-native-base64'
 import { Content, List, ListItem, 
     Text, Left, Right, Icon, Card, CardItem, Body, Button } from 'native-base';
@@ -11,6 +11,17 @@ import convertToDisplay from '../actions/TimeLocation';
 const DeviceScreen = ( { navigation } ) => {
     
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        let secTimer = setInterval( () => {
+          dispatch(readAllPars);
+          console.log("testing");
+          console.log(displayTime);
+        },20000)
+
+        return () => clearInterval(secTimer);
+    }, []);
+
     const device = useSelector(state => state.BLEs.connectedDevice);
     const parameters = useSelector(state => state.BLEs.parameters);
 
