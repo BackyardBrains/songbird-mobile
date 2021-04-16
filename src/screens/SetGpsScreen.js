@@ -14,9 +14,9 @@ const SetGpsScreen = () => {
     let GpsCoordinates = useSelector(state => state.BLEs.parameters.GpsCoordinates);
     let location = useSelector(state => state.BLEs.location);
     
-    let coords = GpsCoordinates.split(':');
+    let DisplayGpsDevice = displayGpsDMS(GpsCoordinates);
     let GpsNew = convertDMS(location.latitude, location.longitude);
-    let DisplayGps = displayGpsDMS(GpsNew);
+    let DisplayGpsNew = displayGpsDMS(GpsNew);
 
     return (
         <Container>
@@ -28,15 +28,15 @@ const SetGpsScreen = () => {
                     <CardItem bordered>
                         <Body>
                             <Text style={{fontWeight: "bold"}}>GPS Coordinates on Songbird device:</Text>
-                            <Text>              Lat: {coords[0]} </Text>
-                            <Text>              Long: {coords[1]} </Text>
+                            <Text>              Lat: {DisplayGpsDevice[0]} </Text>
+                            <Text>              Long: {DisplayGpsDevice[1]} </Text>
                         </Body>
                     </CardItem>
                     <CardItem bordered>
                     <Body>
                         <Text style={{fontWeight: "bold"}}>GPS Coordinates on phone:</Text>
-                        <Text>              Lat: {DisplayGps[0]} </Text>
-                        <Text>              Long: {DisplayGps[1]} </Text>
+                        <Text>              Lat: {DisplayGpsNew[0]} </Text>
+                        <Text>              Long: {DisplayGpsNew[1]} </Text>
                     </Body>
                 </CardItem>
                 </Card>

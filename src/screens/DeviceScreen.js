@@ -33,17 +33,17 @@ const DeviceScreen = ( { navigation } ) => {
     let recordingString, toggle, toggleView;
     switch (parameters.IsRecording){
         case "1":
-            recordingString = "Recording...";
+            recordingString = "ON";
             toggle = "STOP";
             toggleView = "Stop Recording";
             break;
         case "0":
-            recordingString = "Not Recording";
+            recordingString = "OFF";
             toggle = "START";
             toggleView = "Start Recording";
             break;
         default:
-            recordingString = "Not Recording";
+            recordingString = "...";
             toggle = "START";
             toggleView = "Start Recording";
             break;
@@ -56,18 +56,27 @@ const DeviceScreen = ( { navigation } ) => {
                     <Text>Connected: {device.name}</Text>
                 </CardItem>
                 <CardItem bordered>
-                    <Body>
-                        <Text>Battery Level: {displayBattery}%</Text>
+                    <Body style={{ flexDirection: 'row'}}>
+                        <View style={styles.listLeft}>
+                            <Text>Battery Level:</Text>
+                        </View>
+                        <View><Text>{displayBattery}%</Text></View>
                     </Body>
                 </CardItem>
                 <CardItem bordered>
-                    <Body>
-                        <Text>Storage Capacity: {displayStorage}</Text>
+                    <Body style={{ flexDirection: 'row'}}>
+                        <View style={styles.listLeft}>
+                            <Text>Storage Capacity:</Text>
+                        </View>
+                        <View><Text>{displayStorage}</Text></View>
                     </Body>
                 </CardItem>
                 <CardItem bordered>
-                    <Body>
-                        <Text>{recordingString}</Text>
+                    <Body style={{ flexDirection: 'row'}}>
+                        <View style={styles.listLeft}>
+                            <Text>Recording:</Text>
+                        </View>
+                        <View><Text>{recordingString}</Text></View>
                     </Body>
                 </CardItem>
             </Card>
