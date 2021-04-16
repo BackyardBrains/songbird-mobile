@@ -7,10 +7,10 @@ import { changeConnectionStatus, disconnectedBLE,
 const serviceUUID = "ab0828b1-198e-4351-b779-901fa0e0371e";
 const requestUUID = "54fd8ba8-fd8f-4862-97c0-71948babd2d3";
 const responseUUID = "ada3eca6-fd1b-4995-8928-3f8e4688769c"; //char0
-const errorMessage = "TIMEOUT:ERR"
+const errorMessage = "TIMEOUT:ERR\r"
 
 // sleep function -- use with async, await
-function sleep(ms) {
+export function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -44,18 +44,6 @@ export const TranslateStorageCapacity = (inParam) => {
 
     return ((parseInt(temp2[0],10) + parseInt(temp2[1],10)) / (1000 * 1000)).toPrecision(6) + " GB";
 }
-
-export const TranslateGpsIn = (inParam) => {
-    if (inParam === "NO CARDS") return 'No SD Cards'
-    let temp1 = inParam.replace('kB','');
-    temp1 = inParam.replace('NO','0');
-    let temp2 = temp1.split(':');
-
-    return ((parseInt(temp2[0],10) + parseInt(temp2[1],10)) / (1000 * 1000)).toPrecision(6) + " GB";
-}
-
-
-
 
 // thunks
 
@@ -135,7 +123,7 @@ export const readPar = ( parameterName ) => {
         await dispatch(getResponse()); // puts response in state under lastResponse
         let response = getState().BLEs.lastResponse; // example: 'GPS:x:y\r'
         console.log("response", response)
-        if (response === errorMessage) console.log("error reading ",  parameterName);
+        if (response.includes(errorMessage)) console.log("error reading ",  parameterName);
         else { //  clean up response
             response = response.replace('\r',''); // -> 'GPS:x:y'
             response = response.slice(response.indexOf(':')+1); // -> 'x:y'
@@ -152,11 +140,12 @@ export const writePar = ( parameterName, parameterValue ) => {
         await sleep(50);
         await dispatch(getResponse()); 
         let response = getState().BLEs.lastResponse;
-        console.log("response", response)
-        if (response === errorMessage) console.log("error writing to device");
+        console.log("response", response);
+        if (response.includes(errorMessage)) console.log("error writing to device");
         else {
-            if (response === "START") response = '1';
-            if (response === "STOP") response = '0';
+            console.log("response", response);
+            if (response.includes("START")) parameterValue = '1';
+            if (response.includes("STOP")) parameterValue = '0';
             dispatch(changeParameterObject(parameterName, parameterValue));
         }
     }

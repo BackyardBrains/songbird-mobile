@@ -2,11 +2,11 @@ import React from 'react';
 import { View } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { disconnectDevice, TranslateStorageCapacity, writePar, readPar, mapSRCodeToVal } from '../actions/interface';
+import { disconnectDevice, sleep, TranslateStorageCapacity, writePar, readPar, mapSRCodeToVal } from '../actions/interface';
 import base64 from 'react-native-base64'
 import { Content, List, ListItem, 
     Text, Left, Right, Icon, Card, CardItem, Body, Button } from 'native-base';
-import { convertToDisplay } from '../actions/TimeLocation';
+import { convertToDisplay, displayGpsDMS } from '../actions/TimeLocation';
 
 const DeviceScreen = ( { navigation } ) => {
     
@@ -25,10 +25,10 @@ const DeviceScreen = ( { navigation } ) => {
     let displayStorage = TranslateStorageCapacity(parameters.StorageCapacity)
     
     //config GPS & time display
-    let coords = parameters.GpsCoordinates.split(':');
+    let displayGps = displayGpsDMS(parameters.GpsCoordinates);
     let displayTime = convertToDisplay(parameters.DeviceClock, "deviceScreen");
     
-    
+    console.log("recording?:", parameters.IsRecording);
     //config recording display
     let recordingString, toggle, toggleView;
     switch (parameters.IsRecording){
@@ -75,7 +75,9 @@ const DeviceScreen = ( { navigation } ) => {
             <View style={styles.ButtonSection} // recording button
             >
                 <Button rounded 
-                    onPress={() => dispatch(writePar("IsRecording", toggle))}
+                    onPress={() => {
+                        dispatch(writePar("IsRecording", toggle));
+                    }}
                 >
                     <Text>{toggleView}</Text>
                 </Button>
@@ -113,7 +115,7 @@ const DeviceScreen = ( { navigation } ) => {
                         <View style={styles.listLeft}>
                             <Text>GPS Coordinates:</Text>
                         </View>
-                        <Text>{coords[0]},{'\n'}{coords[1]}</Text>
+                        <Text>{displayGps[0]},{'\n'}{displayGps[1]}</Text>
                     </Left>
                     <Right>
                         <Icon name="arrow-forward" />

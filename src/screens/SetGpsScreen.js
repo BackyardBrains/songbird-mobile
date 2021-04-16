@@ -4,7 +4,7 @@ import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { writePar } from '../actions/interface';
 import { Container, Content, Button, Text, Card, CardItem, Body } from 'native-base';
-import { convertDMS } from '../actions/TimeLocation'
+import { convertDMS, displayGpsDMS } from '../actions/TimeLocation'
 
 
 const SetGpsScreen = () => {
@@ -16,7 +16,7 @@ const SetGpsScreen = () => {
     
     let coords = GpsCoordinates.split(':');
     let GpsNew = convertDMS(location.latitude, location.longitude);
-    console.log("GpsNew:", GpsNew);
+    let DisplayGps = displayGpsDMS(GpsNew);
 
     return (
         <Container>
@@ -35,8 +35,8 @@ const SetGpsScreen = () => {
                     <CardItem bordered>
                     <Body>
                         <Text style={{fontWeight: "bold"}}>GPS Coordinates on phone:</Text>
-                        <Text>              Lat: {location.latitude}</Text>
-                        <Text>              Long: {location.longitude} </Text>
+                        <Text>              Lat: {DisplayGps[0]} </Text>
+                        <Text>              Long: {DisplayGps[1]} </Text>
                     </Body>
                 </CardItem>
                 </Card>

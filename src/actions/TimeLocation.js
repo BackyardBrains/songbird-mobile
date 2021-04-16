@@ -71,6 +71,18 @@ export const convertDMS = (lat, lng) => {
   return latitude + ":" + latitudeCardinal + ":" + longitude + ":" + longitudeCardinal;
 }
 
+export const displayGpsDMS = (inParam) => {
+  let temp = inParam.split(':');
+  let lat = temp[0];
+  let latCard = temp[1];
+  let long = temp[2];
+  let longCard = temp[3];
+  let arr = [];
+  arr[0] = lat + " " + latCard;
+  arr[1] = long + " " + longCard;
+  return arr;
+}
+
   export const convertToDisplay = ( clockStr, screenStr ) => {
   if (clockStr === "...") return clockStr;
   let returnStr = '';

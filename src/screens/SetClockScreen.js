@@ -4,7 +4,7 @@ import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { writePar } from '../actions/interface';
 import { Container, Content, Button, Text, Card, CardItem, Body } from 'native-base';
-import convertToDisplay from '../actions/TimeLocation';
+import { convertToDisplay } from '../actions/TimeLocation';
 
 
 const SetClockScreen = () => {
@@ -25,12 +25,12 @@ const SetClockScreen = () => {
 
     
     //Current Day-Of-Month
-    let date = (100 + parseInt(dateTime.getDate())).toString(10).substring(1); //Current Day-Of-Month
-    let month = (100 + parseInt(dateTime.getMonth() + 1)).toString(10).substring(1); //Current Month
-    let year = (100 + parseInt(dateTime.getFullYear() - 2000)).toString(10).substring(1); //Current Year
-    let hours = (100 + parseInt(dateTime.getHours())).toString(10).substring(1); //Current Hours
-    let min = (100 + parseInt(dateTime.getMinutes())).toString(10).substring(1); //Current Minutes
-    let sec = (100 + parseInt(dateTime.getSeconds())).toString(10).substring(1); //Current Seconds
+    let date = dateTime.getDate().toString(10).padStart(2); //Current Day-Of-Month
+    let month = (dateTime.getMonth() + 1).toString(10).padStart(2); //Current Month
+    let year = (dateTime.getFullYear() - 2000).toString(10).padStart(2); //Current Year
+    let hours = dateTime.getHours().toString(10).padStart(2); //Current Hours
+    let min = dateTime.getMinutes().toString(10).padStart(2); //Current Minutes
+    let sec = dateTime.getSeconds().toString(10).padStart(2); //Current Seconds
 
     clockVal = hours + ':' + min + ':' + sec + ':'+ month + ':' + date + ':' + year;
 

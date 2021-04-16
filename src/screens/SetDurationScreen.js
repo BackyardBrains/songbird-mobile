@@ -52,7 +52,7 @@ const SetDurationScreen = () => {
                             }
                             else{
                                 // add zeros to durationval
-                                durationVal = (10000 + parseInt(durationVal)).toString(10).substring(1);
+                                durationVal = durationVal.toString(10).padStart(4);
                                 console.log(durationVal);
                                 dispatch(writePar("RecordingDuration", durationVal));
                             }
