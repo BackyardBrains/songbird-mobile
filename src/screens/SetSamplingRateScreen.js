@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useEffect } from 'react';
 import { View, LogBox } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,14 +10,13 @@ const SetSamplingRateScreen = () => {
     const dispatch = useDispatch();
     let device = useSelector(state => state.BLEs.connectedDevice);
     
-   
+    useEffect(() => {
+        LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+    }, [])
     
     let SamplingRate = useSelector(state => state.BLEs.parameters.SamplingRate);
-   
-    let DisplaySR = mapSRCodeToVal[SamplingRate] + " kHz";
     
-    let DisplayValue = mapSRCodeToVal[DisplaySR];
-    console.log(DisplaySR, SamplingRate, DisplayValue);
+    let DisplaySR = mapSRCodeToVal[SamplingRate] + " kHz";
 
     return (
         <Container>
@@ -40,11 +39,12 @@ const SetSamplingRateScreen = () => {
                                 style={{ width: '100%', 
                                         justifyContent: 'flex-start', 
                                         marginLeft: 10 }}
-                                selectedValue={DisplayValue}
+                                note
                                 placeholder={DisplaySR}
+                                mode="dropdown"
+                                selectedValue={SamplingRate}
                                 onValueChange={(value) => {
       		                        dispatch(writePar('SamplingRate', value));
-                                    DisplayValue = value;
                                 }}
                             >
                                 <Picker.Item label="12 kHz" value="5" />
@@ -53,7 +53,6 @@ const SetSamplingRateScreen = () => {
                                 <Picker.Item label="96 kHz" value="2" />
                                 <Picker.Item label="192 kHz" value="1" />
                                 <Picker.Item label="384 kHz" value="0" />
-                                
                             </Picker>
                          </Form>
                     </Body>
