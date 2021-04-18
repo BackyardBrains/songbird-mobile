@@ -23,17 +23,24 @@ function getKeyByValue(object, value) {
 export const mapSRCodeToVal = {
     "12000" : "12",
     "5" : "12",
+    "12 kHz" : "5",
     "24000" : "24",
+    "24 kHz" : "4",
     "4" : "24",
     "48000" : "48",
+    "48 kHz" : "3",
     "3" : "48",
     "96000" : "96",
+    "96 kHz" : "2",
     "2" : "96",
     "192000" : "192",
+    "192 kHz" : "1",
     "1" : "192",
     "384000" : "384",
+    "384 kHz" : "0",
     "0" : "384",
-    "..." : "..."
+    "..." : "...",
+    "... kHz" : "..."
 }
 
 export const TranslateStorageCapacity = (inParam) => {
