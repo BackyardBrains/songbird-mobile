@@ -150,10 +150,7 @@ export const writePar = ( parameterName, parameterValue ) => {
         console.log("response", response);
         if (response.includes(errorMessage)) console.log("error writing to device");
         else {
-            console.log("response", response);
-            if (response.includes("START")) parameterValue = '1';
-            if (response.includes("STOP")) parameterValue = '0';
-            dispatch(changeParameterObject(parameterName, parameterValue));
+            dispatch(readPar(parameterName));
         }
     }
 }
