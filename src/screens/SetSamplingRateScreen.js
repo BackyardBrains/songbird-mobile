@@ -44,7 +44,6 @@ const SetSamplingRateScreen = () => {
                                 placeholder={DisplaySR}
                                 onValueChange={(value) => {
       		                        dispatch(writePar('SamplingRate', value));
-                                    DisplayValue = value;
                                 }}
                             >
                                 <Picker.Item label="12 kHz" value="5" />
