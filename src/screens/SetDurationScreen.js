@@ -52,7 +52,7 @@ const SetDurationScreen = () => {
                             }
                             else{
                                 // add zeros to durationval
-                                durationVal = durationVal.toString(10).padStart(4, '0');
+                                durationVal = durationVal.toString(10).padStart(4);
                                 console.log(durationVal);
                                 dispatch(writePar("RecordingDuration", durationVal));
                             }

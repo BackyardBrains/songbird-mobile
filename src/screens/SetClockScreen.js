@@ -25,12 +25,12 @@ const SetClockScreen = () => {
 
     
     //Current Day-Of-Month
-    let date = dateTime.getDate().toString(10).padStart(2,'0'); //Current Day-Of-Month
-    let month = (dateTime.getMonth() + 1).toString(10).padStart(2,'0'); //Current Month
-    let year = (dateTime.getFullYear() - 2000).toString(10).padStart(2,'0'); //Current Year
-    let hours = dateTime.getHours().toString(10).padStart(2,'0'); //Current Hours
-    let min = dateTime.getMinutes().toString(10).padStart(2,'0'); //Current Minutes
-    let sec = dateTime.getSeconds().toString(10).padStart(2,'0'); //Current Seconds
+    let date = dateTime.getDate().toString(10).padStart(2); //Current Day-Of-Month
+    let month = (dateTime.getMonth() + 1).toString(10).padStart(2); //Current Month
+    let year = (dateTime.getFullYear() - 2000).toString(10).padStart(2); //Current Year
+    let hours = dateTime.getHours().toString(10).padStart(2); //Current Hours
+    let min = dateTime.getMinutes().toString(10).padStart(2); //Current Minutes
+    let sec = dateTime.getSeconds().toString(10).padStart(2); //Current Seconds
 
     clockVal = hours + ':' + min + ':' + sec + ':'+ month + ':' + date + ':' + year;
 
