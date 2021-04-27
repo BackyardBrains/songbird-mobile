@@ -7,7 +7,7 @@ import { resetBleList, updateCounter } from '../actions/index';
 import { Container, Header, Content, List, ListItem, 
       Text, Left, Right, Icon, Card, CardItem, Button, Body, Grid, Col } from 'native-base';
 import colors from 'native-base/src/theme/variables/commonColor';
-import { handleLocation } from "../actions/TimeLocation";
+import {  } from "../actions/TimeLocation";
 import { showMessage, hideMessage } from "react-native-flash-message";
 
 const HomeScreen = ( {navigation} ) => {
@@ -19,6 +19,17 @@ const HomeScreen = ( {navigation} ) => {
   const location = useSelector(state => state.BLEs.location);
 
   const [isDisabled, toggleDisabled] = useState(false);
+  const scanPressEvent = () => {
+    console.log(connectionStatus);
+    if (connectionStatus !== "Disconnected") dispatch(disconnectDevice());
+    dispatch(resetBleList());
+    dispatch(startScan());
+    toggleDisabled(true)
+    setTimeout( () => 
+      { toggleDisabled(false) },
+      3000
+    )
+  }
 
   const connectPressEvent = (item) => {
     showMessage({
@@ -34,19 +45,7 @@ const HomeScreen = ( {navigation} ) => {
     
     
   }
-
-  const scanPressEvent = () => {
-    console.log(connectionStatus);
-    if (connectionStatus !== "Disconnected") dispatch(disconnectDevice());
-    if (Object.keys(location).length === 0) dispatch(handleLocation());
-    dispatch(resetBleList());
-    dispatch(startScan());
-    toggleDisabled(true)
-    setTimeout( () => 
-      { toggleDisabled(false) },
-      3000
-    )
-  }
+  
 
   return (
   <View style={styles.contentContainer}>
