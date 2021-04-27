@@ -3,9 +3,47 @@
 
 
 
-import { useDispatch, useSelector } from 'react-redux';
 import { initLocation } from '.';
+import Geolocation from 'react-native-geolocation-service';
+import { PermissionsAndroid } from 'react-native';
 
+
+export const handleLocation = () => {
+return async (dispatch, getState) => {
+  let permission = false;
+  if(Platform.OS === 'ios'){
+    hasPermission = await Geolocation.requestAuthorization();
+    if (permission) dispatch(getLocation());
+  }
+  else {
+    permission = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+    );
+    if (permission === PermissionsAndroid.RESULTS.GRANTED) {
+        dispatch(getLocation());
+    } 
+    else {
+        console.log('permission denied');
+    }
+  }
+}
+}
+
+export const getLocation = () => {
+return async (dispatch, getState) => {
+  Geolocation.getCurrentPosition(
+    (position) => {
+      console.log("pos", position);
+      dispatch(initLocation(position.coords));
+    },
+    (error) => {
+      // See error code charts below.
+      console.log("err", error.code, error.message);
+    },
+    { enableHighAccuracy: true, timeout: 30000 }
+  ); 
+}
+}
 
 
 export const toDegreesMinutesAndSeconds = (coordinate) => {

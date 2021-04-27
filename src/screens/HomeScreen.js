@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { View, FlatList, TouchableOpacity } from "react-native";
 import styles from '../styles/style';
-import { useDispatch, shallowEqual, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { connectDevice, disconnectDevice, startScan } from '../actions/interface';
 import { resetBleList, updateCounter } from '../actions/index';
 import { Container, Header, Content, List, ListItem, 
       Text, Left, Right, Icon, Card, CardItem, Button, Body, Grid, Col } from 'native-base';
 import colors from 'native-base/src/theme/variables/commonColor';
-import {  } from "../actions/TimeLocation";
+import { handleLocation } from "../actions/TimeLocation";
 import { showMessage, hideMessage } from "react-native-flash-message";
 
 const HomeScreen = ( {navigation} ) => {
@@ -18,7 +18,12 @@ const HomeScreen = ( {navigation} ) => {
   const BLEList = useSelector(state => state.BLEs.BLEList);
   const location = useSelector(state => state.BLEs.location);
 
+  useEffect(() => {
+    dispatch(handleLocation());
+  }, [])
+
   const [isDisabled, toggleDisabled] = useState(false);
+
   const scanPressEvent = () => {
     console.log(connectionStatus);
     if (connectionStatus !== "Disconnected") dispatch(disconnectDevice());

@@ -89,6 +89,7 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				readStatus: action.payload,
 			}
 		case 'initLocation':
+			console.log("reducer:\n", action.payload);
 			return {
 				...state,
 				location: action.payload,
