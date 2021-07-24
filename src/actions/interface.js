@@ -106,9 +106,9 @@ export const connectDevice = ( item ) => {
 export const readAllPars = () => {
     return async (dispatch, getState, { DeviceManager } ) => {
         await dispatch(readPar("BatteryLevel"));
-        await sleep(6);
+        await sleep(10);
         await dispatch(readPar("StorageCapacity"));
-        await sleep(6);
+        await sleep(10);
         await dispatch(readPar("IsRecording"));
         await sleep(10);
         await dispatch(readPar("DeviceClock"));
@@ -129,9 +129,21 @@ export const readPar = ( parameterName ) => {
         await sleep(50);
         await dispatch(getResponse()); // puts response in state under lastResponse
         let response = getState().BLEs.lastResponse; // example: 'GPS:x:y\r'
-        console.log("response", response)
+        console.log("response", response);
         if (response.includes(errorMessage)) console.log("error reading ",  parameterName);
         else { //  clean up response
+
+            // device sometimes sends the response for write_isRecording
+            // when sent the command for read_isRecording. handle that here
+            if (response.includes("START:OK")) {
+                dispatch(changeParameterObject(parameterName, "1"));
+                return;
+            }
+            else if (response.includes("STOP:OK")) {
+                dispatch(changeParameterObject(parameterName, "0"));
+                return;
+            }
+
             response = response.replace('\r',''); // -> 'GPS:x:y'
             response = response.slice(response.indexOf(':')+1); // -> 'x:y'
             dispatch(changeParameterObject(parameterName, response));
@@ -228,7 +240,7 @@ export const getResponse = () => {
         const deviceID = getState().BLEs.connectedDevice.id;
         let characteristic = await DeviceManager.readCharacteristicForDevice(
                                                 deviceID, serviceUUID, responseUUID  );
-        console.log(base64.decode(characteristic.value));
+        // console.log(base64.decode(characteristic.value));
         dispatch(updateLastResponse(base64.decode(characteristic.value)));
         dispatch(changeConnectionStatus("Connected"));
     }
