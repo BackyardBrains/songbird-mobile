@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, FlatList, TouchableOpacity } from "react-native";
 import styles from '../styles/style';
-import { useDispatch, shallowEqual, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { connectDevice, disconnectDevice, startScan } from '../actions/interface';
 import { resetBleList, updateCounter } from '../actions/index';
 import { Container, Header, Content, List, ListItem, 
@@ -18,7 +18,23 @@ const HomeScreen = ( {navigation} ) => {
   const BLEList = useSelector(state => state.BLEs.BLEList);
   const location = useSelector(state => state.BLEs.location);
 
+  useEffect(() => {
+    dispatch(handleLocation());
+  }, [])
+
   const [isDisabled, toggleDisabled] = useState(false);
+
+  const scanPressEvent = () => {
+    console.log(connectionStatus);
+    if (connectionStatus !== "Disconnected") dispatch(disconnectDevice());
+    dispatch(resetBleList());
+    dispatch(startScan());
+    toggleDisabled(true)
+    setTimeout( () => 
+      { toggleDisabled(false) },
+      3000
+    )
+  }
 
   const connectPressEvent = (item) => {
     showMessage({
@@ -34,19 +50,7 @@ const HomeScreen = ( {navigation} ) => {
     
     
   }
-
-  const scanPressEvent = () => {
-    console.log(connectionStatus);
-    if (connectionStatus !== "Disconnected") dispatch(disconnectDevice());
-    if (Object.keys(location).length === 0) dispatch(handleLocation());
-    dispatch(resetBleList());
-    dispatch(startScan());
-    toggleDisabled(true)
-    setTimeout( () => 
-      { toggleDisabled(false) },
-      3000
-    )
-  }
+  
 
   return (
   <View style={styles.contentContainer}>

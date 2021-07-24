@@ -3,49 +3,46 @@
 
 
 
-
-import RNLocation from 'react-native-location';
-import { useDispatch, useSelector } from 'react-redux';
 import { initLocation } from '.';
-
-RNLocation.configure({
-  distanceFilter: 2 // number of meters you move before location updates
- })
-
+import Geolocation from 'react-native-geolocation-service';
+import { PermissionsAndroid } from 'react-native';
 
 
 export const handleLocation = () => {
-  return async (dispatch, getState, { DeviceManager } ) => {
-    let location;
-    // let permission = await RNLocation.checkPermission({
-    //   ios: 'whenInUse', // or 'always'
-    //   android: {
-    //     detail: 'coarse' // or 'fine'
-    //   }
-    // });
-
-    // if(!permission) {
-
-    //   permission = await RNLocation.requestPermission({
-    //     ios: "whenInUse",
-    //     android: {
-    //       detail: "coarse",
-    //       rationale: {
-    //         title: "We need to access your location",
-    //         message: "We use your location to show where you are on the map",
-    //         buttonPositive: "OK",
-    //         buttonNegative: "Cancel"
-    //       }
-    //     }
-    //   })
-    // }
-    location = await RNLocation.getLatestLocation({timeout: 100})
-
-    dispatch(initLocation(location));
-    const locationState = getState().BLEs.location;
-    console.log("location state: ", locationState);
-    return location;
+return async (dispatch, getState) => {
+  let permission = false;
+  if(Platform.OS === 'ios'){
+    hasPermission = await Geolocation.requestAuthorization();
+    if (permission) dispatch(getLocation());
   }
+  else {
+    permission = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+    );
+    if (permission === PermissionsAndroid.RESULTS.GRANTED) {
+        dispatch(getLocation());
+    } 
+    else {
+        console.log('permission denied');
+    }
+  }
+}
+}
+
+export const getLocation = () => {
+return async (dispatch, getState) => {
+  Geolocation.getCurrentPosition(
+    (position) => {
+      console.log("pos", position);
+      dispatch(initLocation(position.coords));
+    },
+    (error) => {
+      // See error code charts below.
+      console.log("err", error.code, error.message);
+    },
+    { enableHighAccuracy: true, timeout: 30000 }
+  ); 
+}
 }
 
 
