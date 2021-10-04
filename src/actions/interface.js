@@ -154,7 +154,9 @@ export const readPar = ( parameterName ) => {
 export const writePar = ( parameterName, parameterValue ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
         if (getState().BLEs.connectionStatus === "Talking") return;
-        dispatch(changeParameterObject(parameterName, "..."));
+        if (parameterName != 'SamplingRate') {
+            dispatch(changeParameterObject(parameterName, "..."));
+        }
         await dispatch(sendRequest("write", parameterName, parameterValue));
         await sleep(50);
         await dispatch(getResponse()); 
