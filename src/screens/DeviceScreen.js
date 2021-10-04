@@ -28,7 +28,7 @@ const DeviceScreen = ( { navigation } ) => {
     let displayGps = displayGpsDMS(parameters.GpsCoordinates);
     let displayTime = convertToDisplay(parameters.DeviceClock, "deviceScreen");
     
-    console.log("recording?:", parameters.IsRecording);
+    
     //config recording display
     let recordingString, toggle, toggleView;
     switch (parameters.IsRecording){
@@ -93,10 +93,7 @@ const DeviceScreen = ( { navigation } ) => {
             </View>
 
             <List >
-                <ListItem itemHeader first>
-                    <Text>Settings</Text>
-                </ListItem>
-                
+
                 <ListItem onPress={() => navigation.navigate('SetDuration')}>
                     <Left>
                         <View style={styles.listLeft}>

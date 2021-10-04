@@ -15,6 +15,10 @@ const SetGpsScreen = () => {
     let location = useSelector(state => state.BLEs.location);
     
     let DisplayGpsDevice = displayGpsDMS(GpsCoordinates);
+    if (GpsCoordinates === "...") {
+        DisplayGpsDevice[0] = "...";
+        DisplayGpsDevice[1] = "...";
+    }
     let GpsNew = convertDMS(location.latitude, location.longitude);
     let DisplayGpsNew = displayGpsDMS(GpsNew);
 
