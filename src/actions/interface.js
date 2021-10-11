@@ -2,7 +2,7 @@ import base64 from 'react-native-base64'
 import initialParameterObject from '../components/DeviceData';
 import { changeConnectionStatus, disconnectedBLE, 
     addConnectedBLE, addBLE, changeParameterObject, 
-    updateLastResponse, updateCounter, setParameterObject, toggleReadStatus } from '.';
+    updateLastResponse, updateCounter, setParameterObject, toggleInterfaceStatus } from '.';
 
 const serviceUUID = "ab0828b1-198e-4351-b779-901fa0e0371e";
 const requestUUID = "54fd8ba8-fd8f-4862-97c0-71948babd2d3";
@@ -18,6 +18,17 @@ export function sleep(ms) {
 function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
   }
+
+function checkFormat(parameterName, text) {
+    switch(parameterName){
+		
+		case 'GpsCoordinates':
+            let numColons = (text.match(/:/g) || []).length;
+            if (numColons !== 4) return false;
+        default:
+            return true;
+    }
+}
 
 // map sampling rate code to kHz
 export const mapSRCodeToVal = {
@@ -106,66 +117,124 @@ export const connectDevice = ( item ) => {
 export const readAllPars = () => {
     return async (dispatch, getState, { DeviceManager } ) => {
         await dispatch(readPar("BatteryLevel"));
-        await sleep(10);
+        await sleep(20);
         await dispatch(readPar("StorageCapacity"));
-        await sleep(10);
+        await sleep(20);
         await dispatch(readPar("IsRecording"));
-        await sleep(10);
+        await sleep(20);
         await dispatch(readPar("DeviceClock"));
-        await sleep(10);
+        await sleep(20);
         await dispatch(readPar("RecordingDuration"));
-        await sleep(10);
+        await sleep(20);
         await dispatch(readPar("SamplingRate"));
-        await sleep(10);
+        await sleep(20);
         await dispatch(readPar("GpsCoordinates"));
-        console.log(getState().BLEs.parameters);
     }
 }
 
+export const readDynamicPars = () => {
+    return async (dispatch, getState, { DeviceManager } ) => {
+
+        // handle multi-threading ( read is sub-ordinate to write)
+        if (getState().BLEs.connectionStatus === "Talking") return;
+        dispatch(changeConnectionStatus("Talking"));
+
+        await dispatch(readPar("BatteryLevel"));
+        await sleep(20);
+        await dispatch(readPar("IsRecording"));
+        await sleep(20);
+        if (getState().BLEs.parameters.IsRecording.includes("0")){
+            await dispatch(readPar("StorageCapacity"));
+            await sleep(20);
+        }
+        await dispatch(readPar("DeviceClock"));
+
+        console.log(getState().BLEs.parameters);
+
+        dispatch(changeConnectionStatus("Connected"));
+    }
+}
+
+const SLEEP_TIME_B = 50;
 export const readPar = ( parameterName ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
-        if (getState().BLEs.connectionStatus === "Talking") return;
         await dispatch(sendRequest("read", parameterName));
-        await sleep(50);
+        await sleep(SLEEP_TIME_B);
         await dispatch(getResponse()); // puts response in state under lastResponse
         let response = getState().BLEs.lastResponse; // example: 'GPS:x:y\r'
         console.log("response", response);
-        if (response.includes(errorMessage)) console.log("error reading ",  parameterName);
-        else { //  clean up response
 
-            // device sometimes sends the response for write_isRecording
-            // when sent the command for read_isRecording. handle that here
-            if (response.includes("START:OK")) {
-                dispatch(changeParameterObject(parameterName, "1"));
+        // ERROR HANDLER: if read error, wait 50ms and retry once
+        if (response.includes(errorMessage) || !checkFormat(parameterName, response)) {
+            await sleep(SLEEP_TIME_B * 2);
+            await dispatch(sendRequest("read", parameterName));
+            await sleep(SLEEP_TIME_B);
+            await dispatch(getResponse()); // puts response in state under lastResponse
+            response = getState().BLEs.lastResponse; // example: 'GPS:x:y\r'
+            if (response.includes(errorMessage) || !checkFormat(parameterName, response)) {
+                console.log("error reading from device");
                 return;
             }
-            else if (response.includes("STOP:OK")) {
-                dispatch(changeParameterObject(parameterName, "0"));
-                return;
-            }
-
-            response = response.replace('\r',''); // -> 'GPS:x:y'
-            response = response.slice(response.indexOf(':')+1); // -> 'x:y'
-            dispatch(changeParameterObject(parameterName, response));
         }
+        
+        // device sometimes sends the response for write_isRecording
+        // when sent the command for read_isRecording. handle that here
+        if (response.includes("START:OK")) {
+            dispatch(changeParameterObject(parameterName, "1"));
+            return;
+        }
+        else if (response.includes("STOP:OK")) {
+            dispatch(changeParameterObject(parameterName, "0"));
+            return;
+        }
+
+        response = response.replace('\r',''); // -> 'GPS:x:y'
+        response = response.slice(response.indexOf(':')+1); // -> 'x:y'
+        dispatch(changeParameterObject(parameterName, response));
     }
 }
 
 export const writePar = ( parameterName, parameterValue ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
-        if (getState().BLEs.connectionStatus === "Talking") return;
+        
         if (parameterName != 'SamplingRate') {
             dispatch(changeParameterObject(parameterName, "..."));
         }
+
+        // handle multi-threading.
+        // if app is already interfacing with board, write_request retries 
+        // each second for 30 seconds before giving up
+        for (let i = 0; i < 30; ++i) {
+            if (getState().BLEs.connectionStatus === "Talking") {
+                await sleep(1000);
+            }
+            else break;
+        }
+        if (getState().BLEs.connectionStatus === "Talking") return;
+        dispatch(changeConnectionStatus("Talking"));
+
         await dispatch(sendRequest("write", parameterName, parameterValue));
-        await sleep(50);
+        await sleep(SLEEP_TIME_B);
         await dispatch(getResponse()); 
         let response = getState().BLEs.lastResponse;
         console.log("response", response);
-        if (response.includes(errorMessage)) console.log("error writing to device");
-        else {
-            dispatch(readPar(parameterName));
+
+        // ERROR HANDLER: if write error, wait and retry once
+        if (response.includes(errorMessage)) {
+            await dispatch(sendRequest("write", parameterName, parameterValue));
+            await sleep(SLEEP_TIME_B * 2);
+            await dispatch(getResponse()); 
+            let response = getState().BLEs.lastResponse;
+            console.log("response", response);
+            if (response.includes(errorMessage)) {
+                console.log("error writing to device");
+                return;
+            }
         }
+        await dispatch(readPar(parameterName));
+
+        dispatch(changeConnectionStatus("Connected"));
+        await sleep(100);
     }
 }
 
@@ -184,7 +253,6 @@ export const sendRequest = (readWrite, parameterName, parameterValue ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
         const deviceID = getState().BLEs.connectedDevice.id;
         let message;
-        dispatch(changeConnectionStatus("Talking"));
         // choose message
         switch(readWrite){
             case "read":
@@ -244,6 +312,6 @@ export const getResponse = () => {
                                                 deviceID, serviceUUID, responseUUID  );
         // console.log(base64.decode(characteristic.value));
         dispatch(updateLastResponse(base64.decode(characteristic.value)));
-        dispatch(changeConnectionStatus("Connected"));
     }
 }
+

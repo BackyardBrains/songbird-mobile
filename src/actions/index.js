@@ -48,10 +48,6 @@ export const initLocation = (locationObj) => ({
     payload: locationObj,
 })
 
-export const toggleReadStatus = (status) => ({
-    type: "toggleReadStatus",
-    payload: status,
-})
 export const disconnectedBLE = () => ({
     type: "disconnectedBLE",
 })

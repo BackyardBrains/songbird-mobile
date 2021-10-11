@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
-import { disconnectDevice, sleep, TranslateStorageCapacity, writePar, readPar, mapSRCodeToVal } from '../actions/interface';
+import { disconnectDevice, sleep, TranslateStorageCapacity, writePar, readDynamicPars, readPar, mapSRCodeToVal } from '../actions/interface';
 import base64 from 'react-native-base64'
 import { Content, List, ListItem, 
     Text, Left, Right, Icon, Card, CardItem, Body, Button } from 'native-base';
@@ -13,6 +13,14 @@ const DeviceScreen = ( { navigation } ) => {
     const dispatch = useDispatch();
     const device = useSelector(state => state.BLEs.connectedDevice);
     const parameters = useSelector(state => state.BLEs.parameters);
+
+    
+    useEffect(() => {
+        let secTimer = setInterval( () => {
+            dispatch(readDynamicPars());
+         }, 4000);
+        return () => clearInterval(secTimer);
+    }, []);
 
     //config recording duration display
     let displayRecDur = parseInt(parameters.RecordingDuration);
