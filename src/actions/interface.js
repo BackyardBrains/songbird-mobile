@@ -138,9 +138,17 @@ export const readDynamicPars = () => {
         // handle multi-threading ( read is sub-ordinate to write)
         if (getState().BLEs.connectionStatus === "Talking") return;
         dispatch(changeConnectionStatus("Talking"));
-
+        await sleep(50);
+        if (getState().BLEs.parameters.IsRecording.includes("...")){
+            dispatch(changeConnectionStatus("Connected"));
+            return;
+        }
         await dispatch(readPar("BatteryLevel"));
         await sleep(20);
+        if (getState().BLEs.parameters.IsRecording.includes("...")){
+            dispatch(changeConnectionStatus("Connected"));
+            return;
+        }
         await dispatch(readPar("IsRecording"));
         await sleep(20);
         if (getState().BLEs.parameters.IsRecording.includes("0")){
