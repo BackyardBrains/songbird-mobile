@@ -26,6 +26,7 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				 connectedDevice: {deviceID: action.payload},
 			 }
 		case 'changeConnectionStatus':
+			console.log("channel status: ", action.payload);
 			return {
 				...state,
 				connectionStatus: action.payload,
@@ -61,6 +62,9 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 		case 'changeParameterObject':
 			let newParameters = {...state.parameters};
 			newParameters[action.par] = action.val;
+			if (action.par === "DeviceClock") {
+				console.log("!!!CLOCKVAL: ", action.val);
+			}
 			return {
 				...state,
 				parameters: newParameters,

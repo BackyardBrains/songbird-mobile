@@ -17,7 +17,6 @@ const SetSamplingRateScreen = () => {
     let DisplaySR = mapSRCodeToVal[SamplingRate] + " kHz";
     
     let DisplayValue = mapSRCodeToVal[DisplaySR];
-    console.log(DisplaySR, SamplingRate, DisplayValue);
 
     return (
         <Container>

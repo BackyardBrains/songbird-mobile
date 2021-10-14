@@ -53,7 +53,7 @@ const DeviceScreen = ( { navigation } ) => {
         default:
             recordingString = "...";
             toggle = "START";
-            toggleView = "Start Recording";
+            toggleView = "Communicating...";
             break;
     }
 
@@ -92,6 +92,7 @@ const DeviceScreen = ( { navigation } ) => {
             <View style={styles.ButtonSection} // recording button
             >
                 <Button rounded 
+                    disabled={recordingString === "..."}
                     onPress={() => {
                         dispatch(writePar("IsRecording", toggle));
                     }}

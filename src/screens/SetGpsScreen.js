@@ -46,11 +46,12 @@ const SetGpsScreen = () => {
                 </Card>
                 <View style={styles.ButtonSection} >
                     <Button rounded 
+                        disabled={DisplayGpsDevice[0] === "..."}
                         onPress={ () => {
                             dispatch(writePar("GpsCoordinates", GpsNew));
                         }}
                     >
-                        <Text>Submit phone coordinates</Text>
+                        <Text>{DisplayGpsDevice[0] === "..." ? "Communicating..." : "Submit phone coordinates"}</Text>
                     </Button>
                 </View>
             </Content>
