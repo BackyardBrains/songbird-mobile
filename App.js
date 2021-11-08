@@ -20,6 +20,7 @@ import SetClockScreen from './src/screens/SetClockScreen';
 import SetDurationScreen from './src/screens/SetDurationScreen';
 import SetSamplingRateScreen from './src/screens/SetSamplingRateScreen';
 import SetGpsScreen from './src/screens/SetGpsScreen';
+import SaveFileSreen from './src/screens/SaveFileScreen';
 
 
 const navigator = createStackNavigator(
@@ -31,6 +32,7 @@ const navigator = createStackNavigator(
     SetDuration: SetDurationScreen,
     SetSamplingRate: SetSamplingRateScreen,
     SetGps: SetGpsScreen,
+    SaveFiles: SaveFileSreen,
 
 
     
