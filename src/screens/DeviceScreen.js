@@ -150,6 +150,16 @@ const DeviceScreen = ( { navigation } ) => {
                         <Icon name="arrow-forward" />
                     </Right>
                 </ListItem>
+                <ListItem onPress={() => navigation.navigate("SaveFiles")}>
+                    <Left>
+                        <View style={styles.listLeft}>
+                            <Text>Save file (temp)</Text>   
+                        </View>
+                    </Left>
+                    <Right>
+                        <Icon name="arrow-forward" />
+                    </Right>
+                </ListItem>
 
             </List>
             <View style={styles.DisconnectButtonSection} >
