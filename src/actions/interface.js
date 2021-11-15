@@ -294,6 +294,73 @@ export const disconnectDevice = () => {
     }
 }
 
+// TODO:
+// add new commands to sendRequest
+// add handler for data instream
+//      
+
+import RNFetchBlob from 'rn-fetch-blob';
+
+export const requestFile = (parameterName, fileNumberMobile, fileNumberDevice) => {
+    return async (dispatch, getState, { DeviceManager } ) => {
+
+        //      CONSTS
+        const deviceID = getState().BLEs.connectedDevice.id;
+        const NEW_FILE_PATH = RNFetchBlob.fs.dirs.DocumentDir 
+            + "/Songbird/" + fileNumberMobile + ".txt";
+   
+        //      init directory file
+        const fs = RNFetchBlob.fs;
+        const base64 = RNFetchBlob.base64;
+        fs.createFile(NEW_FILE_PATH, "", 'ascii');
+
+
+        //      request data
+        dispatch(sendRequest("read", "RF", fileNumberDevice));
+        
+
+        //      handle instream
+        RNFetchBlob.fs.writeStream(NEW_FILE_PATH, 'base64')
+        .then((stream) => {
+            let prev_input; let new_input; let i = 0;
+
+            while ( i++ < 3 || new_input != prev_input) {
+
+                let new_input = await DeviceManager.readCharacteristicForDevice(
+                deviceID, serviceUUID, responseUUID );
+
+                stream.write(new_input);
+            
+                prev_input = new_input;
+            }
+            return stream.close()
+        })
+        //////////////////////////////////////////////////////////
+    }
+}
+
+// // write utf8 data
+// RNFetchBlob.fs.writeStream(PATH_TO_WRITE, 'utf8')
+//     .then((stream) => {
+//         stream.write('foo')
+//         return stream.close()
+//     })
+// // write ASCII data
+// RNFetchBlob.fs.writeStream(PATH_TO_WRITE, 'ascii')
+//     .then((stream) => {
+//         // write char `f`
+//         stream.write([102])
+//         // write char `o`, `o`
+//         stream.write([111,111])
+//         return stream.close()
+//     })
+// // write BASE64
+// RNFetchBlob.fs.writeStream(PATH_TO_WRITE, 'base64')
+//     .then((stream) => {
+//         stream.write(RNFetchBlob.base64.encode('foo'))
+//         return stream.close()
+//     })
+
 export const sendRequest = (readWrite, parameterName, parameterValue ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
         const deviceID = getState().BLEs.connectedDevice.id;
