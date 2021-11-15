@@ -217,23 +217,24 @@ export const readPar = ( parameterName ) => {
             return;
         }
 
-        response = response.replace('\r',''); // -> 'GPS:x:y'
-        response = response.slice(response.indexOf(':')+1); // -> 'x:y'
-        dispatch(changeParameterObject(parameterName, response));
+        response = response.replace('\r',''); // remove terminating character. new format:: 'GPS:x:y'
+        response = response.slice(response.indexOf(':')+1); // get rid of header. new format:: 'x:y'
+        dispatch(changeParameterObject(parameterName, response)); // update paramterer tree
     }
 }
 
 export const writePar = ( parameterName, parameterValue ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
         
+        // handle a quirk in the front end
         if (parameterName != 'SamplingRate') {
             dispatch(changeParameterObject(parameterName, "..."));
         }
-        console.log("wP: attempting write...");
-        
+
         // handle multi-threading.
         // if app is already interfacing with board, write_request retries 
         // each second for 30 seconds before giving up
+        console.log("wP: attempting write...");
         for (let i = 0; i < 30; ++i) {
             if (getState().BLEs.connectionStatus !== "Free") {
                 console.log("wP: channel is busy for ", i, " seconds, wP waiting...");
@@ -247,12 +248,16 @@ export const writePar = ( parameterName, parameterValue ) => {
         }
         dispatch(changeConnectionStatus("Writing"));
         console.log("wP: channel is free, begin write...");
-        const device_id = getState().BLEs.connectedDevice.id;
+        //
 
+
+        
         await dispatch(sendRequest("write", parameterName, parameterValue));
         await sleep(1000); // songbird device has high latency and needs one second to process write request
+        const device_id = getState().BLEs.connectedDevice.id;
         let response = await getResponse(device_id, DeviceManager); 
         console.log("wP: response: ", response);
+        
 
         // ERROR HANDLER: if write error, wait and retry once
         if (response.includes(errorMessage)) {
@@ -266,6 +271,9 @@ export const writePar = ( parameterName, parameterValue ) => {
                 return;
             }
         }
+
+        // begin readPar
+        // readPar will update the state tree
         console.log("wP: dispatching rP to validate write...");
         await dispatch(readPar(parameterName));
 

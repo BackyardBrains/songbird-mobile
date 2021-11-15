@@ -7,7 +7,8 @@ import { initLocation } from '.';
 import Geolocation from 'react-native-geolocation-service';
 import { PermissionsAndroid } from 'react-native';
 
-
+// handles location permissions and calls getLocation
+// todo: add apple permissions handling
 export const handleLocation = () => {
 return async (dispatch, getState) => {
   let permission = false;
@@ -53,21 +54,32 @@ export const toDegreesMinutesAndSeconds = (coordinate) => {
   let minutes = Math.floor(minutesNotTruncated);
   let seconds = Math.floor((minutesNotTruncated - minutes) * 60);
 
-  return degrees + "" + minutes + seconds + "00";
+
+  let coordinateNew = degrees + "" + minutes + seconds + "00";
+
+  return coordinateNew;
 }
 
+// convert GPS from numerical to having cardinal letters
 export const convertDMS = (lat, lng) => {
 
   let latitude = toDegreesMinutesAndSeconds(lat);
-  let latitudeCardinal = lat >= 0 ? "N" : "S";
-
   let longitude = toDegreesMinutesAndSeconds(lng);
-  if (longitude.length === 8) longitude = '0' + longitude;
+  let latitudeCardinal = lat >= 0 ? "N" : "S";
   let longitudeCardinal = lng >= 0 ? "E" : "W";
 
+  while (longitude.length < 9) {
+    longitude = '0' + longitude;
+  }
+  while (latitude.length < 8) {
+    latitude = '0' + latitude;
+  }
+
+  // find out how many digits each should have at endpoint. Then ensure there are enough here
   return latitude + ":" + latitudeCardinal + ":" + longitude + ":" + longitudeCardinal;
 }
 
+// convert GPS to display
 export const displayGpsDMS = (inParam) => {
   let temp = inParam.split(':');
   let lat = temp[0];
@@ -75,11 +87,15 @@ export const displayGpsDMS = (inParam) => {
   let long = temp[2];
   let longCard = temp[3];
   let arr = [];
+
   arr[0] = lat + " " + latCard;
   arr[1] = long + " " + longCard;
   return arr;
 }
 
+
+  // convert CLOCK to Display
+  // NOTE:: this is kind of a sloppy function name
   export const convertToDisplay = ( clockStr, screenStr ) => {
   if (clockStr === "...") return clockStr;
   let returnStr = '';
