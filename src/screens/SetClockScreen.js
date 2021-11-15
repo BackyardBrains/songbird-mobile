@@ -58,13 +58,14 @@ const SetClockScreen = () => {
                 </Card>
                 <View style={styles.ButtonSection} >
                     <Button rounded 
+                        disabled={displayDeviceClock === "..."}
                         onPress={ () => {
                             
                             console.log(clockVal);
                             dispatch(writePar("DeviceClock", clockVal));
                         }}
                     >
-                        <Text>Submit Phone Time</Text>
+                        <Text>{displayDeviceClock === "..." ? "Communicating..." : "Submit Phone Time"}</Text>
                     </Button>
                 </View>
             </Content>

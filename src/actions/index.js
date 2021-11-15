@@ -1,5 +1,5 @@
 
-
+// to do:: change name of this file to "actions index"
 
 // actions
 
@@ -48,10 +48,6 @@ export const initLocation = (locationObj) => ({
     payload: locationObj,
 })
 
-export const toggleReadStatus = (status) => ({
-    type: "toggleReadStatus",
-    payload: status,
-})
 export const disconnectedBLE = () => ({
     type: "disconnectedBLE",
 })

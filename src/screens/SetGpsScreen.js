@@ -11,15 +11,22 @@ const SetGpsScreen = () => {
     const dispatch = useDispatch();
     let device = useSelector(state => state.BLEs.connectedDevice);
     
+
+    // GpsNew is the value that will be sent to the Songbird device. 
+    // TODO:: this could probably be moved to the backend
     let GpsCoordinates = useSelector(state => state.BLEs.parameters.GpsCoordinates);
     let location = useSelector(state => state.BLEs.location);
-    
+    let GpsNew = convertDMS(location.latitude, location.longitude);
+
+
     let DisplayGpsDevice = displayGpsDMS(GpsCoordinates);
     if (GpsCoordinates === "...") {
         DisplayGpsDevice[0] = "...";
         DisplayGpsDevice[1] = "...";
     }
-    let GpsNew = convertDMS(location.latitude, location.longitude);
+
+
+
     let DisplayGpsNew = displayGpsDMS(GpsNew);
 
     return (
@@ -46,11 +53,12 @@ const SetGpsScreen = () => {
                 </Card>
                 <View style={styles.ButtonSection} >
                     <Button rounded 
+                        disabled={DisplayGpsDevice[0] === "..."}
                         onPress={ () => {
                             dispatch(writePar("GpsCoordinates", GpsNew));
                         }}
                     >
-                        <Text>Submit phone coordinates</Text>
+                        <Text>{DisplayGpsDevice[0] === "..." ? "Communicating..." : "Submit phone coordinates"}</Text>
                     </Button>
                 </View>
             </Content>

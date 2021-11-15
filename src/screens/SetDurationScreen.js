@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { writePar } from '../actions/interface';
@@ -11,7 +11,7 @@ const SetDurationScreen = () => {
     const dispatch = useDispatch();
     let device = useSelector(state => state.BLEs.connectedDevice);
     
-    
+    const [input, setInput] = useState("");
 
     let RecordingDuration = useSelector(state => state.BLEs.parameters.RecordingDuration);
     
@@ -34,32 +34,35 @@ const SetDurationScreen = () => {
                 <Form>
                     <Item fixedLabel>
                         <Input 
+                            value={input}
                             placeholder='New Duration'
                             keyboardType='numeric'
-                            onChangeText={(value) => { 
+                            onChangeText={(value) => {
+                                setInput(value);
                                 durationVal = value;
-                                console.log(durationVal);
+                                console.log(value);
                         }}/>
                     </Item>
                 </Form>
                 <View style={styles.ButtonSection} >
                     <Button rounded 
+                        disabled={RecordingDuration === "..."}
                         onPress={ () => {
                             var reg = new RegExp(/^[1-9]\d*(\.\d{1})?$/);
-                            if (!reg.test(durationVal)) {
-                                alert('Songbirds will ignore any inputs other than number in this section');
-                                durationVal = durationVal.replace(/[^0-9.]/g, "");
+                            if (!reg.test(input)) {
+                                alert("Please enter a number");
                             }
                             else{
-                                // add zeros to durationval
-                                durationVal = durationVal.toString(10).padStart(4, '0');
+                                setInput("");
+                                let durationVal = input.toString(10).padStart(4, '0');
                                 console.log(durationVal);
                                 dispatch(writePar("RecordingDuration", durationVal));
+                                
                             }
                             
                         }}
                     >
-                        <Text>Submit</Text>
+                        <Text>{RecordingDuration === "..." ? "Communicating..." : "Submit"}</Text>
                     </Button>
                 </View>
             </Content>
