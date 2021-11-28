@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, TouchableOpacity } from "react-native";
+import { View, FlatList, TouchableOpacity, PermissionsAndroid } from "react-native";
 import styles from '../styles/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { connectDevice, disconnectDevice, startScan } from '../actions/interface';
@@ -49,6 +49,15 @@ const HomeScreen = ( {navigation} ) => {
       3370);
     
     
+  }
+
+  if (!PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)){
+    console.log(RNFetchBlob.fs.dirs.DocumentDir);
+    const granted = PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+    );
+    if (!granted)
+        alert("Storage Permission Request Fails");
   }
   
 
