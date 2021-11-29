@@ -5,7 +5,7 @@ import { readDirectory, requestFile } from '../actions/interface';
 import { Container, Content, Button, Text, Card, CardItem, ListItem} from 'native-base';
 import RNFetchBlob from 'rn-fetch-blob';
 import styles from '../styles/style';
-
+import { showMessage, hideMessage } from "react-native-flash-message";
 
  
 
@@ -20,6 +20,20 @@ const SaveFileScreen = () => {
     useEffect(() => { dispatch(readDirectory()) }, [cardFiles, RNFetchBlob] );
     cardFiles = useSelector(state => state.BLEs.cardFiles);
 
+    const requestFileEvent = (item) => {
+        showMessage({
+          message: "Downloading, please wait",
+          type: "default",
+          duration: 5000,
+          backgroundColor: colors.brandPrimary,
+          titleStyle: styles.AlertText,
+        });
+        dispatch(requestFile(
+            TARGET_DIRECTORY_PATH + "songbird_" + num_files_on_device + ".wav", 
+            item.index, 
+            item.card));
+        
+      }
     const boardFiles = 
                     [
                         {"name":"file1a", "card":"1", "index":"0"}, 
@@ -67,14 +81,7 @@ const SaveFileScreen = () => {
                 data={boardFiles}
                 renderItem={( {item} ) => {
                     return (
-                        <ListItem 
-                            onPress={() => 
-                                dispatch(requestFile(
-                                    TARGET_DIRECTORY_PATH + "songbird_" + num_files_on_device + ".wav", 
-                                    item.index, 
-                                    item.card))
-                            }
-                        >
+                        <ListItem onPress={() => requestFileEvent(item)}>
                             <Text>{item.name}</Text> 
                         </ListItem>
                     );
