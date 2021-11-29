@@ -30,7 +30,7 @@ const DeviceScreen = ( { navigation } ) => {
     if (displayBattery !== "100") displayBattery = displayBattery.substring(1);
     
     //config storage display
-    let displayStorage = TranslateStorageCapacity(parameters.StorageCapacity)
+    let displayStorage = TranslateStorageCapacity(parameters.StorageCapacity);
     
     //config GPS & time display
     let displayGps = displayGpsDMS(parameters.GpsCoordinates);

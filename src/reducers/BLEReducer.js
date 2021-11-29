@@ -9,7 +9,8 @@ export const INITIAL_STATE = {
 	parameters: initialParameterObject,
 	location: {},
 	lastResponse: '',
-	interfaceStatus: 'null'
+	interruptStatus: 'null',
+	cardFiles: [],
   };
 
 const BLEreducer = (state = INITIAL_STATE, action = {}) => {
@@ -87,16 +88,23 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 				status: 'Disconnected',
 				connectedDevice: {},
 			}
-		case 'toggleInterfaceStatus':
+		case 'toggleInterruptStatus':
 			return {
 				...state,
-				readStatus: action.payload,
+				interruptStatus: action.payload,
 			}
 		case 'initLocation':
 			console.log("reducer:\n", action.payload);
 			return {
 				...state,
 				location: action.payload,
+			}
+		case 'updateCardFiles':
+			let newCardFiles = {...state.cardFiles};
+			newCardFiles[action.cardNum - 1] = action.fileData;
+			return {
+				...state,
+				cardFiles: newCardFiles
 			}
 	 	default: return state;
 	}

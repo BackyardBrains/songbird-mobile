@@ -72,9 +72,9 @@ const HomeScreen = ( {navigation} ) => {
 
 
     <FlatList 
-      keyExtractor={ device => device.name}
+      keyExtractor={ device => device.name }
       data={BLEList}
-      renderItem={({item}) => {
+      renderItem={( {item} ) => {
         return (
           <ListItem onPress={() => connectPressEvent(item)}>
               <Text>{item.name}</Text> 

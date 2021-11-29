@@ -27,6 +27,11 @@ export const addConnectedBLE = (device) => ({
     payload: device,
 })
 
+export const toggleInterruptStatus = (status) => ({
+    type: "toggleInterruptStatus",
+    payload: status,
+})
+
 export const changeParameterObject = (parameter, value) => ({
     type: "changeParameterObject",
     par: parameter,
@@ -50,5 +55,11 @@ export const initLocation = (locationObj) => ({
 
 export const disconnectedBLE = () => ({
     type: "disconnectedBLE",
+})
+
+export const updateCardFiles = (cardNum_in, fileData_in) => ({
+    type: "updateCardFiles",
+    cardNum: cardNum_in,
+    fileData: fileData_in,
 })
 

@@ -1,83 +1,95 @@
-import React from 'react';
-import { View, PermissionsAndroid } from 'react-native';
-import styles from '../styles/style';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, PermissionsAndroid } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { writePar } from '../actions/interface';
-import { Container, Content, Button, Text, Card, CardItem, FlatList} from 'native-base';
+import { readDirectory, requestFile } from '../actions/interface';
+import { Container, Content, Button, Text, Card, CardItem, ListItem} from 'native-base';
 import RNFetchBlob from 'rn-fetch-blob';
+import styles from '../styles/style';
 
 
-const SaveFileSreen = () => {
+ 
+
+  
+
+const SaveFileScreen = () => {
     const dispatch = useDispatch();
     let device = useSelector(state => state.BLEs.connectedDevice);
 
-    dispatch(readDirectory());
-    let cardFile = useSelector(state => state.BLEs.cardFiles);
+    // update directory
+    let cardFiles;
+    useEffect(() => { dispatch(readDirectory()) }, [cardFiles, RNFetchBlob] );
+    cardFiles = useSelector(state => state.BLEs.cardFiles);
 
-    
+    const boardFiles = 
+                    [
+                        {"name":"file1a", "card":"1", "index":"0"}, 
+                        {"name":"file2a","card":"2","index":"1"}
+                    ];
 
-    let boardFiles_1 = [...cardFile[0]];
-    let boardFiles_2 = [...cardFile[1]];
-
-    
+    ///////////// START prepare storage ///////////////
+    // permissions
     if (!PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)){
         alert("Storage Permission Request Fails");
     }
-
-    console.log(RNFetchBlob.fs.dirs.DocumentDir);
-
-
-    RNFetchBlob.fs.exists(RNFetchBlob.fs.dirs.DocumentDir + "/Songbird/")
+    // directory
+    const TARGET_DIRECTORY_PATH = RNFetchBlob.fs.dirs.DocumentDir + "/Songbird/";
+    RNFetchBlob.fs.exists(TARGET_DIRECTORY_PATH)
     .then((res) => {
         if (!res) {
-            console.log("Creating App directory...", RNFetchBlob.fs.dirs.DocumentDir, "/Songbird/")
-            RNFetchBlob.fs.mkdir(RNFetchBlob.fs.dirs.DocumentDir + "/Songbird/")
+            console.log("Creating App directory...", TARGET_DIRECTORY_PATH)
+            RNFetchBlob.fs.mkdir(TARGET_DIRECTORY_PATH)
                 .then((res) => {console.log("App directory created..")})
                 .catch((err) => {console.log(err)})
         };
-    }); // may want to add error handling here?
+    });
+    let num_files_on_device;
+    RNFetchBlob.fs.ls(TARGET_DIRECTORY_PATH)
+    // files will an array contains filenames
+    .then((files) => {
+        num_files_on_device = files.length;
+        console.log(files)
+    })
+    //////////////// END prepare storage /////////////////
     
 
 
     return (
-        <Container>
-            <Content>
-                <Card>
-                    <CardItem header bordered>
-                        <Text >Connected: {device.name}</Text>
-                    </CardItem>
-                </Card>
-                
-                <FlatList 
-                    data={boardFiles_1}
-                    renderItem={({item}) => {
-                        return (
-                            <ListItem onPress={() => dispatch(requestFile(RNFetchBlob.fs.dirs.DocumentDir + "/Songbird/" + item, boardFiles_1.indexOf(item), 0))}>
-                                <Text>{item}</Text> 
-                            </ListItem>
-                          );
-                    }}    
-                />
-                <FlatList 
-                    data={boardFiles_2}
-                    renderItem={({item}) => {
-                        return (
-                            <ListItem onPress={() => dispatch(requestFile(RNFetchBlob.fs.dirs.DocumentDir + "/Songbird/" + item, boardFiles_2.indexOf(item), 1))}>
-                                <Text>{item}</Text> 
-                            </ListItem>
-                          );
-                    }}    
-                />
-            </Content>
-        </Container>
+        <View style={styles.contentContainer}>
+
+            <Card style={styles.cardAStyle}>
+                <CardItem header bordered>
+                    <Text >Connected: {device.name}</Text>
+                </CardItem>
+            </Card>
+
+            <FlatList
+                keyExtractor={ file => file.name } 
+                data={boardFiles}
+                renderItem={( {item} ) => {
+                    return (
+                        <ListItem 
+                            onPress={() => 
+                                dispatch(requestFile(
+                                    TARGET_DIRECTORY_PATH + "songbird_" + num_files_on_device + ".wav", 
+                                    item.index, 
+                                    item.card))
+                            }
+                        >
+                            <Text>{item.name}</Text> 
+                        </ListItem>
+                    );
+                }}    
+            />
+            
+        </View>
     );
     
 };
 
-SaveFileSreen.navigationOptions = () => ({
+SaveFileScreen.navigationOptions = () => ({
     title: 'Save Files From Songbird (temp)'
   });
 
 
 
-export default SaveFileSreen;
+export default SaveFileScreen;

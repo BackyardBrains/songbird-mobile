@@ -2,7 +2,8 @@ import base64 from 'react-native-base64'
 import initialParameterObject from '../components/DeviceData';
 import { changeConnectionStatus, disconnectedBLE, 
     addConnectedBLE, addBLE, changeParameterObject, 
-    updateLastResponse, updateCounter, setParameterObject, toggleInterfaceStatus } from '.';
+    updateCounter, setParameterObject, updateCardFiles, 
+    toggleInterruptStatus} from '.';
 
 const serviceUUID = "ab0828b1-198e-4351-b779-901fa0e0371e";
 const requestUUID = "54fd8ba8-fd8f-4862-97c0-71948babd2d3";
@@ -231,25 +232,9 @@ export const writePar = ( parameterName, parameterValue ) => {
             dispatch(changeParameterObject(parameterName, "..."));
         }
 
-        // handle multi-threading.
-        // if app is already interfacing with board, write_request retries 
-        // each second for 30 seconds before giving up
-        console.log("wP: attempting write...");
-        for (let i = 0; i < 30; ++i) {
-            if (getState().BLEs.connectionStatus !== "Free") {
-                console.log("wP: channel is busy for ", i, " seconds, wP waiting...");
-                await sleep(1000);
-            }
-            else break;
-        }
-        if (getState().BLEs.connectionStatus !== "Free") {
-            console.log("wP: channel is busy for 30 seconds, kill wP process...");
-            return;
-        }
-        dispatch(changeConnectionStatus("Writing"));
-        console.log("wP: channel is free, begin write...");
-        //
-
+        // handle multithreading 1/2
+        await dispatch(interruptRefresh("wP"));
+        if (getState().BLEs.interruptStatus === "fail") return;
 
         
         await dispatch(sendRequest("write", parameterName, parameterValue));
@@ -278,8 +263,8 @@ export const writePar = ( parameterName, parameterValue ) => {
         await dispatch(readPar(parameterName));
 
 
-        console.log("wP: write finished successfully...\n");
-        dispatch(changeConnectionStatus("Free"));
+        // handle multithreading 2/2
+        await dispatch(continueRefresh("wP"));
     }
 }
 
@@ -299,69 +284,108 @@ export const disconnectDevice = () => {
 // add handler for data instream
 //      
 
+function pad_num(num, padlen, padchar) {
+    var pad_char = typeof padchar !== 'undefined' ? padchar : '0';
+    var pad = new Array(1 + padlen).join(pad_char);
+    return (pad + num).slice(-pad.length);
+}
+
 import RNFetchBlob from 'rn-fetch-blob';
 
-export const requestFile = (parameterName, fileNumberMobile, fileNumberDevice) => {
+
+export const readDirectory = () => {
     return async (dispatch, getState, { DeviceManager } ) => {
 
         //      CONSTS
         const deviceID = getState().BLEs.connectedDevice.id;
-        const NEW_FILE_PATH = RNFetchBlob.fs.dirs.DocumentDir 
-            + "/Songbird/" + fileNumberMobile + ".txt";
    
-        //      init directory file
-        const fs = RNFetchBlob.fs;
-        const base64 = RNFetchBlob.base64;
-        fs.createFile(NEW_FILE_PATH, "", 'ascii');
+        // handle multithreading 1/2
+        await dispatch(interruptRefresh("rD"));
+        if (getState().BLEs.interruptStatus === "fail") return;
 
+        //      request data for card 1
+        await dispatch(sendRequest("read", "ReadDirectory", "1"));
+        await sleep(SLEEP_TIME_B);
 
-        //      request data
-        dispatch(sendRequest("read", "RF", fileNumberDevice));
-        
+        //      get response for card 1
+        let response1 = await getResponse(deviceID, DeviceManager); 
 
-        //      handle instream
-        RNFetchBlob.fs.writeStream(NEW_FILE_PATH, 'base64')
-        .then((stream) => {
-            let prev_input; let new_input; let i = 0;
+        //      request data for card 2
+        await dispatch(sendRequest("read", "ReadDirectory", "2"));
+        await sleep(SLEEP_TIME_B);
 
-            while ( i++ < 3 || new_input != prev_input) {
+        //      get response for card 2
+        let response2 = await getResponse(deviceID, DeviceManager); 
 
-                let new_input = await DeviceManager.readCharacteristicForDevice(
-                deviceID, serviceUUID, responseUUID );
+        dispatch(updateCardFiles(1, response1));
+        dispatch(updateCardFiles(2, response2));
 
-                stream.write(new_input);
-            
-                prev_input = new_input;
-            }
-            return stream.close()
-        })
-        //////////////////////////////////////////////////////////
+        console.log("r1:\n", response1,"\n");
+        console.log("r2:\n", response2,"\n");
+
+        // handle multithreading 2/2
+        await dispatch(continueRefresh("rD"));
+
     }
 }
 
-// // write utf8 data
-// RNFetchBlob.fs.writeStream(PATH_TO_WRITE, 'utf8')
-//     .then((stream) => {
-//         stream.write('foo')
-//         return stream.close()
-//     })
-// // write ASCII data
-// RNFetchBlob.fs.writeStream(PATH_TO_WRITE, 'ascii')
-//     .then((stream) => {
-//         // write char `f`
-//         stream.write([102])
-//         // write char `o`, `o`
-//         stream.write([111,111])
-//         return stream.close()
-//     })
-// // write BASE64
-// RNFetchBlob.fs.writeStream(PATH_TO_WRITE, 'base64')
-//     .then((stream) => {
-//         stream.write(RNFetchBlob.base64.encode('foo'))
-//         return stream.close()
-//     })
 
-export const sendRequest = (readWrite, parameterName, parameterValue ) => {
+
+export const requestFile = (NEW_FILE_PATH, fileNumberDevice, SdCard) => {
+    return async (dispatch, getState, { DeviceManager } ) => {
+
+        //      CONSTS
+        const deviceID = getState().BLEs.connectedDevice.id;
+  
+        // handle multithreading 1/2
+        await dispatch(interruptRefresh("rF"));
+        if (getState().BLEs.interruptStatus === "fail") return;
+
+        //      init directory file and stream
+        await RNFetchBlob.fs.createFile(NEW_FILE_PATH, "", 'base64');
+        console.log("success making file");
+        let stream = await RNFetchBlob.fs.writeStream(NEW_FILE_PATH, 'base64', true);
+        console.log("STREAM!\n\n", stream, "\n\n");
+
+        //      request data
+        let padded = pad_num(fileNumberDevice,6,'0');
+        await dispatch(sendRequest("read", "RequestFile", padded, SdCard));
+
+
+        //      load file
+        let prev_input = ""; let new_input = ""; let num_duplicates = 0; let i = 0;
+        while (num_duplicates < 100 && ++i < 500) {
+
+            let char = await DeviceManager.readCharacteristicForDevice(
+            deviceID, serviceUUID, responseUUID );
+            new_input = char.value;
+
+            //console.log(i, "\n");
+
+            if (new_input != prev_input) {
+                console.log(new_input);
+                stream = await stream.write(new_input);
+                num_duplicates = 0;
+            }
+            else {
+                ++num_duplicates;
+            }
+            prev_input = new_input;
+        }
+        await stream.close();
+        console.log("rF DONE");
+
+        // handle multithreading 2/2
+        await dispatch(continueRefresh("rF"));
+
+
+        
+    }
+}
+
+
+
+export const sendRequest = (readWrite, parameterName, parameterValue, misc ) => {
     return async (dispatch, getState, { DeviceManager } ) => {
         const deviceID = getState().BLEs.connectedDevice.id;
         let message;
@@ -390,6 +414,15 @@ export const sendRequest = (readWrite, parameterName, parameterValue ) => {
                     case "GpsCoordinates":
                         message = "GPS?";
                         break;
+
+                    // wireless data transfer commands
+                    case "RequestFile":
+                        message = "RW:" + misc + ":" + parameterValue;
+                        // RW:<SD card #>:<File #>
+                        break;
+                    case "ReadDirectory":
+                        message = "DIR:" + parameterValue;
+                        break;
                 }
                 break;
             case "write":
@@ -413,7 +446,8 @@ export const sendRequest = (readWrite, parameterName, parameterValue ) => {
         }
         console.log('sR: message: ', message);
         await DeviceManager.writeCharacteristicWithResponseForDevice(
-                            deviceID, serviceUUID, requestUUID, base64.encode(message + '\r'));
+                            deviceID, serviceUUID, requestUUID, 
+                            base64.encode(message + '\r'));
     }
 }
 
@@ -424,3 +458,32 @@ async function getResponse(deviceID, DeviceManager) {
 
 }
 
+export const continueRefresh = (functionName) => {
+    return async (dispatch, getState, { DeviceManager } ) => {
+        console.log(functionName + ": write/read finished successfully...\n");
+        dispatch(changeConnectionStatus("Free"));
+    }
+}
+
+export const interruptRefresh = (functionName) => {
+    return async (dispatch, getState, { DeviceManager } ) => {
+
+        console.log(functionName + ": attempting write/read...");
+        for (let i = 0; i < 30; ++i) {
+            if (getState().BLEs.connectionStatus !== "Free") {
+                console.log(functionName + ": channel is busy for ", i, " seconds, " + functionName + ": waiting...");
+                await sleep(1000);
+            }
+            else break;
+        }
+        if (getState().BLEs.connectionStatus !== "Free") {
+            console.log(functionName + ": channel is busy for 30 seconds, kill " + functionName + " process...");
+            dispatch(toggleInterruptStatus("fail"));
+            return;
+        }
+        dispatch(changeConnectionStatus("Writing"));
+        console.log(functionName + ": channel is free, begin write/read...");
+        dispatch(toggleInterruptStatus("success"));
+        return;
+    }
+}
