@@ -5,9 +5,9 @@ import { readDirectory, requestFile } from '../actions/interface';
 import { Container, Content, Button, Text, Card, CardItem, ListItem} from 'native-base';
 import RNFetchBlob from 'rn-fetch-blob';
 import styles from '../styles/style';
-import { showMessage, hideMessage } from "react-native-flash-message";
+import { showMessage } from "react-native-flash-message";
+import colors from 'native-base/src/theme/variables/commonColor';
 
- 
 
   
 
@@ -17,14 +17,14 @@ const SaveFileScreen = () => {
 
     // update directory
     let cardFiles;
-    useEffect(() => { dispatch(readDirectory()) }, [cardFiles, RNFetchBlob] );
+    useEffect(() => { dispatch(readDirectory()); }, [cardFiles, RNFetchBlob] );
     cardFiles = useSelector(state => state.BLEs.cardFiles);
 
     const requestFileEvent = (item) => {
         showMessage({
-          message: "Downloading, please wait",
+          message: "File will be on Dropbox when this message closes",
           type: "default",
-          duration: 5000,
+          autoHide: false,
           backgroundColor: colors.brandPrimary,
           titleStyle: styles.AlertText,
         });
@@ -32,12 +32,15 @@ const SaveFileScreen = () => {
             TARGET_DIRECTORY_PATH + "songbird_" + num_files_on_device + ".wav", 
             item.index, 
             item.card));
-        
       }
+
+    // THIS IS TEMPORARY DUE TO FIRMWARE ISSUE
     const boardFiles = 
                     [
-                        {"name":"file1a", "card":"1", "index":"0"}, 
-                        {"name":"file2a","card":"2","index":"1"}
+                        {"name":"card 1 file 1", "card":"1", "index":"0"}, 
+                        {"name":"card 2 file 1","card":"2","index":"1"},
+                        {"name":"card 2 file 2","card":"2","index":"1"},
+                        {"name":"card 2 file 3","card":"2","index":"2"}
                     ];
 
     ///////////// START prepare storage ///////////////
@@ -94,7 +97,7 @@ const SaveFileScreen = () => {
 };
 
 SaveFileScreen.navigationOptions = () => ({
-    title: 'Save Files From Songbird (temp)'
+    title: 'Save Files From Songbird'
   });
 
 

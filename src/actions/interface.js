@@ -3,7 +3,8 @@ import initialParameterObject from '../components/DeviceData';
 import { changeConnectionStatus, disconnectedBLE, 
     addConnectedBLE, addBLE, changeParameterObject, 
     updateCounter, setParameterObject, updateCardFiles, 
-    toggleInterruptStatus} from '.';
+    toggleInterruptStatus, updateTaskStatus} from '.';
+import { hideMessage } from "react-native-flash-message";
 
 const serviceUUID = "ab0828b1-198e-4351-b779-901fa0e0371e";
 const requestUUID = "54fd8ba8-fd8f-4862-97c0-71948babd2d3";
@@ -279,11 +280,6 @@ export const disconnectDevice = () => {
     }
 }
 
-// TODO:
-// add new commands to sendRequest
-// add handler for data instream
-//      
-
 function pad_num(num, padlen, padchar) {
     var pad_char = typeof padchar !== 'undefined' ? padchar : '0';
     var pad = new Array(1 + padlen).join(pad_char);
@@ -330,7 +326,6 @@ export const readDirectory = () => {
 }
 
 
-
 export const requestFile = (NEW_FILE_PATH, fileNumberDevice, SdCard) => {
     return async (dispatch, getState, { DeviceManager } ) => {
 
@@ -345,7 +340,7 @@ export const requestFile = (NEW_FILE_PATH, fileNumberDevice, SdCard) => {
         await RNFetchBlob.fs.createFile(NEW_FILE_PATH, "", 'base64');
         console.log("success making file");
         let stream = await RNFetchBlob.fs.writeStream(NEW_FILE_PATH, 'base64', true);
-        console.log("STREAM!\n\n", stream, "\n\n");
+        console.log("STREAM: ", stream, "\n\n");
 
         //      request data
         let padded = pad_num(fileNumberDevice,6,'0');
@@ -353,31 +348,56 @@ export const requestFile = (NEW_FILE_PATH, fileNumberDevice, SdCard) => {
 
 
         //      load file
-        let prev_input = ""; let new_input = ""; let num_duplicates = 0; let i = 0;
-        while (num_duplicates < 100 && ++i < 500) {
+        let prev_input = "";  
+        let num_duplicates = 0;
+
+        let char = await DeviceManager.readCharacteristicForDevice(
+            deviceID, serviceUUID, responseUUID );
+        let new_input = char.value;
+
+        if (base64.decode(new_input).includes("ERR:NO FILE")) {
+            await stream.close();
+            await RNFetchBlob.fs.unlink(NEW_FILE_PATH);
+            console.log("rF failed, no file found");
+            hideMessage();
+            await dispatch(continueRefresh("rF"));
+            return;
+        }
+
+        stream = await stream.write(new_input);
+        while (num_duplicates < 40) {
 
             let char = await DeviceManager.readCharacteristicForDevice(
             deviceID, serviceUUID, responseUUID );
             new_input = char.value;
 
-            //console.log(i, "\n");
+            // either something is up with the encoding
+            // or some packets are being missed
 
             if (new_input != prev_input) {
-                console.log(new_input);
+                console.log("raw input: ", new_input);
+                console.log("dec input: ", base64.decode(new_input));
+                console.log("enc input: ", base64.encode(new_input));
                 stream = await stream.write(new_input);
                 num_duplicates = 0;
             }
             else {
                 ++num_duplicates;
+                console.log("dupes: ", num_duplicates);
             }
             prev_input = new_input;
         }
+        
         await stream.close();
+
+        uploadFileHTTP(NEW_FILE_PATH);
+        await RNFetchBlob.fs.unlink(NEW_FILE_PATH);
+
         console.log("rF DONE");
+        hideMessage();
 
         // handle multithreading 2/2
         await dispatch(continueRefresh("rF"));
-
 
         
     }
@@ -487,3 +507,32 @@ export const interruptRefresh = (functionName) => {
         return;
     }
 }
+
+const DROPBOX_ACCESS_TOKEN = "epEX4JrmU1wAAAAAAAAAAZ_mLD99UhBnOLCFJZ1XRtpWLRqKqYcoV38xnj3EM4b4";
+const TARGET_PATH = "/home/Apps/Songbird-Files/";
+
+export const uploadFileHTTP = (FILE_PATH) => {
+
+    const FILE_NAME = FILE_PATH.slice(FILE_PATH.search("/Songbird/")+10);
+
+    RNFetchBlob.fetch('POST', "https://content.dropboxapi.com/2/files/upload", {
+    // dropbox upload headers
+    Authorization : "Bearer " + DROPBOX_ACCESS_TOKEN,
+    'Dropbox-API-Arg': JSON.stringify({
+      path : TARGET_PATH + FILE_NAME,
+      mode : 'add',
+      autorename : true,
+      mute : false
+    }),
+    'Content-Type' : 'application/octet-stream',
+  }, RNFetchBlob.wrap(FILE_PATH))
+  .then((res) => {
+    console.log(res.text())
+  })
+  .catch((err) => {
+    // error handling ..
+  })
+
+}
+
+

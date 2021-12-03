@@ -10,6 +10,7 @@ export const INITIAL_STATE = {
 	location: {},
 	lastResponse: '',
 	interruptStatus: 'null',
+	taskStatus: 0,
 	cardFiles: [],
   };
 
@@ -105,6 +106,11 @@ const BLEreducer = (state = INITIAL_STATE, action = {}) => {
 			return {
 				...state,
 				cardFiles: newCardFiles
+			}
+		case 'updateTaskStatus':
+			return {
+				...state,
+				taskStatus: state.taskStatus + action.payload
 			}
 	 	default: return state;
 	}

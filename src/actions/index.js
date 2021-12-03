@@ -48,6 +48,11 @@ export const updateLastResponse = (response) => ({
     payload: response
 })
 
+export const updateTaskStatus = (status) => ({
+    type: "updateTaskStatus",
+    payload: status,
+})
+
 export const initLocation = (locationObj) => ({
     type: "initLocation",
     payload: locationObj,
